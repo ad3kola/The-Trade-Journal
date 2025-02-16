@@ -20,7 +20,8 @@ function Calendar({
       showOutsideDays={showOutsideDays}
       className={cn("p-3 w-full h-fit rounded-full", className)}
       classNames={{
-        months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 w-full h-full",
+        months:
+          "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 w-full h-full",
         month: "space-y-4 w-full",
         caption: "flex justify-center pt-1 relative items-center w-full",
         caption_label: "text-sm font-medium",
@@ -33,8 +34,7 @@ function Calendar({
         nav_button_next: "absolute right-1",
         table: "w-full h-full border-collapse",
         head_row: "flex w-full",
-        head_cell:
-          "text-red rounded-md w-full font-semibold text-sm py-2",
+        head_cell: "text-red rounded-md w-full font-semibold text-sm py-2",
         row: "flex w-full mt-2",
         cell: cn(
           "relative p-0 py-1 text-center text-sm flex-grow flex-shrink focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-transparent [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected].day-range-end)]:rounded-r-md",
@@ -71,7 +71,6 @@ function Calendar({
     />
   );
 }
-
 Calendar.displayName = "Calendar";
 
 export { Calendar };
