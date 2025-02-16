@@ -28,7 +28,6 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function WinRate() {
-  const totalVisitors = chartData[0].desktop + chartData[0].mobile;
 
   return (
     <Card className="flex flex-col">
