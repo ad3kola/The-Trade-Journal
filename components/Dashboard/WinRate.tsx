@@ -6,7 +6,10 @@ import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import {
   ChartConfig,
@@ -28,13 +31,12 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function WinRate() {
-
   return (
     <Card className="flex flex-col">
-      {/* <CardHeader className="items-center pb-0">
+      <CardHeader className="items-center pb-0">
         <CardTitle>Radial Chart - Stacked</CardTitle>
         <CardDescription>January - June 2024</CardDescription>
-      </CardHeader> */}
+      </CardHeader>
       <CardContent className="flex flex-1 items-center pb-0">
         <ChartContainer
           config={chartConfig}
