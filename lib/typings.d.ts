@@ -70,9 +70,35 @@ export interface FormSchema {
 }
 
 export interface Coin {
-  id: string,
+  id: string;
   symbol: string;
   name: string;
   image: string;
   current_price: number;
+}
+
+export interface OrderBook {
+  coinSymbol: {
+    coinLogo: string;
+    coinName: string;
+    coinDesc: string;
+  };
+  date: Date | undefined | string;
+  status: string;
+  type: string;
+  PnL: string;
+  accountType: string;
+  session: string;
+  entryPrice: number;
+  stopLoss: number;
+  screenshot: string;
+  takeProfit: number;
+  positionSize: number;
+  strategy: {
+    divergence: boolean;
+    h_s: boolean;
+    trendLineRetest: boolean;
+    proTrendBias: boolean;
+    fibKeyLevels: boolean;},
+  confidenceLevel: number;
 }

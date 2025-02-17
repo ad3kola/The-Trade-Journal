@@ -20,8 +20,8 @@ export default function Home() {
         </div>
       </div>
       <div className="w-full py-5 flex flex-col gap-2">
-        <h3 className="px-4 font-semibold text-lg">Recent Transactions</h3>
-        <RecentTransactions />
+      <h3 className="px-4 font-semibold text-lg">Recent Transactions</h3>
+      <RecentTransactions />
       </div>
     </main>
   );

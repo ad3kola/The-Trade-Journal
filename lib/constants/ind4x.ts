@@ -3,7 +3,12 @@ import {
   Cog6ToothIcon,
   HomeIcon,
 } from "@heroicons/react/24/solid";
-import { CoinsList, DailySummaryData, NavLinks } from "@/lib/typings";
+import {
+  CoinsList,
+  DailySummaryData,
+  NavLinks,
+  OrderBook,
+} from "@/lib/typings";
 import {
   BadgeIcon,
   ChartBarIcon,
@@ -17,7 +22,7 @@ import {
 export const navLinks: NavLinks[] = [
   { Icon: HomeIcon, title: "Dashboard", url: "/" },
 
-  { Icon: Table, title: "Orders List", url: "/order-book" },
+  { Icon: Table, title: "Orders List", url: "/orders-list" },
   { Icon: Currency, title: "Payouts", url: "/payouts" },
   { Icon: AcademicCapIcon, title: "Certificates", url: "/certificates" },
   { Icon: ChartBarIcon, title: "Analytics", url: "/analytics" },
@@ -160,4 +165,33 @@ export const leverageAmount: string[] = [
   "150x",
   "175x",
   "200x",
+];
+
+export const orderBook: OrderBook[] = [
+  {
+    coinSymbol: {
+      coinLogo: "/btc.png",
+      coinName: "btc",
+      coinDesc: "Bitcoin TetherUS PERPETUAL",
+    },
+    screenshot: "/mockup.png",
+    date: "24 Aug 2025",
+    status: "win",
+    type: "buy",
+    PnL: "250.00",
+    accountType: "Prop Firm",
+    session: "Asian Session",
+    entryPrice: 10000,
+    stopLoss: 10000,
+    takeProfit: 10000,
+    positionSize: 189498,
+    strategy: {
+      divergence: true,
+      h_s: true,
+      trendLineRetest: false,
+      proTrendBias: false,
+      fibKeyLevels: false,
+    },
+    confidenceLevel: 3,
+  },
 ];
