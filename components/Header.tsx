@@ -1,7 +1,6 @@
 import { BellAlertIcon } from "@heroicons/react/24/outline";
 import { Button } from "./ui/button";
 import Image from "next/image";
-import Searchbar from "./Searchbar";
 import { ModeToggle } from "./ModeToggle";
 import { SidebarTrigger } from "./ui/sidebar";
 
