@@ -1,4 +1,4 @@
-import { TrendingDown, TrendingUp, WineIcon } from "lucide-react";
+import { WineIcon } from "lucide-react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 
 const WeekSummary = () => {
@@ -31,8 +31,8 @@ const WeekSummary = () => {
           <Card key={indx}>
             <CardHeader className="py-3 lg:py-4">
               <div className="flex w-full items-center gap-2">
-              <WineIcon className="w-5 h-5" />
-              <span className="text-sm">{data.title}</span>
+                <WineIcon className="w-5 h-5" />
+                <span className="text-sm">{data.title}</span>
               </div>
             </CardHeader>
             <CardContent className="py-3 lg:py-4">
@@ -40,7 +40,6 @@ const WeekSummary = () => {
                 <h3 className="text-2xl md:text-3xl lg:text-4xl tracking-wide font-extrabold">{`$ ${data.value.toFixed(
                   2
                 )}`}</h3>
-              
               </div>
             </CardContent>
           </Card>
