@@ -6,22 +6,18 @@ import Image from "next/image";
 import { Button } from "../ui/button";
 export const columns: ColumnDef<OrderBook>[] = [
   {
-    accessorKey: "coinSymbol",
+    accessorKey: "coinName",
+    enableHiding: false,
     header: () => <div className="px-2">Coin Symbol</div>,
     cell: ({ row }) => (
       <div className="w-[215px] flex items-center gap-3 tracking-wide">
-        <Image
-          src={row.original.coinSymbol.coinLogo}
-          alt="logo"
-          width={35}
-          height={35}
-        />
+        <Image src={row.original.coinLogo} alt="logo" width={35} height={35} />
         <div className="flex flex-col -space-y-1">
           <span className="uppercase text-left font-bold text-base">
-            {row.original.coinSymbol.coinName.toUpperCase()} / USDT
+            {row.original.coinName.toUpperCase()} / USDT
           </span>
           <span className="text-[10px] font-medium text-muted-foreground">
-            {row.original.coinSymbol.coinDesc}
+            {row.original.coinDesc}
           </span>
         </div>
       </div>
@@ -29,6 +25,7 @@ export const columns: ColumnDef<OrderBook>[] = [
   },
   {
     accessorKey: "date",
+    enableHiding: false,
     header: "Date",
   },
   {
@@ -37,13 +34,18 @@ export const columns: ColumnDef<OrderBook>[] = [
   },
   {
     accessorKey: "screenshot",
+    enableHiding: false,
     header: "Sccreenshot (png)",
-    cell: ({row}) => (
-        <div className="relative h-12 w-full rounded-sm overflow-hidden">
-
-        <Image src={row.getValue("screenshot")} alt='screenshot' fill={true} className="object-cover animate-pulse"/>
-        </div>
-    )
+    cell: ({ row }) => (
+      <div className="relative h-12 w-full rounded-sm overflow-hidden">
+        <Image
+          src={row.getValue("screenshot")}
+          alt="screenshot"
+          fill={true}
+          className="object-cover animate-pulse"
+        />
+      </div>
+    ),
   },
   {
     accessorKey: "status",
@@ -60,6 +62,7 @@ export const columns: ColumnDef<OrderBook>[] = [
   },
   {
     accessorKey: "PnL",
+    enableHiding: false,
     header: () => <div className="">Realized PnL</div>,
     cell: ({ row }) => {
       const formatted = Number(row.getValue("PnL")).toFixed(1);
@@ -163,7 +166,7 @@ export const columns: ColumnDef<OrderBook>[] = [
     ),
   },
   {
-    accessorKey: "h_s",
+    accessorKey: "H_S",
     header: "Head & Shoulders",
     cell: ({ row }) => {
       const strategy = row.original.strategy; // Get the strategy object
@@ -172,12 +175,12 @@ export const columns: ColumnDef<OrderBook>[] = [
       return (
         <div
           className={`py-0.5 px-3 w-fit text-center rounded-md text-[12px] font-semibold tracking-wider mx-auto ${
-            strategy.h_s
+            strategy.H_S
               ? "bg-green-200 text-green-800"
               : "bg-red-200 text-red-800"
           }`}
         >
-          {strategy.h_s ? "true" : "false"}
+          {strategy.H_S ? "true" : "false"}
         </div>
       );
     },

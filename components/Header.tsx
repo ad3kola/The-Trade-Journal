@@ -29,7 +29,7 @@ const Header = () => {
         </div>
       </div>
       <div className="flex items-center w-full h-full justify-end gap-1 md:gap-2">
-        {/* <Searchbar /> */}
+          <SidebarTrigger />
         <div className="bg-sidebar p-1 rounded-lg flex items-center justify-center border gap-2 border-sidebar-accent">
           <BellAlertIcon className="w-5 h-5 text-foreground" />
           <Button
@@ -40,7 +40,6 @@ const Header = () => {
           </Button>
         </div>
         <ModeToggle />
-        <SidebarTrigger />
       </div>
     </header>
   );

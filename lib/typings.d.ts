@@ -78,11 +78,9 @@ export interface Coin {
 }
 
 export interface OrderBook {
-  coinSymbol: {
     coinLogo: string;
     coinName: string;
     coinDesc: string;
-  };
   date: Date | undefined | string;
   status: string;
   type: string;
@@ -96,7 +94,7 @@ export interface OrderBook {
   positionSize: number;
   strategy: {
     divergence: boolean;
-    h_s: boolean;
+    H_S: boolean;
     trendLineRetest: boolean;
     proTrendBias: boolean;
     fibKeyLevels: boolean;},

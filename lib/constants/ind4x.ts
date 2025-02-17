@@ -27,7 +27,7 @@ export const navLinks: NavLinks[] = [
   { Icon: AcademicCapIcon, title: "Certificates", url: "/certificates" },
   { Icon: ChartBarIcon, title: "Analytics", url: "/analytics" },
   { Icon: Cog6ToothIcon, title: "Settings", url: "/settings" },
-  { Icon: PlusIcon, title: "Open a Trade", url: "/upload-trade" },
+  { Icon: PlusIcon, title: "Open a Trade", url: "/upload" },
   { Icon: DownloadIcon, title: "Log a Trade", url: "/log-trade" },
 ];
 
@@ -169,11 +169,9 @@ export const leverageAmount: string[] = [
 
 export const orderBook: OrderBook[] = [
   {
-    coinSymbol: {
-      coinLogo: "/btc.png",
-      coinName: "btc",
-      coinDesc: "Bitcoin TetherUS PERPETUAL",
-    },
+    coinLogo: "/btc.png",
+    coinName: "btc",
+    coinDesc: "Bitcoin TetherUS PERPETUAL",
     screenshot: "/mockup.png",
     date: "24 Aug 2025",
     status: "win",
@@ -187,7 +185,7 @@ export const orderBook: OrderBook[] = [
     positionSize: 189498,
     strategy: {
       divergence: true,
-      h_s: true,
+      H_S: true,
       trendLineRetest: false,
       proTrendBias: false,
       fibKeyLevels: false,
@@ -195,11 +193,33 @@ export const orderBook: OrderBook[] = [
     confidenceLevel: 3,
   },
   {
-    coinSymbol: {
-      coinLogo: "/btc.png",
-      coinName: "btc",
-      coinDesc: "Bitcoin TetherUS PERPETUAL",
+    coinLogo: "/btc.png",
+    coinName: "btc",
+    coinDesc: "Bitcoin TetherUS PERPETUAL",
+    screenshot: "/mockup.png",
+    date: "24 Aug 2025",
+    status: "Loss",
+    type: "buy",
+    PnL: "250.00",
+    accountType: "Personal",
+    session: "Asian Session",
+    entryPrice: 10000,
+    stopLoss: 10000,
+    takeProfit: 10000,
+    positionSize: 189498,
+    strategy: {
+      divergence: true,
+      H_S: true,
+      trendLineRetest: false,
+      proTrendBias: false,
+      fibKeyLevels: false,
     },
+    confidenceLevel: 3,
+  },
+  {
+    coinLogo: "/btc.png",
+    coinName: "btc",
+    coinDesc: "Bitcoin TetherUS PERPETUAL",
     screenshot: "/mockup.png",
     date: "24 Aug 2025",
     status: "win",
@@ -213,7 +233,7 @@ export const orderBook: OrderBook[] = [
     positionSize: 189498,
     strategy: {
       divergence: true,
-      h_s: true,
+      H_S: true,
       trendLineRetest: false,
       proTrendBias: false,
       fibKeyLevels: false,
@@ -221,11 +241,9 @@ export const orderBook: OrderBook[] = [
     confidenceLevel: 3,
   },
   {
-    coinSymbol: {
-      coinLogo: "/btc.png",
-      coinName: "btc",
-      coinDesc: "Bitcoin TetherUS PERPETUAL",
-    },
+    coinLogo: "/btc.png",
+    coinName: "eth",
+    coinDesc: "Ethereum TetherUS PERPETUAL",
     screenshot: "/mockup.png",
     date: "24 Aug 2025",
     status: "win",
@@ -239,7 +257,7 @@ export const orderBook: OrderBook[] = [
     positionSize: 189498,
     strategy: {
       divergence: true,
-      h_s: true,
+      H_S: true,
       trendLineRetest: false,
       proTrendBias: false,
       fibKeyLevels: false,
@@ -247,37 +265,9 @@ export const orderBook: OrderBook[] = [
     confidenceLevel: 3,
   },
   {
-    coinSymbol: {
-      coinLogo: "/btc.png",
-      coinName: "btc",
-      coinDesc: "Bitcoin TetherUS PERPETUAL",
-    },
-    screenshot: "/mockup.png",
-    date: "24 Aug 2025",
-    status: "win",
-    type: "buy",
-    PnL: "250.00",
-    accountType: "Prop Firm",
-    session: "Asian Session",
-    entryPrice: 10000,
-    stopLoss: 10000,
-    takeProfit: 10000,
-    positionSize: 189498,
-    strategy: {
-      divergence: true,
-      h_s: true,
-      trendLineRetest: false,
-      proTrendBias: false,
-      fibKeyLevels: false,
-    },
-    confidenceLevel: 3,
-  },
-  {
-    coinSymbol: {
-      coinLogo: "/btc.png",
-      coinName: "btc",
-      coinDesc: "Bitcoin TetherUS PERPETUAL",
-    },
+    coinLogo: "/btc.png",
+    coinName: "sol",
+    coinDesc: "Solana TetherUS PERPETUAL",
     screenshot: "/mockup.png",
     date: "28 Feb 2025",
     status: "win",
@@ -291,7 +281,7 @@ export const orderBook: OrderBook[] = [
     positionSize: 189498,
     strategy: {
       divergence: false,
-      h_s: false,
+      H_S: false,
       trendLineRetest: true,
       proTrendBias: true,
       fibKeyLevels: false,
