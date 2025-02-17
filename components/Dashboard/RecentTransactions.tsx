@@ -15,7 +15,7 @@ const invoices = [
     realizedPnL: "250.00",
     coinName: "btc",
     coinLogo: "/btc.png",
-    accountType: "Personal Card",
+    accountType: "Prop Firm",
   },
   {
     status: "closed",
@@ -31,7 +31,7 @@ const invoices = [
     realizedPnL: "350.00",
     coinName: "1000pepe",
     coinLogo: "/btc.png",
-    accountType: "Personal Transfer",
+    accountType: "Prop Firm",
   },
   {
     status: "closed",
@@ -39,7 +39,7 @@ const invoices = [
     realizedPnL: "450.00",
     coinName: "btc",
     coinLogo: "/btc.png",
-    accountType: "PropFirm",
+    accountType: "Prop Firm",
   },
   {
     status: "closed",
@@ -61,7 +61,7 @@ export default function RecentTransactions() {
           <TableHead>Status</TableHead>
           <TableHead>Method</TableHead>
           <TableHead className="w-[250px]">Amount</TableHead>
-          <TableHead className="w-[130px]">Method</TableHead>
+          <TableHead className="w-[150px]">Method</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody className="px-10">
@@ -70,7 +70,9 @@ export default function RecentTransactions() {
             <TableCell className="w-[230px] flex items-center gap-4 tracking-wide">
               <Image src={invoice.coinLogo} alt="logo" width={30} height={30} />
               <div className="flex flex-col">
-                <span className="uppercase font-bold">{invoice.coinName} / USDT</span>
+                <span className="uppercase font-bold">
+                  {invoice.coinName} / USDT
+                </span>
                 <span className="text-[12px] font-medium text-muted-foreground">
                   {"Aug 24, 2024"}
                 </span>
@@ -101,9 +103,22 @@ export default function RecentTransactions() {
                 </span>
               </div>
             </TableCell>
-            <TableCell><div className="w-[130px]">{invoice.accountType}</div></TableCell>
+            <TableCell>
+              <div className="w-[150px] flex items-center ">
+                <span
+                  className={`px-2 py-1 text-center rounded-md text-[12px] mx-auto font-semibold tracking-wider ${
+                    invoice.accountType.toLowerCase() == "personal"
+                      ? "bg-blue-200 text-blue-800"
+                      : "bg-violet-200 text-violet-800"
+                  }`}
+                >
+                  {invoice.accountType} Account
+                </span>
+              </div>
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
     </Table>
-)}
+  );
+}
