@@ -1,9 +1,10 @@
 import { columns } from "@/components/OrderHistory/Columns";
 import { DataTable } from "@/components/OrderHistory/DataTable";
+import { formSchema } from "@/lib/config/zod";
 import { orderBook } from "@/lib/constants/ind4x";
-import { OrderBook } from "@/lib/typings";
+import { z } from "zod";
 
-async function getData(): Promise<OrderBook[]> {
+async function getData(): Promise<z.infer<typeof formSchema>[]> {
   return orderBook;
 }
 

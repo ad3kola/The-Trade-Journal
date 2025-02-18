@@ -77,26 +77,3 @@ export interface Coin {
   current_price: number;
 }
 
-export interface OrderBook {
-    coinLogo: string;
-    coinName: string;
-    coinDesc: string;
-  date: Date | undefined | string;
-  status: string;
-  tradeType: string;
-  PnL: string;
-  accountType: string;
-  session: string;
-  entryPrice: number;
-  stopLoss: number;
-  screenshot: string;
-  takeProfit: number;
-  positionSize: number;
-  strategy: {
-    divergence: boolean;
-    H_S: boolean;
-    trendLineRetest: boolean;
-    proTrendBias: boolean;
-    fibKeyLevels: boolean;},
-  confidenceLevel: number;
-}
