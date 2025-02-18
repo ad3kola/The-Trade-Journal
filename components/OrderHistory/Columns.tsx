@@ -1,10 +1,11 @@
 "use client";
 
-import { OrderBook } from "@/lib/typings";
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
 import { Button } from "../ui/button";
-export const columns: ColumnDef<OrderBook>[] = [
+import { z } from "zod";
+import { formSchema } from "@/lib/config/zod";
+export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
   {
     accessorKey: "coinName",
     enableHiding: false,

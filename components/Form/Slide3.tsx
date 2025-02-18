@@ -31,9 +31,6 @@ interface Props {
 const Slide3 = ({ form, onSubmit, current, count }: Props) => {
   const screenShotRef = useRef<HTMLInputElement | null>(null);
   const [imagePreview, setImagePreview] = useState("");
-  //   useEffect(() => {
-  // setImagePreview(form.watch("screenshot"));
-  //   }, [form.watch("screenshot")]);
   return (
     <div className="w-full rounded-sm flex flex-col border mx-auto items-center gap-4 p-2 pt-16 relative">
       <div className="text-[12px] left-1/2 -translate-x-1/2 absolute top-3 text-center text-foreground">
