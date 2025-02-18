@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  ChartPieIcon,
-  ChevronDown,
-  User2,
-} from "lucide-react";
+import { ChartPieIcon, ChevronDown, User2 } from "lucide-react";
 
 import {
   Sidebar,
@@ -34,7 +30,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-
 const SideBar = () => {
   const activeRoute = usePathname();
 
@@ -73,7 +68,7 @@ const SideBar = () => {
                     <SidebarMenuBadge>10</SidebarMenuBadge>
                   </SidebarMenuItem>
                 ))}
-                <SidebarSeparator className="mt-7 " />
+              <SidebarSeparator className="mt-7 " />
               <Collapsible defaultOpen className="group/collapsible">
                 <SidebarGroup>
                   <SidebarGroupLabel asChild>
@@ -85,30 +80,29 @@ const SideBar = () => {
                   <CollapsibleContent>
                     <SidebarGroupContent className="mt-2">
                       <SidebarMenuSub>
-                            <SidebarMenuItem>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <SidebarMenuButton>
-                    <User2 /> Username
-                  </SidebarMenuButton>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  side="top"
-                  className="w-[--radix-popper-anchor-width]"
-                >
-                  <DropdownMenuItem>
-                    <span>Account</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <span>Billing</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <span>Sign out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </SidebarMenuItem>
-
+                        <SidebarMenuItem>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <SidebarMenuButton>
+                                <User2 /> Username
+                              </SidebarMenuButton>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                              side="top"
+                              className="w-[--radix-popper-anchor-width]"
+                            >
+                              <DropdownMenuItem>
+                                <span>Account</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <span>Billing</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <span>Sign out</span>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </SidebarMenuItem>
                       </SidebarMenuSub>
                     </SidebarGroupContent>
                   </CollapsibleContent>

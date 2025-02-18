@@ -18,6 +18,7 @@ export default function FormComponent() {
       entryPrice: 0,
       riskAmount: 0,
       takeProfit: 0,
+      screenshot: "",
       stopLoss: 0,
       confidenceLevel: 1,
       strategy: {

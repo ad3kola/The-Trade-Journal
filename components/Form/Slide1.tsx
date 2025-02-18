@@ -41,8 +41,8 @@ import { UseFormReturn } from "react-hook-form";
 
 interface Props {
   form: UseFormReturn<z.infer<typeof formSchema>>;
-  current: number,
-  count: number
+  current: number;
+  count: number;
 }
 
 const Slide1 = ({ form, current, count }: Props) => {
@@ -59,8 +59,8 @@ const Slide1 = ({ form, current, count }: Props) => {
   ];
   return (
     <div className="w-full border relative rounded-md flex flex-col p-2 items-center pt-12 pb-8 gap-6">
-       <div className="text-[12px] left-1/2 -translate-x-1/2 absolute top-3 text-center text-foreground">
-        <p className="animate-pulse ">
+      <div className="text-[12px] left-1/2 -translate-x-1/2 absolute top-3 text-center text-foreground">
+        <p className="animate-pulse animate-right">
           <ChevronDoubleLeftIcon className="w-4 h-4 inline mr-2" /> Swipe
           between slides{" "}
           <ChevronDoubleRightIcon className="w-4 h-4 inline ml-2" />
@@ -242,27 +242,88 @@ const Slide1 = ({ form, current, count }: Props) => {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="tradeType"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="px-1">Trade Type</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="What's your bias..." />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="buy">Buy</SelectItem>
-                  <SelectItem value="sell">Sell</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="flex items-center w-full gap-2">
+          <FormField
+            control={form.control}
+            name="tradeType"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="px-1">Trade Type</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="What's your bias..." />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="buy">Buy</SelectItem>
+                    <SelectItem value="sell">Sell</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="timeframe"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="px-1">Timeframe</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="3min" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="1min">1min</SelectItem>
+                    <SelectItem value="3min">3min</SelectItem>
+                    <SelectItem value="5min">5min</SelectItem>
+                    <SelectItem value="15min">15min</SelectItem>
+                    <SelectItem value="30min">30min</SelectItem>
+                    <SelectItem value="1hr">1hr</SelectItem>
+                    <SelectItem value="2hr">2hr</SelectItem>
+                    <SelectItem value="4hr">4hr</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="px-1">Trade Outcome</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Win / Loss" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="win">Win</SelectItem>
+                    <SelectItem value="loss">Loss</SelectItem>
+                    <SelectItem value="missed_entry">Missed Entry</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
       </div>
     </div>
   );

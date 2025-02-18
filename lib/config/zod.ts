@@ -6,18 +6,19 @@ export const formSchema = z.object({
   coinName: z.string().min(1, "Coin name is required."),
   coinDesc: z.string().min(1, "Coin description is required."),
   date: z.coerce.date(),
-  status: z.enum(["win", "loss", "missed entry"]),
-  riskAmount: z.number().positive("Required"),
+  status: z.enum(["win", "loss", "missed_entry"]),
+  riskAmount: z.number().positive("Must be a number"),
   tradeType: z.enum(["long", "short"]),
   PnL: z.number().optional(),
   accountType: z.enum(["personal", "prop_firm"]),
   session: z.enum(["London", "New York", "Asian"]),
-  entryPrice: z.number().positive("Must be a positive number"),
-  stopLoss: z.number().positive("Must be a positive number"),
+  timeframe: z.enum(["1min", "3min", "5min", "15min", "30min", "1hr", "2hr", "4hr"]),
+  entryPrice: z.number().positive("Must be a number"),
+  stopLoss: z.number().positive("Must be a number"),
   screenshot: z.string().optional(),
-  takeProfit: z.number().positive("Must be a positive number"),
-  positionSize: z.number().positive("Must be a positive number"),
-  confidenceLevel: z.number().min(0).max(100),
+  takeProfit: z.number().positive("Must be a number"),
+  positionSize: z.number().positive("Must be a number"),
+  confidenceLevel: z.number().min(0).max(100, "Must be a number between 0 and 100"),
   tradeRemarks: z.string().optional(),
   strategy: z.object({
     divergence: z.boolean(),
@@ -28,8 +29,7 @@ export const formSchema = z.object({
   }),
 });
 
-
 export function onSubmit(data: z.infer<typeof formSchema>) {
-  console.log("clicked")
+  console.log("clicked");
   console.log(data);
 }

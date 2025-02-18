@@ -23,7 +23,7 @@ const Slide2 = ({ form, current, count }: Props) => {
   return (
     <div className="w-full rounded-sm flex flex-col border mx-auto items-center gap-4 p-2 pt-16 relative">
       <div className="text-[12px] left-1/2 -translate-x-1/2 absolute top-3 text-center text-foreground">
-        <p className="animate-pulse ">
+        <p className="animate-pulse animate-left-right">
           <ChevronDoubleLeftIcon className="w-4 h-4 inline mr-2" /> Swipe
           between slides{" "}
           <ChevronDoubleRightIcon className="w-4 h-4 inline ml-2" />

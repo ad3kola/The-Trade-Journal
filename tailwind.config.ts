@@ -1,3 +1,7 @@
+import tailwindCSSAnimate from "tailwindcss-animate";
+import tailwindScrollbarHide from "tailwind-scrollbar-hide";
+import tailwindScrollbar from "tailwind-scrollbar";
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -9,6 +13,9 @@ export default {
   ],
   theme: {
     extend: {
+      animation: {
+        rotation: 'rotation 1s linear infinite',
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -69,8 +76,8 @@ export default {
     },
   },
   plugins: [
-    require("tailwindcss-animate"),
-    require("tailwind-scrollbar-hide"),
-	require('tailwind-scrollbar')({ nocompatible: true }),
-],
+    tailwindCSSAnimate,
+    tailwindScrollbarHide,
+    tailwindScrollbar({ nocompatible: true }),
+  ],
 } satisfies Config;

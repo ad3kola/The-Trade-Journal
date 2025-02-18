@@ -86,3 +86,88 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* styles/globals.css */
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loader {
+  @apply inline-block w-6 h-6 border-2 border-white rounded-full relative box-border animate-rotation;
+  animation: rotation 1s linear infinite;
+}
+
+.loader::after,
+.loader::before {
+  content: '';
+  @apply absolute w-[4px] h-[4px] rounded-full bg-white;
+  box-sizing: border-box;
+}
+
+.loader::after {
+  top: 0;
+  left: 0;
+  transform: translate(150%, 150%);
+}
+
+.loader::before {
+  bottom: 0;
+  right: 0;
+  transform: translate(-150%, -150%);
+}
+
+/* styles/globals.css */
+
+/* Move only to the right */
+@keyframes moveRight {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(8px); /* Move slightly to the right */
+  }
+}
+
+/* Move only to the left */
+@keyframes moveLeft {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-8px); /* Move slightly to the left */
+  }
+}
+
+/* Move both ways: left and right */
+@keyframes moveLeftRight {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-8px); /* Move slightly to the left */
+  }
+  50% {
+    transform: translateX(8px); /* Move slightly to the right */
+  }
+  75% {
+    transform: translateX(-8px); /* Move slightly back to the left */
+  }
+}
+
+/* Apply animation classes to each */
+.animate-right {
+  animation: moveRight 1.5s ease-in-out infinite, pulse 2s ease-in-out infinite;
+}
+
+.animate-left {
+  animation: moveLeft 3s ease-in-out infinite, pulse 2s ease-in-out infinite;
+}
+
+.animate-left-right {
+  animation: moveLeftRight 1.5s ease-in-out infinite, pulse 2s ease-in-out infinite;
+}
