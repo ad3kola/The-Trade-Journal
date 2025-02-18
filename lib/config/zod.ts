@@ -6,8 +6,8 @@ export const formSchema = z.object({
   coinName: z.string().min(1, "Coin name is required."),
   coinDesc: z.string().min(1, "Coin description is required."),
   date: z.coerce.date(),
-  status: z.enum(["open", "closed"]),
-  riskAmount: z.number().positive("Must be a positive number"),
+  status: z.enum(["win", "loss", "missed entry"]),
+  riskAmount: z.number().positive("Required"),
   tradeType: z.enum(["long", "short"]),
   PnL: z.number().optional(),
   accountType: z.enum(["personal", "prop_firm"]),
@@ -19,11 +19,17 @@ export const formSchema = z.object({
   positionSize: z.number().positive("Must be a positive number"),
   confidenceLevel: z.number().min(0).max(100),
   tradeRemarks: z.string().optional(),
-
-  // Boolean values for trading strategies
-  divergence: z.boolean(),
-  headShoulders: z.boolean(),
-  trendLineRetest: z.boolean(),
-  proTrendBias: z.boolean(),
-  fibKeyLevels: z.boolean(),
+  strategy: z.object({
+    divergence: z.boolean(),
+    H_S: z.boolean(),
+    trendLineRetest: z.boolean(),
+    proTrendBias: z.boolean(),
+    fibKeyLevels: z.boolean(),
+  }),
 });
+
+
+export function onSubmit(data: z.infer<typeof formSchema>) {
+  console.log("clicked")
+  console.log(data);
+}

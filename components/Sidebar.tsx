@@ -3,7 +3,6 @@
 import {
   ChartPieIcon,
   ChevronDown,
-  ChevronUp,
   User2,
 } from "lucide-react";
 
@@ -56,7 +55,7 @@ const SideBar = () => {
           <SidebarGroupContent>
             <SidebarMenu>
               {navLinks
-                .slice(0, navLinks.length - 2)
+                .slice(0, navLinks.length)
                 .map(({ title, Icon, url }) => (
                   <SidebarMenuItem key={title}>
                     <SidebarMenuButton
@@ -74,52 +73,23 @@ const SideBar = () => {
                     <SidebarMenuBadge>10</SidebarMenuBadge>
                   </SidebarMenuItem>
                 ))}
+                <SidebarSeparator className="mt-7 " />
               <Collapsible defaultOpen className="group/collapsible">
                 <SidebarGroup>
                   <SidebarGroupLabel asChild>
                     <CollapsibleTrigger>
-                      Log New Data
+                      Settings
                       <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
                     </CollapsibleTrigger>
                   </SidebarGroupLabel>
                   <CollapsibleContent>
                     <SidebarGroupContent className="mt-2">
                       <SidebarMenuSub>
-                        {navLinks
-                          .slice(navLinks.length - 2, navLinks.length)
-                          .map(({ title, Icon, url }) => (
-                            <SidebarMenuItem key={title}>
-                              <SidebarMenuButton
-                                asChild
-                                className={`font-bold transition duration-100 ease-in-out text-sm tracking-wider gap-4 py-5 ${
-                                  activeRoute == url &&
-                                  "bg-primary hover:bg-primary hover:text-foreground hover:font-medium"
-                                }`}
-                              >
-                                <a href={url}>
-                                  <Icon className="h-10 w-10" />
-                                  <span>{title}</span>
-                                </a>
-                              </SidebarMenuButton>
-                            </SidebarMenuItem>
-                          ))}{" "}
-                      </SidebarMenuSub>
-                    </SidebarGroupContent>
-                  </CollapsibleContent>
-                </SidebarGroup>
-              </Collapsible>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        <SidebarSeparator />
-        <SidebarFooter>
-          <SidebarMenu>
-            <SidebarMenuItem>
+                            <SidebarMenuItem>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuButton>
                     <User2 /> Username
-                    <ChevronUp className="ml-auto" />
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
@@ -138,8 +108,15 @@ const SideBar = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarFooter>
+
+                      </SidebarMenuSub>
+                    </SidebarGroupContent>
+                  </CollapsibleContent>
+                </SidebarGroup>
+              </Collapsible>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter />
     </Sidebar>

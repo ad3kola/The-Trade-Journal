@@ -53,8 +53,7 @@ export const columns: ColumnDef<OrderBook>[] = [
     cell: ({ row }) => (
       <div
         className={`px-2 py-0.5 text-center rounded-md text-[12px] font-semibold w-fit mx-auto text-foreground tracking-wider ${
-          row.getValue("status") == "win" ? "bg-green-500" : "bg-red-600"
-        }`}
+          row.getValue("status") == "win" ? "bg-green-500" : row.getValue("status") == "loss" ? "bg-red-600" : "bg-accent"}`}
       >
         {row.getValue("status")}
       </div>

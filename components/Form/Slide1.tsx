@@ -7,6 +7,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "../ui/form";
 import { format } from "date-fns";
 
@@ -30,6 +31,8 @@ import {
 } from "../ui/command";
 import {
   CheckBadgeIcon,
+  ChevronDoubleLeftIcon,
+  ChevronDoubleRightIcon,
 } from "@heroicons/react/24/solid";
 import { Calendar } from "../ui/calendar";
 import { z } from "zod";
@@ -38,9 +41,11 @@ import { UseFormReturn } from "react-hook-form";
 
 interface Props {
   form: UseFormReturn<z.infer<typeof formSchema>>;
+  current: number,
+  count: number
 }
 
-const Slide1 = ({ form }: Props) => {
+const Slide1 = ({ form, current, count }: Props) => {
   const languages = [
     { label: "Bitcoin", value: "btc", logo: "/btc.png" },
     { label: "French", value: "fr", logo: "/btc.png" },
@@ -53,8 +58,18 @@ const Slide1 = ({ form }: Props) => {
     { label: "Chinese", value: "zh", logo: "/btc.png" },
   ];
   return (
-    <div className="w-full border rounded-md flex flex-col p-2 items-center pt-10 pb-8 gap-6">
-      <h3 className="text-xl uppercase font-extrabold tracking-wider">
+    <div className="w-full border relative rounded-md flex flex-col p-2 items-center pt-12 pb-8 gap-6">
+       <div className="text-[12px] left-1/2 -translate-x-1/2 absolute top-3 text-center text-foreground">
+        <p className="animate-pulse ">
+          <ChevronDoubleLeftIcon className="w-4 h-4 inline mr-2" /> Swipe
+          between slides{" "}
+          <ChevronDoubleRightIcon className="w-4 h-4 inline ml-2" />
+        </p>{" "}
+        <p>
+          Slide {current} of {count}
+        </p>
+      </div>
+      <h3 className="text-xl uppercase font-extrabold mt-8 tracking-wider">
         Trade Details
       </h3>
       <div className="flex flex-col gap-4 w-full">
@@ -152,6 +167,7 @@ const Slide1 = ({ form }: Props) => {
                     <SelectItem value="propFirm">Prop Firm Account</SelectItem>
                   </SelectContent>
                 </Select>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -180,6 +196,7 @@ const Slide1 = ({ form }: Props) => {
                     </SelectItem>
                   </SelectContent>
                 </Select>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -221,6 +238,7 @@ const Slide1 = ({ form }: Props) => {
                   />
                 </PopoverContent>
               </Popover>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -241,11 +259,11 @@ const Slide1 = ({ form }: Props) => {
                   <SelectItem value="sell">Sell</SelectItem>
                 </SelectContent>
               </Select>
+              <FormMessage />
             </FormItem>
           )}
         />
       </div>
-     
     </div>
   );
 };
