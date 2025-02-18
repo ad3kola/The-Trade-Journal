@@ -18,6 +18,7 @@ export const formSchema = z.object({
   takeProfit: z.number().positive("Must be a positive number"),
   positionSize: z.number().positive("Must be a positive number"),
   confidenceLevel: z.number().min(0).max(100),
+  tradeRemarks: z.string().optional(),
 
   // Boolean values for trading strategies
   divergence: z.boolean(),

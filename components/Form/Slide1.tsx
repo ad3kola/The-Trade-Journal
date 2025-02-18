@@ -7,7 +7,6 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "../ui/form";
 import { format } from "date-fns";
 
@@ -29,17 +28,19 @@ import {
   CommandItem,
   CommandList,
 } from "../ui/command";
-import { CheckBadgeIcon } from "@heroicons/react/24/solid";
+import {
+  CheckBadgeIcon,
+} from "@heroicons/react/24/solid";
 import { Calendar } from "../ui/calendar";
 import { z } from "zod";
 import { formSchema } from "@/lib/config/zod";
 import { UseFormReturn } from "react-hook-form";
 
 interface Props {
-    form: UseFormReturn<z.infer<typeof formSchema>>;
-  };
+  form: UseFormReturn<z.infer<typeof formSchema>>;
+}
 
-const Slide1 = ({form}: Props) => {
+const Slide1 = ({ form }: Props) => {
   const languages = [
     { label: "Bitcoin", value: "btc", logo: "/btc.png" },
     { label: "French", value: "fr", logo: "/btc.png" },
@@ -50,13 +51,13 @@ const Slide1 = ({form}: Props) => {
     { label: "Japanese", value: "ja", logo: "/btc.png" },
     { label: "Korean", value: "ko", logo: "/mockup.png" },
     { label: "Chinese", value: "zh", logo: "/btc.png" },
-  ] as const;
+  ];
   return (
-    <div className="w-full border flex flex-col p-2 items-center py-12 gap-4">
+    <div className="w-full border rounded-md flex flex-col p-2 items-center pt-10 pb-8 gap-6">
       <h3 className="text-xl uppercase font-extrabold tracking-wider">
         Trade Details
       </h3>
-      <div className="flex flex-col gap-4 mt-4 w-full">
+      <div className="flex flex-col gap-4 w-full">
         <FormField
           control={form.control}
           name="coinName"
@@ -127,7 +128,6 @@ const Slide1 = ({form}: Props) => {
                   </Command>
                 </PopoverContent>
               </Popover>
-              <FormMessage />
             </FormItem>
           )}
         />
@@ -152,7 +152,6 @@ const Slide1 = ({form}: Props) => {
                     <SelectItem value="propFirm">Prop Firm Account</SelectItem>
                   </SelectContent>
                 </Select>
-                <FormMessage />
               </FormItem>
             )}
           />
@@ -181,7 +180,6 @@ const Slide1 = ({form}: Props) => {
                     </SelectItem>
                   </SelectContent>
                 </Select>
-                <FormMessage />
               </FormItem>
             )}
           />
@@ -223,7 +221,6 @@ const Slide1 = ({form}: Props) => {
                   />
                 </PopoverContent>
               </Popover>
-              <FormMessage />
             </FormItem>
           )}
         />
@@ -244,11 +241,11 @@ const Slide1 = ({form}: Props) => {
                   <SelectItem value="sell">Sell</SelectItem>
                 </SelectContent>
               </Select>
-              <FormMessage />
             </FormItem>
           )}
         />
       </div>
+     
     </div>
   );
 };

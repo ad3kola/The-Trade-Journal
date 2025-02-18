@@ -15,7 +15,7 @@ interface Props {
 
 const Slide2 = ({ form }: Props) => {
   return (
-    <div className="w-full flex flex-col border mx-auto items-center gap-4 p-2 py-16">
+    <div className="w-full rounded-sm flex flex-col border mx-auto items-center gap-4 p-2 pt-16">
       <h3 className="text-xl uppercase font-extrabold tracking-wider">
         Trade Execution
       </h3>
@@ -168,8 +168,8 @@ const Slide2 = ({ form }: Props) => {
               name="confidenceLevel"
               control={form.control}
               render={({ field }) => (
-                <FormItem className="flex items-center gap-4 flex-nowrap relative">
-                  <FormLabel className="font-medium whitespace-nowrap text-sm">
+                <FormItem className="flex items-center justify-center gap-4 flex-nowrap relative -mt-1">
+                  <FormLabel className="font-normal mt-1 tracking-wide text-sm">
                     Confidence
                   </FormLabel>
                   <Slider
@@ -177,7 +177,7 @@ const Slide2 = ({ form }: Props) => {
                     defaultValue={[field.value]}
                     max={5}
                     step={1}
-                  />
+                    />
                   <span className="w-full absolute -bottom-5 left-10 text-[11px] font-light tracking-wider text-white/80 text-center">
                     1 (Gamble) ... 5 (Very Confident)
                   </span>
