@@ -1,12 +1,11 @@
-import FormComponent from '@/components/Form'
-import React from 'react'
+import FormComponent from "@/components/Form";
 
 const page = () => {
   return (
-    <div>
+    <main className="p-2 md:p-4 flex flex-col w-full">
       <FormComponent />
-    </div>
-  )
-}
+    </main>
+  );
+};
 
-export default page
+export default page;

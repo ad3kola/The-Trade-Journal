@@ -29,7 +29,7 @@ export const columns: ColumnDef<OrderBook>[] = [
     header: "Date",
   },
   {
-    accessorKey: "type",
+    accessorKey: "tradeType",
     header: "Type",
   },
   {

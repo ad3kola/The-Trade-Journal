@@ -54,7 +54,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="rounded-none">
-      <div className="flex items-center pb-4">
+      <div className="flex items-center pb-4 gap-3">
         <Input
           placeholder="Filter emails..."
           value={
@@ -67,7 +67,7 @@ export function DataTable<TData, TValue>({
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button variant="outline" className="ml-auto py-6">
               Columns
             </Button>
           </DropdownMenuTrigger>

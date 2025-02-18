@@ -83,7 +83,7 @@ export interface OrderBook {
     coinDesc: string;
   date: Date | undefined | string;
   status: string;
-  type: string;
+  tradeType: string;
   PnL: string;
   accountType: string;
   session: string;

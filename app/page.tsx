@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <main className="w-full px-2 py-4">
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 items-start w-full">
-        <div className="flex flex-col w-full col-span-2 gap-3">
+        <div className="flex flex-col w-full col-span-2 gap-3" >
           <WeekSummary />
           <GradientChart />
         </div>
