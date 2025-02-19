@@ -132,6 +132,7 @@ export const listOfCoins: CoinsList[] = [
   { name: "SOL/USDT", logo: "/assets/Solana.webp", value: "solusdt" },
   { name: "AVAX/USDT", logo: "/assets/Avax.png", value: "avaxusdt" },
 ];
+export const GenderOptions: string[] = ["Win", "Loss", "Missed Entry"]
 
 export const leverageAmount: string[] = [
   "5x",
@@ -161,11 +162,11 @@ export const orderBook: z.infer<typeof formSchema>[] = [
     date: new Date(),
     timeframe: "3min",
     status: "win",
-    tradeType: "long",
+    tradeType: "buy",
     PnL: 250.0,
     riskAmount: 50,
     accountType: "prop_firm",
-    session: "Asian",
+    session: "london",
     entryPrice: 10000,
     stopLoss: 10000,
     takeProfit: 10000,
@@ -178,5 +179,6 @@ export const orderBook: z.infer<typeof formSchema>[] = [
       fibKeyLevels: false,
     },
     confidenceLevel: 3,
+    tradeRemarks: "",
   },
 ];

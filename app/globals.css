@@ -52,6 +52,7 @@ body {
     --primary: 262, 85%, 47%;
     --primary-foreground: 0 0% 9%;
     --secondary: 0 0% 14.9%;
+    --input: 242, 22%, 28%, 0.2;
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 14.9%;
     --muted-foreground: 0 0% 63.9%;
@@ -60,7 +61,7 @@ body {
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 242, 22%, 28%;
-    --input: 0 0% 14.9%;
+    --input: 242 22% 28% / 20%;
     --ring: 0 0% 83.1%;
     --chart-1: 220 70% 50%;
     --chart-2: 224, 100%, 58%;
@@ -85,40 +86,6 @@ body {
   body {
     @apply bg-background text-foreground;
   }
-}
-
-/* styles/globals.css */
-@keyframes rotation {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.loader {
-  @apply inline-block w-6 h-6 border-2 border-white rounded-full relative box-border animate-rotation;
-  animation: rotation 1s linear infinite;
-}
-
-.loader::after,
-.loader::before {
-  content: '';
-  @apply absolute w-[4px] h-[4px] rounded-full bg-white;
-  box-sizing: border-box;
-}
-
-.loader::after {
-  top: 0;
-  left: 0;
-  transform: translate(150%, 150%);
-}
-
-.loader::before {
-  bottom: 0;
-  right: 0;
-  transform: translate(-150%, -150%);
 }
 
 /* styles/globals.css */
@@ -170,4 +137,16 @@ body {
 
 .animate-left-right {
   animation: moveLeftRight 1.5s ease-in-out infinite, pulse 2s ease-in-out infinite;
+}
+
+@layer utilities {
+  .animate-wave {
+    animation: wave 4s infinite;
+  }
+}
+
+@layer components {
+  .custom-phone-input input {
+    @apply w-full bg-transparent text-foreground focus:outline-none;
+  }
 }

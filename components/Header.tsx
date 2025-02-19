@@ -34,7 +34,7 @@ const Header = () => {
           <BellAlertIcon className="w-5 h-5 text-foreground" />
           <Button
             variant="default"
-            className="px-2 cursor-pointer hover:bg-primary text-[12px] h-7"
+            className="px-2 cursor-pointer text-[12px] h-7"
           >
             {Math.floor(Math.random() * 8) + 1} New{" "}
           </Button>

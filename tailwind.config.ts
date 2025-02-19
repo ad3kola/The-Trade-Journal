@@ -14,7 +14,24 @@ export default {
   theme: {
     extend: {
       animation: {
-        rotation: 'rotation 1s linear infinite',
+        wave: "wave 1.5s infinite",
+        rotation: "rotation 1s linear infinite",
+      },
+      keyframes: {
+        wave: {
+          "0%, 100%": {
+            transform: "rotate(0deg)",
+          },
+          "25%": {
+            transform: "rotate(20deg)",
+          },
+          "50%": {
+            transform: "rotate(-10deg)",
+          },
+          "75%": {
+            transform: "rotate(20deg)",
+          },
+        },
       },
       colors: {
         background: "hsl(var(--background))",

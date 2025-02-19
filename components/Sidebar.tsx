@@ -55,7 +55,7 @@ const SideBar = () => {
                   <SidebarMenuItem key={title}>
                     <SidebarMenuButton
                       asChild
-                      className={`font-bold transition duration-100 ease-in-out text-sm tracking-wider gap-4 py-5 ${
+                      className={`font-bold transition duration-100 ease-in-out text-sm tracking-wider gap-4 py-6 ${
                         activeRoute == url &&
                         "bg-primary hover:bg-primary hover:text-foreground hover:font-medium"
                       }`}
