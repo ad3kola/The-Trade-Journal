@@ -18,8 +18,12 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Calendar } from "./ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
-import { CalendarIcon } from "@heroicons/react/24/solid";
+import { CalendarIcon, CameraIcon } from "@heroicons/react/24/solid";
 import { cn } from "@/lib/utils";
+import { Select, SelectContent, SelectTrigger, SelectValue } from "./ui/select";
+import { Textarea } from "./ui/textarea";
+import { useState } from "react";
+import Image from "next/image";
 
 interface CustomProps {
   control: Control<any>;
@@ -41,6 +45,7 @@ const RenderField = ({
   props: CustomProps;
 }) => {
   const { fieldType, placeholder, label, renderSkeleton } = props;
+  const [fileURL, setFileURL] = useState("");
   switch (fieldType) {
     case FormFieldType.INPUT:
       return (
@@ -65,14 +70,14 @@ const RenderField = ({
       );
     case FormFieldType.DATE_PICKER:
       return (
-        <div className="flex rounded-md border border-accent bg-sidebar">
+        <div className="flex rounded-md border border-accent bg-background">
           <Popover>
             <PopoverTrigger asChild>
               <FormControl>
                 <Button
                   variant={"outline"}
                   className={cn(
-                    "w-full pl-3 bg-input text-left font-normal text-[13px] border-b border-primary",
+                    "w-full pl-3 bg-input text-left font-normal text-[13px] border-b border-accent",
                     !field.value && "text-muted-foreground"
                   )}
                 >
@@ -100,20 +105,72 @@ const RenderField = ({
         </div>
       );
     case FormFieldType.SKELETON:
+      return renderSkeleton ? renderSkeleton(field) : null;
+    case FormFieldType.SELECT:
       return (
-        renderSkeleton ? renderSkeleton(field) : null
-      )
+        <FormControl>
+          <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <FormControl>
+              <SelectTrigger>
+                <SelectValue placeholder={placeholder} />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent>{props.children}</SelectContent>
+          </Select>
+        </FormControl>
+      );
     case FormFieldType.TEXTAREA:
-      return;
-    case FormFieldType.CHECKBOX:
-      return;
-    case FormFieldType.DATE_PICKER:
-      return;
+      return (
+        <FormControl>
+          <Textarea
+            placeholder={placeholder}
+            {...field}
+            disabled={props.disabled}
+          />
+        </FormControl>
+      );
+    case FormFieldType.FILE_INPUT:
+      return (
+        <FormControl>
+          <div className="h-full w-full flex">
+            <Input
+              // ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                // uploadImage(e);
+                field.onChange(e);
+              }}
+            />
+            <div
+              // onClick={() => fileInputRef.current?.click()}
+              className="w-full bg-input rounded-md h-60 border hover:bg-accent border-accent flex items-center justify-center text-white/80 cursor-pointer hover:scale-[1.01] duration-200 transition flex-col relative"
+            >
+              {fileURL ? (
+                <Image
+                  src={fileURL}
+                  alt="Screenshot"
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="p-3 flex items-center justify-center flex-col gap-2">
+                  <CameraIcon className="h-10 w-10 text-white/50" />
+                  <span className="text-[12px] md:text-sm">
+                    Click to Upload Image
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        </FormControl>
+      );
   }
 };
 
 const CustomFormField = (props: CustomProps) => {
-  const { control, fieldType, name, label } = props;
+  const { control, name, label } = props;
   return (
     <div>
       <FormField
@@ -121,9 +178,7 @@ const CustomFormField = (props: CustomProps) => {
         name={name}
         render={({ field }) => (
           <FormItem className="w-full">
-            {fieldType !== FormFieldType.CHECKBOX && label && (
-              <FormLabel className="pl-2">{label}</FormLabel>
-            )}
+            <FormLabel className="pl-2 whitespace-nowrap">{label}</FormLabel>
             <RenderField field={field} props={props} />
             <FormMessage />
           </FormItem>

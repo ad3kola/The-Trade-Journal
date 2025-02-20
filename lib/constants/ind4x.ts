@@ -132,26 +132,43 @@ export const listOfCoins: CoinsList[] = [
   { name: "SOL/USDT", logo: "/assets/Solana.webp", value: "solusdt" },
   { name: "AVAX/USDT", logo: "/assets/Avax.png", value: "avaxusdt" },
 ];
-export const GenderOptions: string[] = ["Win", "Loss", "Missed Entry"]
 
-export const leverageAmount: string[] = [
-  "5x",
-  "10x",
-  "15x",
-  "20x",
-  "25x",
-  "30x",
-  "45x",
-  "50x",
-  "75x",
-  "80x",
-  "95x",
-  "100x",
-  "125x",
-  "150x",
-  "175x",
-  "200x",
-];
+export enum TradeStatus {
+  WIN = "Win",
+  LOSS = "Loss",
+  MISSED_ENTRY = "Missed Entry",
+}
+
+export enum TradeSession {
+  ASIAN = "Asian",
+  LONDON = "London",
+  NEW_YORK = "New York",
+}
+
+export enum TradeType {
+  BUY = "Buy",
+  SELL = "Sell",
+}
+
+export enum AccountType {
+  PERSONAL = "Personal",
+  PROP_FIRM = "Prop Firm"
+}
+
+export enum TradeTimeframe {
+  M1 = "1min",
+  M3 = "3min",
+  M5 = "5min",
+  M15 = "15min",
+  M30 = "30min",
+  H1 = "1hr",
+  H2 = "2hr",
+  H4 = "4hr",
+  D1 = "1D",
+  W1 = "1W",
+  M1M = "1M",
+}
+
 
 export const orderBook: z.infer<typeof formSchema>[] = [
   {

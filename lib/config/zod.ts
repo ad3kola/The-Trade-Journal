@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { AccountType, TradeSession, TradeStatus, TradeTimeframe, TradeType } from "../constants/ind4x";
 
 export const userSchema = z.object({
   fullName: z.string().min(2, "Must be more than 2 characters"),
@@ -18,16 +19,16 @@ export const formSchema = z.object({
   date: z.coerce.date(),
   // coinLogo: z.string().min(1, "Coin logo is required."),
   // coinName: z.string().min(1, "Coin name is required."),
-  // timeframe: z.enum(["1min", "3min", "5min", "15min", "30min", "1hr", "2hr", "4hr"]),
   // coinDesc: z.string().min(1, "Coin description is required."),
-  // status: z.enum(["win", "loss", "missed_entry"]),
-  // tradeType: z.enum(["buy", "sell"]),
-  // screenshot: z.string().optional(),
-  // PnL: z.coerce.number().optional(),
-  // accountType: z.enum(["personal", "prop_firm"]),
-  // session: z.enum(["london", "newYork", "asian"]),
+  timeframe: z.nativeEnum(TradeTimeframe),
+  status: z.nativeEnum(TradeStatus),
+  tradeType: z.nativeEnum(TradeType),
+  tradeSession: z.nativeEnum(TradeSession),
+  tradeScreenshot: z.string().optional(),
+  realizedPnL: z.coerce.number().optional(),
+  accountType: z.nativeEnum(AccountType),
   // confidenceLevel: z.coerce.number().min(0).max(5),
-  // tradeRemarks: z.string(),
+  tradeReview: z.string(),
   // strategy: z.object({
   // divergence: z.boolean(),
   // H_S: z.boolean(),
