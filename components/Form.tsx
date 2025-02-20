@@ -17,6 +17,7 @@ import {
   TradeTimeframe,
   TradeType,
 } from "@/lib/constants/ind4x";
+import { getImageString } from "@/actions/getmageString";
 
 export enum FormFieldType {
   INPUT = "input",
@@ -63,9 +64,10 @@ export default function FormComponent() {
       //   },
     },
   });
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log("clicked");
-    console.log(data);
+ async function onSubmit(data: z.infer<typeof formSchema>) {
+    if (data.tradeScreenshot)  {
+      // const fileurl = await getImageString(data.)
+    }
   }
 
   return (

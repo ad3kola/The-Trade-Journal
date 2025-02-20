@@ -22,8 +22,9 @@ import { CalendarIcon, CameraIcon } from "@heroicons/react/24/solid";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectTrigger, SelectValue } from "./ui/select";
 import { Textarea } from "./ui/textarea";
-import { useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import Image from "next/image";
+import { getImageString } from "@/actions/getmageString";
 
 interface CustomProps {
   control: Control<any>;
@@ -36,7 +37,6 @@ interface CustomProps {
   children?: React.ReactNode;
   renderSkeleton?: (field: ControllerRenderProps<any, string>) => JSX.Element;
 }
-
 const RenderField = ({
   field,
   props,
@@ -45,7 +45,21 @@ const RenderField = ({
   props: CustomProps;
 }) => {
   const { fieldType, placeholder, label, renderSkeleton } = props;
-  const [fileURL, setFileURL] = useState("");
+  const [fileURL, setFileURL] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const handleFileUpload = async (
+    e: ChangeEvent<HTMLInputElement>,
+  ) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const file = e.target.files[0];
+    try {
+      const imageURL = await getImageString(file);
+      setFileURL(imageURL);
+    } catch (error) {
+      console.log("Error: ", error);
+      console.log(error);
+    }
+  };
   switch (fieldType) {
     case FormFieldType.INPUT:
       return (
@@ -132,20 +146,17 @@ const RenderField = ({
     case FormFieldType.FILE_INPUT:
       return (
         <FormControl>
-          <div className="h-full w-full flex">
+          <div className="h-full w-full flex flex-col">
             <Input
-              // ref={fileInputRef}
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={(e) => {
-                // uploadImage(e);
-                field.onChange(e);
-              }}
+              ref={fileInputRef}
+              onChange={(e) => handleFileUpload(e)} // Calling the function here
             />
             <div
-              // onClick={() => fileInputRef.current?.click()}
-              className="w-full bg-input rounded-md h-60 border hover:bg-accent border-accent flex items-center justify-center text-white/80 cursor-pointer hover:scale-[1.01] duration-200 transition flex-col relative"
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full bg-input rounded-md h-64 border hover:bg-accent border-accent flex items-center justify-center text-white/80 cursor-pointer hover:scale-[1.01] duration-200 transition flex-col relative"
             >
               {fileURL ? (
                 <Image
@@ -163,6 +174,26 @@ const RenderField = ({
                 </div>
               )}
             </div>
+            {fileURL && (
+              <div className=" flex items-center justify-end gap-4 py-2 px-4">
+                <Button
+                  type="button"
+                  variant={"secondary"}
+                  className="font-semibold"
+                  onClick={() => setFileURL("")}
+                >
+                  Remove Image
+                </Button>
+                <Button
+                  type="button"
+                  variant={"secondary"}
+                  className="font-semibold"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  Change Image
+                </Button>
+              </div>
+            )}
           </div>
         </FormControl>
       );

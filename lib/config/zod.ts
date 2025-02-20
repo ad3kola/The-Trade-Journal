@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { AccountType, TradeSession, TradeStatus, TradeTimeframe, TradeType } from "../constants/ind4x";
+import {
+  AccountType,
+  TradeSession,
+  TradeStatus,
+  TradeTimeframe,
+  TradeType,
+} from "../constants/ind4x";
 
 export const userSchema = z.object({
   fullName: z.string().min(2, "Must be more than 2 characters"),
@@ -24,8 +30,8 @@ export const formSchema = z.object({
   status: z.nativeEnum(TradeStatus),
   tradeType: z.nativeEnum(TradeType),
   tradeSession: z.nativeEnum(TradeSession),
-  tradeScreenshot: z.string().optional(),
-  realizedPnL: z.coerce.number().optional(),
+  tradeScreenshot: z.string(),
+  realizedPnL: z.coerce.number(),
   accountType: z.nativeEnum(AccountType),
   // confidenceLevel: z.coerce.number().min(0).max(5),
   tradeReview: z.string(),
