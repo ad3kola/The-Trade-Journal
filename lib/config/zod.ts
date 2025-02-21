@@ -46,7 +46,7 @@ export const formSchema = z.object({
   
   confidence: z.array(z.number()),
 
-  tradeScreenshot: z.string().min(1, "Trade screenshot is required"), 
+  tradeScreenshot: z.string(), 
   
   tradeReview: z.string().min(5, "Review must be at least 5 characters"),
 

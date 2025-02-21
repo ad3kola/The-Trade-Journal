@@ -98,7 +98,7 @@ export default function FormComponent() {
   } = form;
   console.log(errors);
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log("Clicked");
+    
     if (fileURL) {
       data.tradeScreenshot = fileURL;
     }
@@ -106,8 +106,16 @@ export default function FormComponent() {
       const formattedDate = new Date(format(new Date(data.date), "PP"));
       data = { ...data, date: formattedDate };
     }
-    console.log("Submitted Data: ", data);
-  }
+    const res = await fetch("/api/trade", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+      console.log(res);
+      console.log("Clicked");
+    }
   const [fileURL, setFileURL] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
