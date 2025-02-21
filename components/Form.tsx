@@ -79,29 +79,34 @@ export default function FormComponent() {
       strategy: {
         divergence: false,
         head_Shoulders: false,
-        proTrendBias: false,
         trendlineRetest: false,
         fibKeyLevels: false,
+        proTrendBias: false,
         indicatorHighlight: false,
       },
-      tradeReview: "jhjfkrofo",
+      tradeReview: "",
       tradeScreenshot: "",
 
-      confidence: [3],
+      confidence: [0],
     },
   });
-  const { setValue } = form;
-
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = form;
+  console.log(errors);
   async function onSubmit(data: z.infer<typeof formSchema>) {
     console.log("Clicked");
-    // if (fileURL) {
-    //   data.tradeScreenshot = fileURL;
-    // }
-    // if (data.date) {
-    //   const formattedDate = new Date(format(new Date(data.date), "PP"));
-    //   data = { ...data, date: formattedDate };
-    // }
-    // console.log("Submitted Data: ", data);
+    if (fileURL) {
+      data.tradeScreenshot = fileURL;
+    }
+    if (data.date) {
+      const formattedDate = new Date(format(new Date(data.date), "PP"));
+      data = { ...data, date: formattedDate };
+    }
+    console.log("Submitted Data: ", data);
   }
   const [fileURL, setFileURL] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -119,10 +124,10 @@ export default function FormComponent() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="h-full py-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="h-full py-5">
         <div className="w-full flex flex-col gap-6 p-2 max-w-3xl mx-auto">
           <FormField
-            control={form.control}
+            control={control}
             name="coinSymbol"
             render={({}) => (
               <FormItem className="flex flex-col">
@@ -202,7 +207,7 @@ export default function FormComponent() {
           <div className="grid grid-cols-2 w-full gap-4 lg:grid-cols-4">
             <div className="col-span-2 w-full">
               <CustomFormField
-                control={form.control}
+                control={control}
                 fieldType={FormFieldType.SELECT}
                 name="accountType"
                 label="Trade Account Type"
@@ -221,7 +226,7 @@ export default function FormComponent() {
           <div className="grid grid-cols-2 w-full gap-4 lg:grid-cols-4">
             <div className="col-span-2 w-full">
               <CustomFormField
-                control={form.control}
+                control={control}
                 fieldType={FormFieldType.SELECT}
                 name="tradeSession"
                 label="Trade Session"
@@ -238,7 +243,7 @@ export default function FormComponent() {
             </div>
             <div className="w-full grid grid-cols-2 gap-4 col-span-2">
               <CustomFormField
-                control={form.control}
+                control={control}
                 fieldType={FormFieldType.SELECT}
                 name="timeframe"
                 label="Timeframe"
@@ -253,7 +258,7 @@ export default function FormComponent() {
                 ))}
               </CustomFormField>
               <CustomFormField
-                control={form.control}
+                control={control}
                 fieldType={FormFieldType.SELECT}
                 name="tradeType"
                 label="Trade Type"
@@ -271,7 +276,7 @@ export default function FormComponent() {
           </div>
           <div className="grid grid-cols-1 w-full gap-4 lg:grid-cols-2">
             <CustomFormField
-              control={form.control}
+              control={control}
               fieldType={FormFieldType.INPUT}
               name="entryPrice"
               label="Entry Price"
@@ -279,14 +284,14 @@ export default function FormComponent() {
             />
             <div className="grid w-full gap-4 grid-cols-2">
               <CustomFormField
-                control={form.control}
+                control={control}
                 fieldType={FormFieldType.INPUT}
                 name="takeProfit"
                 label="Take Profit"
                 placeholder="0.00"
               />{" "}
               <CustomFormField
-                control={form.control}
+                control={control}
                 fieldType={FormFieldType.INPUT}
                 name="stopLoss"
                 label="Stop Loss"
@@ -295,7 +300,7 @@ export default function FormComponent() {
             </div>
 
             <CustomFormField
-              control={form.control}
+              control={control}
               fieldType={FormFieldType.INPUT}
               name="riskAmount"
               label="Risk Amount"
@@ -303,14 +308,14 @@ export default function FormComponent() {
             />
             <div className="w-full grid grid-cols-2 items-center gap-3">
               <CustomFormField
-                control={form.control}
+                control={control}
                 fieldType={FormFieldType.INPUT}
                 name="leverage"
                 label="Leverage Used"
                 placeholder="0.00"
               />
               <CustomFormField
-                control={form.control}
+                control={control}
                 fieldType={FormFieldType.INPUT}
                 name="positionSize"
                 label="Quantity | Pos. Size"
@@ -320,15 +325,17 @@ export default function FormComponent() {
           </div>{" "}
           <div className="w-full grid grid-cols-2 items-center gap-3">
             <CustomFormField
-              control={form.control}
+              control={control}
               fieldType={FormFieldType.INPUT}
               name="realizedPnL"
+              disabled={true}
               label="Realized PnL"
               placeholder="0.00"
             />
             <CustomFormField
-              control={form.control}
+              control={control}
               fieldType={FormFieldType.INPUT}
+              disabled={true}
               name="risk_Reward"
               label="Risk : Reward "
               placeholder="+3.0R"
@@ -337,7 +344,7 @@ export default function FormComponent() {
           <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-3">
             <div className="lg:col-span-2">
               <CustomFormField
-                control={form.control}
+                control={control}
                 fieldType={FormFieldType.DATE_PICKER}
                 name="date"
                 label="Trade Date"
@@ -345,16 +352,16 @@ export default function FormComponent() {
             </div>
             <div className="lg:col-span-2">
               <CustomFormField
-                control={form.control}
+                control={control}
                 fieldType={FormFieldType.SKELETON}
                 name="status"
-                label="Trade Outcome"
+                label="Trade Status"
                 renderSkeleton={(field) => (
                   <FormControl>
                     <RadioGroup
                       className="flex flex-wrap items-center h-11 gap-3 w-full lg:justify-between"
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      defaultValue={String(field.value)}
                     >
                       {Object.values(TradeStatus).map((status) => (
                         <Label
@@ -382,44 +389,44 @@ export default function FormComponent() {
             <div className="flex flex-col w-full gap-3 px-5 py-3 max-w-[650px]">
               <div className="w-full flex flex-wrap gap-7 ">
                 <CustomFormField
-                  control={form.control}
+                  control={control}
                   name="strategy.divergence"
                   label="Divergence"
                   fieldType={FormFieldType.SWITCH}
                 />
                 <CustomFormField
-                  control={form.control}
+                  control={control}
                   name="strategy.head_Shoulders"
                   label="Head & Shoulders"
                   fieldType={FormFieldType.SWITCH}
                 />
                 <CustomFormField
-                  control={form.control}
+                  control={control}
                   name="strategy.trendlineRetest"
                   label="Trendline Retest"
                   fieldType={FormFieldType.SWITCH}
                 />{" "}
                 <CustomFormField
-                  control={form.control}
+                  control={control}
                   name="strategy.fibKeyLevels"
                   label="Fib Key Levels"
                   fieldType={FormFieldType.SWITCH}
                 />
                 <CustomFormField
-                  control={form.control}
+                  control={control}
                   name="strategy.proTrendBias"
                   label="Aligns with 15min Trend Bias"
                   fieldType={FormFieldType.SWITCH}
                 />
                 <CustomFormField
-                  control={form.control}
+                  control={control}
                   name="strategy.indicatorHighlight"
                   label="Highlight on IT Pro+ Indicatr"
                   fieldType={FormFieldType.SWITCH}
                 />
               </div>
               <CustomFormField
-                control={form.control}
+                control={control}
                 name="confidence"
                 fieldType={FormFieldType.SLIDER}
               />
@@ -427,7 +434,7 @@ export default function FormComponent() {
           </div>
           <FormField
             name="tradeScreenshot"
-            control={form.control}
+            control={control}
             render={({ field }) => (
               <FormControl>
                 <div className="h-full w-full flex flex-col gap-3">
@@ -488,7 +495,7 @@ export default function FormComponent() {
           />
           <div>
             <CustomFormField
-              control={form.control}
+              control={control}
               name="tradeReview"
               label="Trade Remark"
               placeholder="Write a feedback..."

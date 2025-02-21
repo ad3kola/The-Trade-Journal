@@ -8,7 +8,7 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
-import { Control, ControllerRenderProps } from "react-hook-form";
+import { Control, ControllerRenderProps, FieldValues, Path } from "react-hook-form";
 import { FormFieldType } from "./Form";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
@@ -25,37 +25,36 @@ import { Textarea } from "./ui/textarea";
 import { Switch } from "./ui/switch";
 import { Slider } from "./ui/slider";
 
-interface CustomProps {
-  control: Control<any>;
+interface CustomProps<T extends FieldValues> {
+  control: Control<T>;
   fieldType: FormFieldType;
-  name: string;
+  name: Path<T>;
   label?: string;
   placeholder?: string;
   disabled?: boolean;
   dateFormat?: string;
   children?: React.ReactNode;
-  renderSkeleton?: (field: ControllerRenderProps<any, string>) => JSX.Element;
+  renderSkeleton?: (field: ControllerRenderProps<T, Path<T>>) => JSX.Element;
 }
-const RenderField = ({
+const RenderField = <T extends FieldValues>({
   field,
   props,
 }: {
-  field: ControllerRenderProps<any, string>;
-  props: CustomProps;
+  field: ControllerRenderProps<T, Path<T>>;
+  props: CustomProps<T>;
 }) => {
-  const { fieldType, placeholder, label, renderSkeleton } = props;
+  const { fieldType, disabled, placeholder, label, renderSkeleton } = props;
 
   switch (fieldType) {
     case FormFieldType.SLIDER:
       return (
         <FormControl>
-          <div className="flex items-center w-full gap-3 relative">
+          <div className="flex items-center w-full gap-3">
             <FormLabel className="shrink-0">Confidence</FormLabel>
-            <span className='absolute -bottom-3.5 left-1/2 -translate-x-1/2 text-[11px] '>1 (Gamble) ... 5 (Very Confident)</span>
             <FormControl>
               <Slider
                 className="flex-1 max-w-64 w-full "
-                defaultValue={[0]}
+                defaultValue={field.value}
                 onValueChange={(value) => field.onChange([value[0]])}
                 min={0}
                 max={5}
@@ -69,7 +68,7 @@ const RenderField = ({
     case FormFieldType.INPUT:
       return (
         <FormControl>
-          <Input placeholder={placeholder} {...field} />
+          <Input placeholder={placeholder} {...field} disabled={disabled} />
         </FormControl>
       );
     case FormFieldType.PHONE_INPUT:
@@ -169,8 +168,7 @@ const RenderField = ({
       );
   }
 };
-
-const CustomFormField = (props: CustomProps) => {
+const CustomFormField = <T extends FieldValues>(props: CustomProps<T>) => {
   const { control, name, label } = props;
   return (
     <div>

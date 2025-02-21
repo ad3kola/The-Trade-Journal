@@ -17,10 +17,10 @@ export const userSchema = z.object({
 
 export const formSchema = z.object({
   coinSymbol: z.object({
-    logo: z.string().url(),
+    logo: z.string(),
     name: z.string(),
     value: z.string(),
-  }),
+  }).strict(),
   accountType: z.nativeEnum(AccountType),
   tradeSession: z.nativeEnum(TradeSession),
   timeframe: z.nativeEnum(TradeTimeframe),
@@ -44,11 +44,11 @@ export const formSchema = z.object({
     indicatorHighlight: z.boolean(),
   }),
   
+  confidence: z.array(z.number()),
 
-  tradeScreenshot: z.string(),
+  tradeScreenshot: z.string().min(1, "Trade screenshot is required"), 
   
   tradeReview: z.string().min(5, "Review must be at least 5 characters"),
 
-  confidence: z.array(z.number()),
 
 });
