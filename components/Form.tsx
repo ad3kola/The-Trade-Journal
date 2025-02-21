@@ -57,47 +57,51 @@ export default function FormComponent() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      entryPrice: 0,
-      riskAmount: 0,
-      takeProfit: 0,
-      leverage: 0,
-      stopLoss: 0,
-      positionSize: 0,
-      date: new Date(),
-      accountType: AccountType.PERSONAL,
-      tradeSession: TradeSession.NEW_YORK,
-      tradeType: TradeType.BUY,
-      timeframe: TradeTimeframe.M3,
-      status: TradeStatus.WIN,
-      realizedPnL: 0,
-      tradeReview: "",
-      tradeScreenshot: "",
       coinSymbol: {
         logo: "",
         name: "",
         value: "",
       },
-      //   confidenceLevel: 1,
+      accountType: AccountType.PERSONAL,
+      tradeSession: TradeSession.NEW_YORK,
+      timeframe: TradeTimeframe.M3,
+      tradeType: TradeType.BUY,
+      entryPrice: 10,
+      takeProfit: 10,
+      stopLoss: 10,
+      riskAmount: 10,
+      leverage: 10,
+      positionSize: 10,
+      realizedPnL: 10,
+      risk_Reward: 10,
+      date: new Date(),
+      status: TradeStatus.WIN,
       strategy: {
         divergence: false,
-        H_S: false,
-        trendLineRetest: false,
+        head_Shoulders: false,
         proTrendBias: false,
+        trendlineRetest: false,
         fibKeyLevels: false,
+        indicatorHighlight: false,
       },
+      tradeReview: "jhjfkrofo",
+      tradeScreenshot: "",
+
+      confidence: [3],
     },
   });
   const { setValue } = form;
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    if (fileURL) {
-      data.tradeScreenshot = fileURL;
-    }
-    if (data.date) {
-      const formattedDate = new Date(format(new Date(data.date), "PP"));
-      data = { ...data, date: formattedDate };
-    }
-    console.log("Submitted Data: ", data);
+    console.log("Clicked");
+    // if (fileURL) {
+    //   data.tradeScreenshot = fileURL;
+    // }
+    // if (data.date) {
+    //   const formattedDate = new Date(format(new Date(data.date), "PP"));
+    //   data = { ...data, date: formattedDate };
+    // }
+    // console.log("Submitted Data: ", data);
   }
   const [fileURL, setFileURL] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -126,7 +130,7 @@ export default function FormComponent() {
                   <PopoverTrigger asChild>
                     <Button
                       variant={"outline"}
-                      className="w-[280px] mx-auto gap-7 flex items-center"
+                      className="w-[280px] mx-auto gap-7 h-14 flex items-center"
                     >
                       {form.getValues("coinSymbol").value ? (
                         <div className="flex items-center gap-3">
@@ -152,7 +156,7 @@ export default function FormComponent() {
                       <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-70" />{" "}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-[300px] p-0">
+                  <PopoverContent className="w-[280px] p-0">
                     <Command>
                       <CommandInput placeholder="Search for coin" />
                       <CommandList>
@@ -169,8 +173,8 @@ export default function FormComponent() {
                                 width={30}
                                 height={30}
                               />
-                              <div className="flex flex-col">
-                                <span className="uppercase font-bold text-sm">
+                              <div className="flex flex-col -space-y-1">
+                                <span className="uppercase font-bold">
                                   {coin.value} / USDT
                                 </span>
                                 <span className="text-[10px] text-foreground">
@@ -314,7 +318,22 @@ export default function FormComponent() {
               />
             </div>
           </div>{" "}
-          <div></div>
+          <div className="w-full grid grid-cols-2 items-center gap-3">
+            <CustomFormField
+              control={form.control}
+              fieldType={FormFieldType.INPUT}
+              name="realizedPnL"
+              label="Realized PnL"
+              placeholder="0.00"
+            />
+            <CustomFormField
+              control={form.control}
+              fieldType={FormFieldType.INPUT}
+              name="risk_Reward"
+              label="Risk : Reward "
+              placeholder="+3.0R"
+            />
+          </div>
           <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-3">
             <div className="lg:col-span-2">
               <CustomFormField
@@ -356,25 +375,53 @@ export default function FormComponent() {
               />
             </div>
           </div>
-          <div>
-            <div className="w-full flex flex-wrap gap-5">
+          <div className="flex flex-col w-full gap-2">
+            <h3 className="text-lg font-bold tracking-wider">
+              Trade Startegy Metrics
+            </h3>
+            <div className="flex flex-col w-full gap-3 px-5 py-3 max-w-[650px]">
+              <div className="w-full flex flex-wrap gap-7 ">
+                <CustomFormField
+                  control={form.control}
+                  name="strategy.divergence"
+                  label="Divergence"
+                  fieldType={FormFieldType.SWITCH}
+                />
+                <CustomFormField
+                  control={form.control}
+                  name="strategy.head_Shoulders"
+                  label="Head & Shoulders"
+                  fieldType={FormFieldType.SWITCH}
+                />
+                <CustomFormField
+                  control={form.control}
+                  name="strategy.trendlineRetest"
+                  label="Trendline Retest"
+                  fieldType={FormFieldType.SWITCH}
+                />{" "}
+                <CustomFormField
+                  control={form.control}
+                  name="strategy.fibKeyLevels"
+                  label="Fib Key Levels"
+                  fieldType={FormFieldType.SWITCH}
+                />
+                <CustomFormField
+                  control={form.control}
+                  name="strategy.proTrendBias"
+                  label="Aligns with 15min Trend Bias"
+                  fieldType={FormFieldType.SWITCH}
+                />
+                <CustomFormField
+                  control={form.control}
+                  name="strategy.indicatorHighlight"
+                  label="Highlight on IT Pro+ Indicatr"
+                  fieldType={FormFieldType.SWITCH}
+                />
+              </div>
               <CustomFormField
                 control={form.control}
-                name="strategy.divergence"
-                label="Divergence"
-                fieldType={FormFieldType.SWITCH}
-              />
-              <CustomFormField
-                control={form.control}
-                name="strategy.H_S"
-                label="Head & Shoulders"
-                fieldType={FormFieldType.SWITCH}
-              />
-              <CustomFormField
-                control={form.control}
-                name="strategy.trendLineRetest"
-                label="Trendline Retest"
-                fieldType={FormFieldType.SWITCH}
+                name="confidence"
+                fieldType={FormFieldType.SLIDER}
               />
             </div>
           </div>
@@ -397,7 +444,7 @@ export default function FormComponent() {
                   />
                   <div
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-full bg-input rounded-md h-64 border hover:bg-accent border-accent overflow-hidden flex items-center justify-center text-white/80 cursor-pointer hover:scale-[1.01] duration-200 transition flex-col relative"
+                    className="w-full bg-background rounded-md h-64 border hover:bg-accent border-accent overflow-hidden flex items-center justify-center text-white/80 cursor-pointer hover:scale-[1.01] duration-200 transition flex-col relative"
                   >
                     {fileURL ? (
                       <Image
@@ -447,7 +494,7 @@ export default function FormComponent() {
               placeholder="Write a feedback..."
               fieldType={FormFieldType.TEXTAREA}
             />
-          </div>
+          </div>{" "}
           <Button type="submit" variant="secondary">
             Submit
           </Button>

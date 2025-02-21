@@ -16,31 +16,25 @@ export const userSchema = z.object({
 });
 
 export const formSchema = z.object({
-  entryPrice: z.coerce.number().positive().int(),
-  stopLoss: z.coerce.number().positive().int(),
-  takeProfit: z.coerce.number().positive().int(),
-  leverage: z.coerce.number().positive().int(),
-  riskAmount: z.coerce.number().int().positive(),
-  positionSize: z.coerce.number().positive().int(),
-  date: z.date(),
-
   coinSymbol: z.object({
-    logo: z.string(),
+    logo: z.string().url(),
     name: z.string(),
     value: z.string(),
   }),
-
-  timeframe: z.nativeEnum(TradeTimeframe),
-  status: z.nativeEnum(TradeStatus),
-  tradeSession: z.nativeEnum(TradeSession),
-  tradeType: z.nativeEnum(TradeType),
-  tradeScreenshot: z.string(),
-
-  realizedPnL: z.coerce.number(),
   accountType: z.nativeEnum(AccountType),
-  tradeReview: z.string(),
-
-  // confidenceLevel: 1,
+  tradeSession: z.nativeEnum(TradeSession),
+  timeframe: z.nativeEnum(TradeTimeframe),
+  tradeType: z.nativeEnum(TradeType),
+  entryPrice: z.coerce.number().positive(),
+  takeProfit: z.coerce.number().positive(),
+  stopLoss: z.coerce.number().positive(),
+  riskAmount: z.coerce.number().positive(),
+  leverage: z.coerce.number().positive(),
+  positionSize: z.coerce.number().positive(),
+  realizedPnL: z.coerce.number(),
+  risk_Reward: z.coerce.number(),
+  date: z.coerce.date(),
+  status: z.nativeEnum(TradeStatus),
   strategy: z.object({
     divergence: z.boolean(),
     head_Shoulders: z.boolean(),
@@ -49,4 +43,12 @@ export const formSchema = z.object({
     fibKeyLevels: z.boolean(),
     indicatorHighlight: z.boolean(),
   }),
+  
+
+  tradeScreenshot: z.string(),
+  
+  tradeReview: z.string().min(5, "Review must be at least 5 characters"),
+
+  confidence: z.array(z.number()),
+
 });
