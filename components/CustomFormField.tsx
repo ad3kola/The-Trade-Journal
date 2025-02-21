@@ -18,13 +18,11 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Calendar } from "./ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
-import { CalendarIcon, CameraIcon } from "@heroicons/react/24/solid";
+import { CalendarIcon } from "@heroicons/react/24/solid";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectTrigger, SelectValue } from "./ui/select";
 import { Textarea } from "./ui/textarea";
-import { ChangeEvent, useRef, useState } from "react";
-import Image from "next/image";
-import { getImageString } from "@/actions/getmageString";
+import { Switch } from "./ui/switch";
 
 interface CustomProps {
   control: Control<any>;
@@ -45,21 +43,7 @@ const RenderField = ({
   props: CustomProps;
 }) => {
   const { fieldType, placeholder, label, renderSkeleton } = props;
-  const [fileURL, setFileURL] = useState<string>("");
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const handleFileUpload = async (
-    e: ChangeEvent<HTMLInputElement>,
-  ) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    const file = e.target.files[0];
-    try {
-      const imageURL = await getImageString(file);
-      setFileURL(imageURL);
-    } catch (error) {
-      console.log("Error: ", error);
-      console.log(error);
-    }
-  };
+
   switch (fieldType) {
     case FormFieldType.INPUT:
       return (
@@ -96,7 +80,7 @@ const RenderField = ({
                   )}
                 >
                   {field.value ? (
-                    format(field.value, "PPPP")
+                    format(new Date(field.value), "PPPP") // Format the date here, ensuring it's a Date object
                   ) : (
                     <span>Pick a date</span>
                   )}
@@ -107,12 +91,14 @@ const RenderField = ({
             <PopoverContent className="w-auto p-0" align="start">
               <Calendar
                 mode="single"
-                selected={field.value}
-                onSelect={field.onChange}
+                selected={field.value ? new Date(field.value) : undefined}
+                onSelect={(date) => {
+                  if (date) field.onChange(date); // Store the date directly as a Date object
+                }}
+                initialFocus
                 disabled={(date) =>
                   date > new Date() || date < new Date("1900-01-01")
                 }
-                initialFocus
               />
             </PopoverContent>
           </Popover>
@@ -143,57 +129,18 @@ const RenderField = ({
           />
         </FormControl>
       );
-    case FormFieldType.FILE_INPUT:
+    case FormFieldType.SWITCH:
       return (
         <FormControl>
-          <div className="h-full w-full flex flex-col">
-            <Input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              ref={fileInputRef}
-              onChange={(e) => handleFileUpload(e)} // Calling the function here
-            />
-            <div
-              onClick={() => fileInputRef.current?.click()}
-              className="w-full bg-input rounded-md h-64 border hover:bg-accent border-accent flex items-center justify-center text-white/80 cursor-pointer hover:scale-[1.01] duration-200 transition flex-col relative"
-            >
-              {fileURL ? (
-                <Image
-                  src={fileURL}
-                  alt="Screenshot"
-                  fill
-                  className="object-cover"
-                />
-              ) : (
-                <div className="p-3 flex items-center justify-center flex-col gap-2">
-                  <CameraIcon className="h-10 w-10 text-white/50" />
-                  <span className="text-[12px] md:text-sm">
-                    Click to Upload Image
-                  </span>
-                </div>
-              )}
-            </div>
-            {fileURL && (
-              <div className=" flex items-center justify-end gap-4 py-2 px-4">
-                <Button
-                  type="button"
-                  variant={"secondary"}
-                  className="font-semibold"
-                  onClick={() => setFileURL("")}
-                >
-                  Remove Image
-                </Button>
-                <Button
-                  type="button"
-                  variant={"secondary"}
-                  className="font-semibold"
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  Change Image
-                </Button>
-              </div>
-            )}
+          <div className="flex items-center gap-4">
+            <FormLabel>{label}</FormLabel>
+            <FormControl>
+              <Switch
+                value={field.value}
+                checked={field.value}
+                onChange={field.onChange}
+              />
+            </FormControl>
           </div>
         </FormControl>
       );
@@ -208,8 +155,10 @@ const CustomFormField = (props: CustomProps) => {
         control={control}
         name={name}
         render={({ field }) => (
-          <FormItem className="w-full">
-            <FormLabel className="pl-2 whitespace-nowrap">{label}</FormLabel>
+          <FormItem className={cn("w-full flex gap-1 flex-col")}>
+            {props.fieldType !== FormFieldType.SWITCH && (
+              <FormLabel className="pl-2 whitespace-nowrap">{label}</FormLabel>
+            )}
             <RenderField field={field} props={props} />
             <FormMessage />
           </FormItem>

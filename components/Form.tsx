@@ -1,6 +1,12 @@
 "use client";
 
-import { Form, FormControl } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
 import { formSchema } from "@/lib/config/zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,14 +16,29 @@ import CustomFormField from "./CustomFormField";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Label } from "./ui/label";
 import { SelectItem } from "./ui/select";
+import { Popover, PopoverTrigger, PopoverContent } from "./ui/popover";
+import {
+  Command,
+  CommandInput,
+  CommandList,
+  CommandItem,
+  CommandEmpty,
+} from "./ui/command";
+import { CheckBadgeIcon } from "@heroicons/react/24/solid";
+import { format } from "date-fns";
 import {
   AccountType,
+  listOfCoins,
   TradeSession,
   TradeStatus,
   TradeTimeframe,
   TradeType,
 } from "@/lib/constants/ind4x";
 import { getImageString } from "@/actions/getmageString";
+import { ChangeEvent, useRef, useState } from "react";
+import { CameraIcon, ChevronsUpDown } from "lucide-react";
+import Image from "next/image";
+import { Input } from "./ui/input";
 
 export enum FormFieldType {
   INPUT = "input",
@@ -51,44 +72,148 @@ export default function FormComponent() {
       realizedPnL: 0,
       tradeReview: "",
       tradeScreenshot: "",
+      coinSymbol: {
+        logo: "",
+        name: "",
+        value: "",
+      },
       //   confidenceLevel: 1,
-      //   coinDesc: "",
-      //   coinName: "",
-      //   coinLogo: "",
-      //   strategy: {
-      //     divergence: false,
-      //     H_S: false,
-      //     trendLineRetest: false,
-      //     proTrendBias: false,
-      //     fibKeyLevels: false,
-      //   },
+      strategy: {
+        divergence: false,
+        H_S: false,
+        trendLineRetest: false,
+        proTrendBias: false,
+        fibKeyLevels: false,
+      },
     },
   });
- async function onSubmit(data: z.infer<typeof formSchema>) {
-    if (data.tradeScreenshot)  {
-      // const fileurl = await getImageString(data.)
+  const { setValue } = form;
+
+  async function onSubmit(data: z.infer<typeof formSchema>) {
+    if (fileURL) {
+      data.tradeScreenshot = fileURL;
     }
+    if (data.date) {
+      const formattedDate = new Date(format(new Date(data.date), "PP"));
+      data = { ...data, date: formattedDate };
+    }
+    console.log("Submitted Data: ", data);
   }
+  const [fileURL, setFileURL] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const file = e.target.files[0];
+    try {
+      const imageURL = await getImageString(file);
+      setFileURL(imageURL);
+    } catch (error) {
+      console.log("Error: ", error);
+      console.log(error);
+    }
+  };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="h-full py-5">
         <div className="w-full flex flex-col gap-6 p-2 max-w-3xl mx-auto">
-          <CustomFormField
+          <FormField
             control={form.control}
-            fieldType={FormFieldType.SELECT}
-            name="tradeSession"
-            label="Coin Symbol"
-            placeholder="Select coin"
-          >
-            {Object.values(TradeSession).map((type) => (
-              <SelectItem key={type} value={type}>
-                <div className="flex cursor-pointer items-center gap-2">
-                  {type}
-                </div>
-              </SelectItem>
-            ))}
-          </CustomFormField>
+            name="coinSymbol"
+            render={({}) => (
+              <FormItem className="flex flex-col">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className="w-[280px] mx-auto gap-7 flex items-center"
+                    >
+                      {form.getValues("coinSymbol").value ? (
+                        <div className="flex items-center gap-3">
+                          <Image
+                            src={form.getValues("coinSymbol").logo}
+                            alt="logo"
+                            width={35}
+                            height={35}
+                          />
+                          <div className="flex flex-col items-start -space-y-1">
+                            <span className="uppercase font-bold text-base">
+                              {form.getValues("coinSymbol").value} / USDT
+                            </span>
+                            <span className="text-[9px] text-foreground">
+                              {form.getValues("coinSymbol").name} TetherUS
+                              Perpetual
+                            </span>
+                          </div>
+                        </div>
+                      ) : (
+                        "Select coin"
+                      )}
+                      <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-70" />{" "}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[300px] p-0">
+                    <Command>
+                      <CommandInput placeholder="Search for coin" />
+                      <CommandList>
+                        <CommandEmpty>No coin found</CommandEmpty>
+                        {listOfCoins.map((coin, index) => (
+                          <CommandItem
+                            key={index}
+                            onSelect={() => setValue("coinSymbol", coin)}
+                          >
+                            <div className="w-full flex gap-3 items-center">
+                              <Image
+                                src={coin.logo}
+                                alt="logo"
+                                width={30}
+                                height={30}
+                              />
+                              <div className="flex flex-col">
+                                <span className="uppercase font-bold text-sm">
+                                  {coin.value} / USDT
+                                </span>
+                                <span className="text-[10px] text-foreground">
+                                  {coin.name} TetherUS Perpetual
+                                </span>
+                              </div>
+                              <CheckBadgeIcon
+                                className={`ml-auto ${
+                                  coin.value ===
+                                  form.getValues("coinSymbol").value
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                }`}
+                              />
+                            </div>
+                          </CommandItem>
+                        ))}
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </FormItem>
+            )}
+          />
+          <div className="grid grid-cols-2 w-full gap-4 lg:grid-cols-4">
+            <div className="col-span-2 w-full">
+              <CustomFormField
+                control={form.control}
+                fieldType={FormFieldType.SELECT}
+                name="accountType"
+                label="Trade Account Type"
+                placeholder="Select session"
+              >
+                {Object.values(AccountType).map((type) => (
+                  <SelectItem key={type} value={type}>
+                    <div className="flex cursor-pointer items-center gap-2">
+                      {type}
+                    </div>
+                  </SelectItem>
+                ))}
+              </CustomFormField>
+            </div>
+          </div>{" "}
           <div className="grid grid-cols-2 w-full gap-4 lg:grid-cols-4">
             <div className="col-span-2 w-full">
               <CustomFormField
@@ -189,6 +314,7 @@ export default function FormComponent() {
               />
             </div>
           </div>{" "}
+          <div></div>
           <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-3">
             <div className="lg:col-span-2">
               <CustomFormField
@@ -230,11 +356,88 @@ export default function FormComponent() {
               />
             </div>
           </div>
-          <CustomFormField
-            control={form.control}
-            fieldType={FormFieldType.FILE_INPUT}
+          <div>
+            <div className="w-full flex flex-wrap gap-5">
+              <CustomFormField
+                control={form.control}
+                name="strategy.divergence"
+                label="Divergence"
+                fieldType={FormFieldType.SWITCH}
+              />
+              <CustomFormField
+                control={form.control}
+                name="strategy.H_S"
+                label="Head & Shoulders"
+                fieldType={FormFieldType.SWITCH}
+              />
+              <CustomFormField
+                control={form.control}
+                name="strategy.trendLineRetest"
+                label="Trendline Retest"
+                fieldType={FormFieldType.SWITCH}
+              />
+            </div>
+          </div>
+          <FormField
             name="tradeScreenshot"
-            label="Upload"
+            control={form.control}
+            render={({ field }) => (
+              <FormControl>
+                <div className="h-full w-full flex flex-col gap-3">
+                  <FormLabel className="pl-2 whitespace-nowrap">
+                    Trade Screenshot
+                  </FormLabel>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    {...field}
+                    ref={fileInputRef}
+                    onChange={(e) => handleFileUpload(e)} // Calling the function here
+                  />
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full bg-input rounded-md h-64 border hover:bg-accent border-accent overflow-hidden flex items-center justify-center text-white/80 cursor-pointer hover:scale-[1.01] duration-200 transition flex-col relative"
+                  >
+                    {fileURL ? (
+                      <Image
+                        src={fileURL}
+                        alt="Screenshot"
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="p-3 flex items-center justify-center flex-col gap-2">
+                        <CameraIcon className="h-10 w-10 text-white/50" />
+                        <span className="text-[12px] md:text-sm">
+                          Click to Upload Image
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  {fileURL && (
+                    <div className=" flex items-center justify-end gap-4 py-2 px-4">
+                      <Button
+                        type="button"
+                        variant={"secondary"}
+                        className="font-semibold"
+                        onClick={() => setFileURL("")}
+                      >
+                        Remove Image
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={"secondary"}
+                        className="font-semibold"
+                        onClick={() => fileInputRef.current?.click()}
+                      >
+                        Change Image
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </FormControl>
+            )}
           />
           <div>
             <CustomFormField

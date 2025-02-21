@@ -127,10 +127,21 @@ export const pnlOverTimeChartData = [
 ];
 
 export const listOfCoins: CoinsList[] = [
-  { name: "BTC/USDT", logo: "/assets/Bitcoin.png", value: "btcusdt" },
-  { name: "1000PEPE/USDT", logo: "/assets/Pepe.png", value: "1000pepeusdt" },
-  { name: "SOL/USDT", logo: "/assets/Solana.webp", value: "solusdt" },
-  { name: "AVAX/USDT", logo: "/assets/Avax.png", value: "avaxusdt" },
+  {
+    name: "Bitcoin",
+    logo: "/btc.png",
+    value: "BTC",
+  },
+  {
+    name: "1000PEPE",
+    logo: "/btc.png",
+    value: "1000PEPE",
+  },
+  {
+    name: "Solana",
+    logo: "/btc.png",
+    value: "solusdt",
+  },
 ];
 
 export enum TradeStatus {
@@ -152,7 +163,7 @@ export enum TradeType {
 
 export enum AccountType {
   PERSONAL = "Personal",
-  PROP_FIRM = "Prop Firm"
+  PROP_FIRM = "Prop Firm",
 }
 
 export enum TradeTimeframe {
@@ -169,12 +180,11 @@ export enum TradeTimeframe {
   M1M = "1M",
 }
 
-
 export const orderBook: z.infer<typeof formSchema>[] = [
   {
     coinLogo: "/btc.png",
     coinName: "btc",
-    coinDesc: "Bitcoin TetherUS PERPETUAL",
+
     screenshot: "/mockup.png",
     date: new Date(),
     timeframe: "3min",
