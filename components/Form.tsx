@@ -75,7 +75,7 @@ export default function FormComponent() {
       realizedPnL: 10,
       risk_Reward: 10,
       date: new Date(),
-      status: TradeStatus.WIN,
+      tradeStatus: TradeStatus.WIN,
       strategy: {
         divergence: false,
         head_Shoulders: false,
@@ -98,7 +98,6 @@ export default function FormComponent() {
   } = form;
   console.log(errors);
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    
     if (fileURL) {
       data.tradeScreenshot = fileURL;
     }
@@ -113,14 +112,16 @@ export default function FormComponent() {
       },
       body: JSON.stringify(data),
     });
-      console.log(res);
-      console.log("Clicked");
-    }
+    console.log(res);
+    console.log("Clicked");
+  }
   const [fileURL, setFileURL] = useState<string>("");
+  const [isUploading, setIsUploading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
     const file = e.target.files[0];
+    setIsUploading(true);
     try {
       const imageURL = await getImageString(file);
       setFileURL(imageURL);
@@ -128,6 +129,7 @@ export default function FormComponent() {
       console.log("Error: ", error);
       console.log(error);
     }
+    setIsUploading(false);
   };
 
   return (
@@ -362,7 +364,7 @@ export default function FormComponent() {
               <CustomFormField
                 control={control}
                 fieldType={FormFieldType.SKELETON}
-                name="status"
+                name="tradeStatus"
                 label="Trade Status"
                 renderSkeleton={(field) => (
                   <FormControl>
@@ -510,8 +512,21 @@ export default function FormComponent() {
               fieldType={FormFieldType.TEXTAREA}
             />
           </div>{" "}
-          <Button type="submit" variant="secondary">
-            Submit
+          <Button
+            type="submit"
+            className={`${isUploading ? "bg-primary" : "bg-foreground"}`}
+          >
+            {isUploading ? (
+              <div className="flex items-center gap-4">
+                Uploading
+                <div className="relative w-4 h-4">
+                  <div className="w-4 h-4 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <div className="absolute top-0 left-0 w-4 h-4 border-4 border-purple-400 border-l-transparent border-b-transparent rounded-full animate-[spin_0.7s_linear_infinite_reverse]"></div>
+                </div>
+              </div>
+            ) : (
+              "Submit"
+            )}
           </Button>
         </div>
       </form>

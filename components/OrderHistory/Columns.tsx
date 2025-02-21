@@ -19,22 +19,32 @@ const StatusCell = ({ value }: { value: boolean }) => (
 
 export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
   {
-    accessorKey: "coinName",
+    accessorKey: "coinSymbol",
     enableHiding: false,
     header: () => <div className="px-2">Coin Symbol</div>,
     cell: ({ row }) => (
       <div className="w-[215px] flex items-center gap-3 tracking-wide">
-        <Image src={row.original.coinSymbol.logo} alt="logo" width={35} height={35} />
+        <Image
+          src={row.original.coinSymbol.logo}
+          alt="logo"
+          width={35}
+          height={35}
+        />
         <div className="flex flex-col -space-y-1">
           <span className="uppercase text-left font-bold text-base">
             {row.original.coinSymbol.value.toUpperCase()} / USDT
           </span>
           <span className="text-[10px] font-medium text-muted-foreground">
-            {row.original.coinSymbol.name} TetherUS Perpetual 
+            {row.original.coinSymbol.name} TetherUS Perpetual
           </span>
         </div>
       </div>
     ),
+    filterFn: (row, columnId, filterValue) => {
+      return row.original.coinSymbol.value
+        .toLowerCase()
+        .includes(filterValue.toLowerCase());
+    },
   },
   {
     accessorKey: "date",
@@ -50,17 +60,28 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
     header: "Type",
   },
   {
+    accessorKey: "tradeSession",
+    header: "Session",
+    cell: ({ row }) => {
+      return (
+        <div className="tracking-wider font-medium">
+          {row.getValue("tradeSession")}
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: "timeframe",
     header: "Timeframe",
   },
   {
-    accessorKey: "screenshot",
+    accessorKey: "tradeScreenshot",
     enableHiding: false,
     header: "Screenshot (png)",
     cell: ({ row }) => (
       <div className="relative h-12 w-full rounded-sm overflow-hidden">
         <Image
-          src={row.getValue("screenshot")}
+          src={row.getValue("tradeScreenshot")}
           alt="screenshot"
           fill={true}
           className="object-cover animate-pulse"
@@ -69,37 +90,33 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
     ),
   },
   {
-    accessorKey: "status",
+    accessorKey: "tradeStatus",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.getValue("status");
-      const statusLabel =
-        status === "missed_entry" ? "Missed Entry" : (status as string);
+      const status = row.getValue("tradeStatus") as string;
 
       return (
         <div
           className={`px-2 py-0.5 text-center rounded-md text-[12px] font-semibold w-fit mx-auto text-foreground tracking-wider ${
-            status === "win"
+            status.toLowerCase() == "win"
               ? "bg-green-500"
-              : status === "loss"
+              : status.toLowerCase() == "loss"
               ? "bg-red-600"
-              : status === "missed_entry"
-              ? "bg-accent"
-              : ""
+              : "bg-accent"
           }`}
         >
-          {statusLabel}
+          {status}
         </div>
       );
     },
   },
 
   {
-    accessorKey: "PnL",
+    accessorKey: "realizedPnL",
     enableHiding: false,
     header: () => <div className="">Realized PnL</div>,
     cell: ({ row }) => {
-      const formatted = Number(row.getValue("PnL")).toFixed(1);
+      const formatted = Number(row.getValue("realizedPnL")).toFixed(1);
       return (
         <div className="tracking-wider font-semibold">${formatted}USD</div>
       );
@@ -111,14 +128,12 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
     cell: ({ row }) => (
       <div
         className={`px-2 py-0.5 text-center rounded-md text-[12px] font-semibold mx-auto w-fit tracking-wider ${
-          row.getValue("accountType") == "personal"
+          row.getValue("accountType") == "Personal"
             ? "bg-blue-200 text-blue-800"
             : "bg-violet-200 text-violet-800"
         }`}
       >
-        {row.getValue("accountType") === "prop_firm"
-          ? "Prop Firm"
-          : row.getValue("accountType")}
+        {row.getValue("accountType")}
       </div>
     ),
   },
@@ -166,28 +181,18 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
       );
     },
   },
+
   {
-    accessorKey: "session",
-    header: "Session",
-    cell: ({ row }) => {
-      return (
-        <div className="tracking-wider font-medium">
-          {row.getValue("session")}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "confidenceLevel",
+    accessorKey: "confidence",
     header: "Confidence",
     cell: ({ row }) => (
-      <Button className="bg-white hover:bg-white cursor-default mx-auto text-background font-bold h-8 w-8 text-sm">
-        {row.getValue("confidenceLevel")}
+      <Button className="bg-white hover:bg-white cursor-default mx-auto text-background font-bold h-6 w-5 text-[13px]">
+        {row.getValue("confidence")}
       </Button>
     ),
   },
   {
-    accessorKey: "H_S",
+    accessorKey: "head_Shoulders",
     header: "Head & Shoulders",
     cell: ({ row }) => {
       const strategy = row.original.strategy;
@@ -210,9 +215,7 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
     cell: ({ row }) => {
       const strategy = row.original.strategy;
       if (!strategy) return null;
-      return (
-        <StatusCell value={strategy.fibKeyLevels} />
-      );
+      return <StatusCell value={strategy.fibKeyLevels} />;
     },
   },
   {
@@ -221,9 +224,7 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
     cell: ({ row }) => {
       const strategy = row.original.strategy;
       if (!strategy) return null;
-      return (
-        <StatusCell value={strategy.proTrendBias} />
-      );
+      return <StatusCell value={strategy.proTrendBias} />;
     },
   },
   {
@@ -232,9 +233,7 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
     cell: ({ row }) => {
       const strategy = row.original.strategy;
       if (!strategy) return null;
-      return (
-        <StatusCell value={strategy.trendlineRetest} />
-      );
+      return <StatusCell value={strategy.trendlineRetest} />;
     },
   },
 ];

@@ -12,7 +12,7 @@ const buttonVariants = cva(
         default:
           "bg-primary text-foreground shadow",
         outline:
-          "border border-sidebar-accent bg-sidebar shadow-sm hover:bg-accent hover:text-accent-foreground",
+          "border border-sidebar-accent bg-sidebar shadow-sm hover:bg-input hover:text-accent-foreground",
         secondary:
           "bg-foreground text-background hover:bg-primary text-[14px] py-10 font-bold shadow-sm hover:text-foreground",
           ghost: ""

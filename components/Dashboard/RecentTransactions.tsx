@@ -6,115 +6,80 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { orderBook } from "@/lib/constants/ind4x";
+import {format} from "date-fns";
 import Image from "next/image";
-
-const invoices = [
-  {
-    status: "open",
-    type: "buy",
-    realizedPnL: "250.00",
-    coinName: "btc",
-    coinLogo: "/btc.png",
-    accountType: "Prop Firm",
-  },
-  {
-    status: "closed",
-    type: "sell",
-    realizedPnL: "150.00",
-    coinName: "btc",
-    coinLogo: "/btc.png",
-    accountType: "Personal",
-  },
-  {
-    status: "closed",
-    type: "buy",
-    realizedPnL: "350.00",
-    coinName: "1000pepe",
-    coinLogo: "/btc.png",
-    accountType: "Prop Firm",
-  },
-  {
-    status: "closed",
-    type: "buy",
-    realizedPnL: "450.00",
-    coinName: "btc",
-    coinLogo: "/btc.png",
-    accountType: "Prop Firm",
-  },
-  {
-    status: "closed",
-    type: "sell",
-    realizedPnL: "550.00",
-    coinName: "btc",
-    coinLogo: "/btc.png",
-    accountType: "Personal",
-  },
-];
 
 export default function RecentTransactions() {
   return (
     <Table>
-      {/* <TableCaption>Recent Transaction</TableCaption> */}
-      <TableHeader className="">
-        <TableRow>
-          <TableHead className="w-[230px]">Coin Symbol</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Method</TableHead>
-          <TableHead className="w-[250px]">Amount</TableHead>
-          <TableHead className="w-[150px]">Method</TableHead>
+      <TableHeader>
+        <TableRow className="border-b bg-input">
+          <TableHead className="w-[230px] text-left whitespace-nowrap">Coin Symbol</TableHead>
+          <TableHead className="text-center whitespace-nowrap">Trade Type</TableHead>
+          <TableHead className="text-center whitespace-nowrap">Status</TableHead>
+          <TableHead className="w-[250px] text-right whitespace-nowrap">Amount</TableHead>
+          <TableHead className="w-[150px] text-center whitespace-nowrap">Method</TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody className="px-10">
-        {invoices.map((invoice, indx) => (
-          <TableRow key={indx} className="hover:bg-transparent">
-            <TableCell className="w-[230px] flex items-center gap-4 tracking-wide">
-              <Image src={invoice.coinLogo} alt="logo" width={30} height={30} />
-              <div className="flex flex-col">
-                <span className="uppercase font-bold">
-                  {invoice.coinName} / USDT
+      <TableBody>
+        {orderBook.slice(-5).map((trade, indx) => (
+          <TableRow key={indx} className="hover:bg-input">
+            {/* Coin Symbol */}
+            <TableCell className="w-[230px] flex items-center gap-3 whitespace-nowrap">
+              <Image src={trade.coinSymbol.logo} alt="logo" width={30} height={30} />
+              <div className="flex flex-col -space-y-1">
+                <span className="uppercase font-bold tracking-wider">
+                  {trade.coinSymbol.value}
+                  USDT
                 </span>
-                <span className="text-[12px] font-medium text-muted-foreground">
-                  {"Aug 24, 2024"}
+                <span className="text-[11px] px-1 font-medium text-muted-foreground">
+                {format(trade.date, "PP")}
                 </span>
               </div>
             </TableCell>
-            <TableCell className="capitalize font-medium tracking-wide">
-              <span>{invoice.type}</span>
+
+            {/* Trade Type */}
+            <TableCell className="text-center capitalize font-medium text-[13px] tracking-wide whitespace-nowrap">
+              {trade.tradeType}
             </TableCell>
-            <TableCell className="uppercase font-medium tracking-wide">
+
+            {/* Trade Status */}
+            <TableCell className="text-center whitespace-nowrap">
               <span
-                className={`px-2 py-1 rounded-md text-[10px] ${
-                  invoice.status == "open"
-                    ? "bg-white text-primary"
-                    : "bg-primary text-foreground"
+                className={`px-2 py-1 rounded-md text-[11px] font-medium w-fit tracking-wide text-foreground ${
+                  trade.tradeStatus.toLowerCase() === "win"
+                    ? "bg-green-500"
+                    : trade.tradeStatus.toLowerCase() === "loss"
+                    ? "bg-red-500"
+                    : "bg-gray-500"
                 }`}
               >
-                {invoice.status}
+                {trade.tradeStatus}
               </span>
             </TableCell>
-            <TableCell>
-              <div className="w-[120px] flex flex-col -space-y-1">
-                <span className="font-medium text-base tracking-wide">
-                  {" "}
-                  ${invoice.realizedPnL}
-                </span>
+
+            {/* Amount */}
+            <TableCell className="text-right whitespace-nowrap">
+              <div className="flex flex-col items-end -space-y-1">
+                <span className="font-bold text-base tracking-wide">${trade.realizedPnL}</span>
                 <span className="text-[11px] font-medium text-muted-foreground">
-                  $ {invoice.realizedPnL} CAD
+                  $ {trade.realizedPnL} CAD
                 </span>
               </div>
             </TableCell>
-            <TableCell>
-              <div className="w-[150px] flex items-center ">
-                <span
-                  className={`px-2 py-1 text-center rounded-md text-[12px] mx-auto font-semibold tracking-wider ${
-                    invoice.accountType.toLowerCase() == "personal"
-                      ? "bg-blue-200 text-blue-800"
-                      : "bg-violet-200 text-violet-800"
-                  }`}
-                >
-                  {invoice.accountType} Account
-                </span>
-              </div>
+
+            {/* Account Type */}
+            <TableCell className="text-center whitespace-nowrap">
+              <span
+                className={`px-2 py-1 rounded-md text-[12px] font-semibold tracking-wide ${
+                  trade.accountType.toLowerCase() === "personal"
+                    ? "bg-blue-200 text-blue-800"
+                    : "bg-violet-200 text-violet-800"
+                }`}
+              >
+                {trade.accountType}
+              </span>
             </TableCell>
           </TableRow>
         ))}

@@ -51,23 +51,25 @@ export function DataTable<TData, TValue>({
       columnVisibility,
     },
   });
-
   return (
     <div className="rounded-none">
       <div className="flex items-center pb-4 gap-3">
         <Input
           placeholder="Filter emails..."
           value={
-            (table.getColumn("coinName")?.getFilterValue() as string) ?? ""
+            (table.getColumn("coinSymbol")?.getFilterValue() as string) ??
+            ""
           }
           onChange={(event) =>
-            table.getColumn("coinName")?.setFilterValue(event.target.value)
+            table
+              .getColumn("coinSymbol")
+              ?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto py-6">
+            <Button variant="outline" className="h-auto py-2">
               Columns
             </Button>
           </DropdownMenuTrigger>

@@ -34,7 +34,7 @@ export const formSchema = z.object({
   realizedPnL: z.coerce.number(),
   risk_Reward: z.coerce.number(),
   date: z.coerce.date(),
-  status: z.nativeEnum(TradeStatus),
+  tradeStatus: z.nativeEnum(TradeStatus),
   strategy: z.object({
     divergence: z.boolean(),
     head_Shoulders: z.boolean(),
@@ -42,7 +42,7 @@ export const formSchema = z.object({
     trendlineRetest: z.boolean(),
     fibKeyLevels: z.boolean(),
     indicatorHighlight: z.boolean(),
-  }),
+  }).strict(),
   
   confidence: z.array(z.number()),
 
