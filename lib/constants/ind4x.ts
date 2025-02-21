@@ -1,8 +1,6 @@
 import { HomeIcon } from "@heroicons/react/24/solid";
 import { CoinsList, DailySummaryData, NavLinks } from "@/lib/typings";
 import { BadgeIcon, ChartBarIcon, Clock, PlusIcon, Table } from "lucide-react";
-import { z } from "zod";
-import { formSchema } from "../config/zod";
 
 export const navLinks: NavLinks[] = [
   { Icon: HomeIcon, title: "Dashboard", url: "/" },
@@ -179,33 +177,3 @@ export enum TradeTimeframe {
   W1 = "1W",
   M1M = "1M",
 }
-
-export const orderBook: z.infer<typeof formSchema>[] = [
-  {
-    coinLogo: "/btc.png",
-    coinName: "btc",
-
-    screenshot: "/mockup.png",
-    date: new Date(),
-    timeframe: "3min",
-    status: "win",
-    tradeType: "buy",
-    PnL: 250.0,
-    riskAmount: 50,
-    accountType: "prop_firm",
-    session: "london",
-    entryPrice: 10000,
-    stopLoss: 10000,
-    takeProfit: 10000,
-    positionSize: 189498,
-    strategy: {
-      divergence: false,
-      H_S: false,
-      trendLineRetest: false,
-      proTrendBias: false,
-      fibKeyLevels: false,
-    },
-    confidenceLevel: 3,
-    tradeRemarks: "",
-  },
-];

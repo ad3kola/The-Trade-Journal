@@ -7,7 +7,6 @@ import { z } from "zod";
 import { format } from "date-fns";
 import { formSchema } from "@/lib/config/zod";
 
-// Reusable StatusCell component to reduce repetition
 const StatusCell = ({ value }: { value: boolean }) => (
   <div
     className={`py-0.5 px-3 w-fit text-center rounded-md text-[12px] font-semibold tracking-wider mx-auto ${
@@ -25,13 +24,13 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
     header: () => <div className="px-2">Coin Symbol</div>,
     cell: ({ row }) => (
       <div className="w-[215px] flex items-center gap-3 tracking-wide">
-        <Image src={row.original.coinLogo} alt="logo" width={35} height={35} />
+        <Image src={row.original.coinSymbol.logo} alt="logo" width={35} height={35} />
         <div className="flex flex-col -space-y-1">
           <span className="uppercase text-left font-bold text-base">
-            {row.original.coinName.toUpperCase()} / USDT
+            {row.original.coinSymbol.value.toUpperCase()} / USDT
           </span>
           <span className="text-[10px] font-medium text-muted-foreground">
-            {row.original.coinDesc}
+            {row.original.coinSymbol.name} TetherUS Perpetual 
           </span>
         </div>
       </div>
@@ -193,7 +192,7 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
     cell: ({ row }) => {
       const strategy = row.original.strategy;
       if (!strategy) return null;
-      return <StatusCell value={strategy.H_S} />;
+      return <StatusCell value={strategy.head_Shoulders} />;
     },
   },
   {
@@ -234,7 +233,7 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
       const strategy = row.original.strategy;
       if (!strategy) return null;
       return (
-        <StatusCell value={strategy.trendLineRetest} />
+        <StatusCell value={strategy.trendlineRetest} />
       );
     },
   },
