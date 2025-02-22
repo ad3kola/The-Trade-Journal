@@ -36,10 +36,12 @@ import {
   TradeType,
 } from "@/lib/constants/ind4x";
 import { getImageString } from "@/actions/getmageString";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { CameraIcon, ChevronsUpDown } from "lucide-react";
 import Image from "next/image";
 import { Input } from "./ui/input";
+import { useAppSelector } from "@/config/redux/hooks";
+import toast from "react-hot-toast";
 
 export enum FormFieldType {
   INPUT = "input",
@@ -67,12 +69,12 @@ export default function FormComponent() {
       tradeSession: TradeSession.NEW_YORK,
       timeframe: TradeTimeframe.M3,
       tradeType: TradeType.BUY,
-      entryPrice: 169.84,
-      takeProfit: 178.67,
-      stopLoss: 167.64,
-      riskAmount: 50,
-      leverage: 5,
-      positionSize: 22.7,
+      entryPrice: 0,
+      takeProfit: 0,
+      stopLoss: 0,
+      riskAmount: 0,
+      leverage: 0,
+      positionSize: 0,
       realizedPnL: 0,
       risk_Reward: 0,
       date: new Date(),
@@ -94,11 +96,18 @@ export default function FormComponent() {
   const {
     control,
     handleSubmit,
+    reset,
+    watch,
+    getValues,
     setValue,
     formState: { errors },
   } = form;
   console.log(errors);
+
+  const userID = useAppSelector((state) => state.user.id);
   async function onSubmit(data: z.infer<typeof formSchema>) {
+    setIsUploading(true);
+
     if (fileURL) {
       data.tradeScreenshot = fileURL;
     }
@@ -106,49 +115,77 @@ export default function FormComponent() {
       const formattedDate = new Date(format(new Date(data.date), "PP"));
       data = { ...data, date: formattedDate };
     }
-    const res = await fetch("/api/trade", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    console.log(res);
-    console.log("Clicked");
+
+    await toast.promise(
+      fetch("/api/trade", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ data, userID }),
+      }).then((res) => {
+        if (!res.ok) throw new Error("Error logging trade, please try again.");
+        return res.json();
+      }),
+      {
+        loading: "Uploading...",
+        success: "Trade logged successfully!",
+        error: "Error logging trade, please try again.",
+      }
+    );
+
+    setIsUploading(false);
+    reset();
   }
+
   const [fileURL, setFileURL] = useState<string>("");
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
     const file = e.target.files[0];
-    setIsUploading(true);
     try {
       const imageURL = await getImageString(file);
       setFileURL(imageURL);
     } catch (error) {
       console.log("Error: ", error);
-      console.log(error);
     }
-    setIsUploading(false);
   };
+  useEffect(() => {
+    const entry = getValues("entryPrice");
+    const tp = getValues("takeProfit");
+    const sl = getValues("stopLoss");
+    const risk = getValues("riskAmount");
+    const isLong = getValues("tradeType");
 
-  const entry = form.getValues("entryPrice");
-  const tp = form.getValues("takeProfit");
-  const sl = form.getValues("stopLoss");
-  const risk = form.getValues("riskAmount");
-  const isLong = form.getValues("tradeType");
+    if (entry && tp && sl && risk) {
+      const result = calculateTradeMetrics(entry, tp, sl, risk, isLong);
 
-  const result = calculateTradeMetrics(entry, tp, sl, risk, isLong);
+      setValue("realizedPnL", parseFloat(result.realizedPnl.toFixed(3)));
+      setValue("risk_Reward", parseFloat(result.rrr.toFixed(2)));
+    }
 
-  const PnL = parseFloat(result.realizedPnl.toFixed(3)); // Convert to number
-  const RR = parseFloat(result.rrr.toFixed(2));
+    if (entry && sl && risk) {
+      const positionSize = risk / Math.abs(entry - sl); // Handles both long & short trades
+      setValue("positionSize", parseFloat(positionSize.toFixed(3)));
+    }
+  }, [
+    watch("entryPrice"),
+    watch("takeProfit"),
+    watch("stopLoss"),
+    watch("riskAmount"),
+    watch("tradeType"),
+  ]);
 
-  console.log(PnL);
-  form.setValue("realizedPnL", PnL);
+  const PnL = watch("realizedPnL");
+  const RR = watch("risk_Reward");
+  const qty = watch("positionSize");
 
-  console.log(RR);
-  form.setValue("risk_Reward", RR);
+  // console.log(PnL);
+  // form.setValue("realizedPnL", PnL);
+
+  // console.log(RR);
+  // form.setValue("risk_Reward", RR);
 
   return (
     <Form {...form}>
@@ -163,7 +200,7 @@ export default function FormComponent() {
                   <PopoverTrigger asChild>
                     <Button
                       variant={"outline"}
-                      className="w-[280px] mx-auto gap-7 h-14 flex items-center"
+                      className="w-[280px] bg-background mx-auto gap-7 h-14 flex items-center"
                     >
                       {form.getValues("coinSymbol").value ? (
                         <div className="flex items-center gap-4">
@@ -348,6 +385,7 @@ export default function FormComponent() {
                 name="positionSize"
                 label="Quantity | Pos. Size"
                 placeholder="0.00"
+                value={qty}
               />
             </div>
           </div>{" "}
@@ -359,14 +397,16 @@ export default function FormComponent() {
               disabled={true}
               label="Realized PnL"
               placeholder="0.00"
+              value={PnL} // Pass calculated value
             />
             <CustomFormField
               control={control}
               fieldType={FormFieldType.INPUT}
-              disabled={true}
               name="risk_Reward"
-              label="Risk : Reward "
+              disabled={true}
+              label="Risk : Reward"
               placeholder="+3.0R"
+              value={RR} // Pass calculated value
             />
           </div>
           <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-4">

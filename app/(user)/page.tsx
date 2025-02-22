@@ -12,9 +12,12 @@ import { ModeToggle } from "@/components/ModeToggle";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { UserProps } from "@/lib/typings";
+import { useAppSelector } from "@/config/redux/hooks";
 
 export default function FormComponent() {
   const router = useRouter();
+    const userID = useAppSelector((state) => state.user.id)
+  
   const form = useForm<z.infer<typeof userSchema>>({
     resolver: zodResolver(userSchema),
     defaultValues: {
@@ -44,6 +47,9 @@ export default function FormComponent() {
     }
   }
 
+  if (userID) {
+    router.push(`/overview/${userID}`)
+  }
   return (
     <div className="w-full h-screen flex flex-col gap-5 items-center justify-center overflow-hidden bg-background p-5">
       <ModeToggle />

@@ -25,8 +25,11 @@ export default function Page() {
           },
         });
         if (res.ok) {
-          const userData: UserProps = await res.json();
-          console.log(userData);
+          const data: UserProps = await res.json();
+          const userData: UserProps = {
+            ...data,
+            id
+          }
           dispatch(setUser(userData));
         }
       } catch (err) {
@@ -36,9 +39,9 @@ export default function Page() {
     fetchUserData();
   }, [id, dispatch]);
 
+  
   return (
     <main className="w-full px-2 py-4">
-      <h3>{id}</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 items-start w-full">
         <div className="flex flex-col w-full col-span-2 gap-3">
           <WeekSummary />

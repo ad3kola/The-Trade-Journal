@@ -37,7 +37,7 @@ const Header = () => {
           <SidebarTrigger />
         <div className="bg-sidebar p-1 rounded-lg flex items-center justify-center border gap-2 border-sidebar-accent">
           <BellAlertIcon className="w-5 h-5 text-foreground" />
-          <Button
+          <Button suppressHydrationWarning
             variant="default"
             className="px-2 cursor-pointer text-[12px] h-7"
           >

@@ -6,6 +6,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import SideBar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import ReduxProvider from "@/components/ReduxProvider";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({
   variable: "--font-geist-sans",
@@ -25,6 +26,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${inter.className} antialiased`}>
+      <Toaster
+          position="top-center"
+          toastOptions={{
+            style: {
+              fontSize: "0.85rem",
+              borderRadius: "8px",
+            },
+          }}
+        />
         <ReduxProvider>
           <ThemeProvider attribute="class" defaultTheme="system">
             <SidebarProvider>
@@ -38,6 +48,7 @@ export default function RootLayout({
             </SidebarProvider>
           </ThemeProvider>
         </ReduxProvider>
+
       </body>
     </html>
   );

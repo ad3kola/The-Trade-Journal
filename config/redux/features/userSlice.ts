@@ -21,15 +21,10 @@ export const userSlice = createSlice({
       state.fullName = action.payload.fullName;
       state.phone = action.payload.phone;
       state.profile = action.payload.profile;
+      state.id = action.payload.id; // ✅ FIXED: Add `id`
     },
     // Clear user data
-    clearUser: (state) => {
-      state.email = "";
-      state.fullName = "";
-      state.phone = "";
-      state.profile = "";
-      state.id = "";
-    },
+    clearUser: () => initialState, // ✅ Simplified reset
   },
 });
 

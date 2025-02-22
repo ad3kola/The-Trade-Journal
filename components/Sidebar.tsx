@@ -1,6 +1,14 @@
 "use client";
 
-import { ChartPieIcon, ChevronDown, User2 } from "lucide-react";
+import {
+  ChartBarIcon,
+  ChartPieIcon,
+  ChevronDown,
+  HomeIcon,
+  PlusIcon,
+  Table,
+  User2,
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -23,14 +31,25 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "./ui/collapsible";
-import { navLinks } from "@/lib/constants/ind4x";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { NavLinks } from "@/lib/typings";
+import { useAppSelector } from "@/config/redux/hooks";
+import Link from "next/link";
 const SideBar = () => {
+  const userID = useAppSelector((state) => state.user.id);
+
+  const navLinks: NavLinks[] = [
+    { Icon: HomeIcon, title: "Dashboard", url: "/overview" },
+
+    { Icon: Table, title: "Orders List", url: "/orders-list" },
+    { Icon: ChartBarIcon, title: "Analytics", url: "/analytics" },
+    { Icon: PlusIcon, title: "Log a Trade", url: "/upload" },
+  ];
   const activeRoute = usePathname();
 
   return (
@@ -56,14 +75,14 @@ const SideBar = () => {
                     <SidebarMenuButton
                       asChild
                       className={`font-bold transition duration-100 ease-in-out text-sm tracking-wider gap-4 py-6 ${
-                        activeRoute == url &&
+                        activeRoute == `${url}/${userID}` &&
                         "bg-primary hover:bg-primary hover:text-foreground hover:font-medium"
                       }`}
                     >
-                      <a href={url}>
+                      <Link href={`${url}/${userID}`}>
                         <Icon className="h-10 w-10" />
                         <span>{title}</span>
-                      </a>
+                      </Link>
                     </SidebarMenuButton>
                     <SidebarMenuBadge>10</SidebarMenuBadge>
                   </SidebarMenuItem>

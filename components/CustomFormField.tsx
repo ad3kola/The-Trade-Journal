@@ -8,7 +8,12 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
-import { Control, ControllerRenderProps, FieldValues, Path } from "react-hook-form";
+import {
+  Control,
+  ControllerRenderProps,
+  FieldValues,
+  Path,
+} from "react-hook-form";
 import { FormFieldType } from "./Form";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
@@ -31,6 +36,7 @@ interface CustomProps<T extends FieldValues> {
   name: Path<T>;
   label?: string;
   placeholder?: string;
+  value?: number;
   disabled?: boolean;
   dateFormat?: string;
   children?: React.ReactNode;
@@ -43,8 +49,8 @@ const RenderField = <T extends FieldValues>({
   field: ControllerRenderProps<T, Path<T>>;
   props: CustomProps<T>;
 }) => {
-  const { fieldType, disabled, placeholder, label, renderSkeleton } = props;
-console.log()
+  const { fieldType, disabled, placeholder, value, label, renderSkeleton } =
+    props;
   switch (fieldType) {
     case FormFieldType.SLIDER:
       return (
@@ -61,18 +67,22 @@ console.log()
                 step={1}
               />
             </FormControl>
-              <p className="text-sm font-bold">{field.value}</p>
+            <p className="text-sm font-bold">{field.value}</p>
           </div>
         </FormControl>
       );
     case FormFieldType.INPUT:
       return (
         <FormControl>
-          <Input placeholder={placeholder} {...field} disabled={disabled} />
+          <Input
+            placeholder={placeholder}
+            {...field}
+            disabled={disabled}
+            value={value && field.value}
+          />
         </FormControl>
       );
     case FormFieldType.PHONE_INPUT:
-
       return (
         <FormControl>
           <PhoneInput
@@ -88,7 +98,6 @@ console.log()
         </FormControl>
       );
     case FormFieldType.DATE_PICKER:
-
       return (
         <div className="flex rounded-md border border-accent bg-background">
           <Popover>
