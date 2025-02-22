@@ -1,15 +1,31 @@
+"use client";
+
 import { columns } from "@/components/OrderHistory/Columns";
 import { DataTable } from "@/components/OrderHistory/DataTable";
 import { formSchema } from "@/config/zod";
-import { orderBook } from "@/lib/constants/ind4x";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 
-async function getData(): Promise<z.infer<typeof formSchema>[]> {
-  return orderBook;
-}
+function Page() {
+  const { id } = useParams<{ id: string }>();
+  const [allTrades, setAllTrades] = useState<z.infer<typeof formSchema>[]>([]);
 
-async function page() {
-  const data = await getData();
+  useEffect(() => {
+    const fetchAllTrades = async () => {
+      const res = await fetch(`/api/trade?id=${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      setAllTrades(data);
+    };
+    fetchAllTrades();
+  }, [id]);
+
+  console.log(allTrades)
+  
   return (
     <main className="p-4 flex flex-col w-full gap-3">
       <div className="px-4 mt-5 font-semibold">
@@ -19,9 +35,9 @@ async function page() {
           insights to refine your strategy.
         </h5>
       </div>
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={allTrades} />
     </main>
   );
 }
 
-export default page;
+export default Page;

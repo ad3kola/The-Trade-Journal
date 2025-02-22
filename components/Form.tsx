@@ -134,8 +134,9 @@ export default function FormComponent() {
       }
     );
 
-    setIsUploading(false);
+    // Reset the form with an empty object or initial values
     reset();
+    setIsUploading(false);
   }
 
   const [fileURL, setFileURL] = useState<string>("");
