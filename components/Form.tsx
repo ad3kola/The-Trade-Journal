@@ -54,6 +54,7 @@ export enum FormFieldType {
 }
 
 export default function FormComponent() {
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -132,10 +133,23 @@ export default function FormComponent() {
     setIsUploading(false);
   };
 
+  const calculateRR = (riskAmount: number, entry: number, takeProfit: number, stopLoss: number) => {
+    const lossDistance = Math.abs(entry - stopLoss); // Ensure it's always positive
+    const potentialReward = Math.abs(takeProfit - entry); // Ensure it's always positive
+
+    if (lossDistance === 0) {
+        throw new Error("Stop loss cannot be the same as entry price."); // Prevent division by zero
+    }
+
+    const RR = potentialReward / lossDistance;
+    
+    return RR;
+};
+
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit(onSubmit)} className="h-full py-5">
-        <div className="w-full flex flex-col gap-6 p-2 max-w-3xl mx-auto">
+        <div className="w-full flex flex-col gap-6 p-2 max-w-6xl mx-auto">
           <FormField
             control={control}
             name="coinSymbol"
@@ -148,7 +162,7 @@ export default function FormComponent() {
                       className="w-[280px] mx-auto gap-7 h-14 flex items-center"
                     >
                       {form.getValues("coinSymbol").value ? (
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-4">
                           <Image
                             src={form.getValues("coinSymbol").logo}
                             alt="logo"
@@ -181,7 +195,7 @@ export default function FormComponent() {
                             key={index}
                             onSelect={() => setValue("coinSymbol", coin)}
                           >
-                            <div className="w-full flex gap-3 items-center">
+                            <div className="w-full flex gap-4 items-center">
                               <Image
                                 src={coin.logo}
                                 alt="logo"
@@ -316,7 +330,7 @@ export default function FormComponent() {
               label="Risk Amount"
               placeholder="0.00"
             />
-            <div className="w-full grid grid-cols-2 items-center gap-3">
+            <div className="w-full grid grid-cols-2 items-center gap-4">
               <CustomFormField
                 control={control}
                 fieldType={FormFieldType.INPUT}
@@ -333,7 +347,7 @@ export default function FormComponent() {
               />
             </div>
           </div>{" "}
-          <div className="w-full grid grid-cols-2 items-center gap-3">
+          <div className="w-full grid grid-cols-2 items-center gap-4">
             <CustomFormField
               control={control}
               fieldType={FormFieldType.INPUT}
@@ -351,7 +365,7 @@ export default function FormComponent() {
               placeholder="+3.0R"
             />
           </div>
-          <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-3">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-4">
             <div className="lg:col-span-2">
               <CustomFormField
                 control={control}
@@ -369,7 +383,7 @@ export default function FormComponent() {
                 renderSkeleton={(field) => (
                   <FormControl>
                     <RadioGroup
-                      className="flex flex-wrap items-center h-11 gap-3 w-full lg:justify-between"
+                      className="flex flex-wrap items-center h-11 gap-4 w-full lg:justify-between"
                       onValueChange={field.onChange}
                       defaultValue={String(field.value)}
                     >
@@ -377,7 +391,7 @@ export default function FormComponent() {
                         <Label
                           key={status}
                           htmlFor={status} // Links label to radio input
-                          className="flex h-full flex-1 items-center gap-3 w-full rounded-md border-2 border-dashed cursor-pointer border-accent bg-input p-3 whitespace-nowrap"
+                          className="flex h-full flex-1 items-center gap-4 w-full rounded-md border-2 border-dashed cursor-pointer border-accent bg-input p-3 whitespace-nowrap"
                         >
                           <FormControl>
                             <RadioGroupItem value={status} id={status} />
@@ -392,117 +406,119 @@ export default function FormComponent() {
               />
             </div>
           </div>
-          <div className="flex flex-col w-full gap-2">
-            <h3 className="text-lg font-bold tracking-wider">
-              Trade Startegy Metrics
-            </h3>
-            <div className="flex flex-col w-full gap-3 px-5 py-3 max-w-[650px]">
-              <div className="w-full flex flex-wrap gap-7 ">
+          <div className="w-full grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <div className="flex flex-col w-full gap-2">
+              <h3 className="text-lg font-bold tracking-wider">
+                Trade Strategy Metrics
+              </h3> 
+              <div className="flex flex-col w-full gap-4 px-5 py-3 max-w-[650px]">
+                <div className="w-full flex flex-wrap gap-7 ">
+                  <CustomFormField
+                    control={control}
+                    name="strategy.divergence"
+                    label="Divergence"
+                    fieldType={FormFieldType.SWITCH}
+                  />
+                  <CustomFormField
+                    control={control}
+                    name="strategy.head_Shoulders"
+                    label="Head & Shoulders"
+                    fieldType={FormFieldType.SWITCH}
+                  />
+                  <CustomFormField
+                    control={control}
+                    name="strategy.trendlineRetest"
+                    label="Trendline Retest"
+                    fieldType={FormFieldType.SWITCH}
+                  />{" "}
+                  <CustomFormField
+                    control={control}
+                    name="strategy.fibKeyLevels"
+                    label="Fib Key Levels"
+                    fieldType={FormFieldType.SWITCH}
+                  />
+                  <CustomFormField
+                    control={control}
+                    name="strategy.proTrendBias"
+                    label="Aligns with 15min Trend Bias"
+                    fieldType={FormFieldType.SWITCH}
+                  />
+                  <CustomFormField
+                    control={control}
+                    name="strategy.indicatorHighlight"
+                    label="Highlight on IT Pro+ Indicatr"
+                    fieldType={FormFieldType.SWITCH}
+                  />
+                </div>
                 <CustomFormField
                   control={control}
-                  name="strategy.divergence"
-                  label="Divergence"
-                  fieldType={FormFieldType.SWITCH}
-                />
-                <CustomFormField
-                  control={control}
-                  name="strategy.head_Shoulders"
-                  label="Head & Shoulders"
-                  fieldType={FormFieldType.SWITCH}
-                />
-                <CustomFormField
-                  control={control}
-                  name="strategy.trendlineRetest"
-                  label="Trendline Retest"
-                  fieldType={FormFieldType.SWITCH}
-                />{" "}
-                <CustomFormField
-                  control={control}
-                  name="strategy.fibKeyLevels"
-                  label="Fib Key Levels"
-                  fieldType={FormFieldType.SWITCH}
-                />
-                <CustomFormField
-                  control={control}
-                  name="strategy.proTrendBias"
-                  label="Aligns with 15min Trend Bias"
-                  fieldType={FormFieldType.SWITCH}
-                />
-                <CustomFormField
-                  control={control}
-                  name="strategy.indicatorHighlight"
-                  label="Highlight on IT Pro+ Indicatr"
-                  fieldType={FormFieldType.SWITCH}
+                  name="confidence"
+                  fieldType={FormFieldType.SLIDER}
                 />
               </div>
-              <CustomFormField
-                control={control}
-                name="confidence"
-                fieldType={FormFieldType.SLIDER}
-              />
             </div>
-          </div>
-          <FormField
-            name="tradeScreenshot"
-            control={control}
-            render={({ field }) => (
-              <FormControl>
-                <div className="h-full w-full flex flex-col gap-3">
-                  <FormLabel className="pl-2 whitespace-nowrap">
-                    Trade Screenshot
-                  </FormLabel>
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    {...field}
-                    ref={fileInputRef}
-                    onChange={(e) => handleFileUpload(e)} // Calling the function here
-                  />
-                  <div
-                    onClick={() => fileInputRef.current?.click()}
-                    className="w-full bg-background rounded-md h-64 border hover:bg-accent border-accent overflow-hidden flex items-center justify-center text-white/80 cursor-pointer hover:scale-[1.01] duration-200 transition flex-col relative"
-                  >
-                    {fileURL ? (
-                      <Image
-                        src={fileURL}
-                        alt="Screenshot"
-                        fill
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="p-3 flex items-center justify-center flex-col gap-2">
-                        <CameraIcon className="h-10 w-10 text-white/50" />
-                        <span className="text-[12px] md:text-sm">
-                          Click to Upload Image
-                        </span>
+            <FormField
+              name="tradeScreenshot"
+              control={control}
+              render={({ field }) => (
+                <FormControl>
+                  <div className="h-full w-full flex flex-col gap-4">
+                    <FormLabel className="pl-2 whitespace-nowrap">
+                      Trade Screenshot
+                    </FormLabel>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      {...field}
+                      ref={fileInputRef}
+                      onChange={(e) => handleFileUpload(e)} // Calling the function here
+                    />
+                    <div
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-full bg-background rounded-md h-64 border hover:bg-accent border-accent overflow-hidden flex items-center justify-center text-white/80 cursor-pointer hover:scale-[1.01] duration-200 transition flex-col relative"
+                    >
+                      {fileURL ? (
+                        <Image
+                          src={fileURL}
+                          alt="Screenshot"
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="p-3 flex items-center justify-center flex-col gap-2">
+                          <CameraIcon className="h-10 w-10 text-white/50" />
+                          <span className="text-[12px] md:text-sm">
+                            Click to Upload Image
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    {fileURL && (
+                      <div className=" flex items-center justify-end gap-4 py-2 px-4">
+                        <Button
+                          type="button"
+                          variant={"secondary"}
+                          className="font-semibold"
+                          onClick={() => setFileURL("")}
+                        >
+                          Remove Image
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={"secondary"}
+                          className="font-semibold"
+                          onClick={() => fileInputRef.current?.click()}
+                        >
+                          Change Image
+                        </Button>
                       </div>
                     )}
                   </div>
-                  {fileURL && (
-                    <div className=" flex items-center justify-end gap-4 py-2 px-4">
-                      <Button
-                        type="button"
-                        variant={"secondary"}
-                        className="font-semibold"
-                        onClick={() => setFileURL("")}
-                      >
-                        Remove Image
-                      </Button>
-                      <Button
-                        type="button"
-                        variant={"secondary"}
-                        className="font-semibold"
-                        onClick={() => fileInputRef.current?.click()}
-                      >
-                        Change Image
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </FormControl>
-            )}
-          />
+                </FormControl>
+              )}
+            />
+          </div>
           <div>
             <CustomFormField
               control={control}
@@ -514,7 +530,7 @@ export default function FormComponent() {
           </div>{" "}
           <Button
             type="submit"
-            className={`${isUploading ? "bg-primary" : "bg-foreground"}`}
+            className={`${isUploading ? "bg-primary text-foreground" : "bg-foreground text-background"}`}
           >
             {isUploading ? (
               <div className="flex items-center gap-4">

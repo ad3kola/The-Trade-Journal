@@ -44,7 +44,7 @@ const RenderField = <T extends FieldValues>({
   props: CustomProps<T>;
 }) => {
   const { fieldType, disabled, placeholder, label, renderSkeleton } = props;
-
+console.log()
   switch (fieldType) {
     case FormFieldType.SLIDER:
       return (
