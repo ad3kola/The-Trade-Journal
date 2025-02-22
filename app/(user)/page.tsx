@@ -35,11 +35,11 @@ export default function FormComponent() {
       if (!res.ok) throw new Error("User creation failed");
 
       const data: UserProps = await res.json();
-      const { email, fullName, phone, id, profile } = data;
+      const { id } = data;
 
       router.push(`/overview/${id}`);
       toast.success("Pls wait as you're being redirected 😊");
-    } catch (err) {
+    } catch {
       toast.error("An error occurred while creating user, try again");
     }
   }

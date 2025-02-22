@@ -12,7 +12,7 @@ import { setUser } from "@/config/redux/features/userSlice";
 import { UserProps } from "@/lib/typings";
 import { useAppDispatch } from "@/config/redux/hooks";
 
-export default function page() {
+export const Page = () => {
   const { id } = useParams<{ id: string }>();
 
   const dispatch = useAppDispatch();
