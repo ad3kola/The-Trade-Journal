@@ -347,3 +347,34 @@ export const orderBook: z.infer<typeof formSchema>[] = [
     tradeType: TradeType.SELL,
   },
 ];
+
+
+export const calculateTradeMetrics = (entry: number, tp: number, sl: number, riskAmount: number, isLong: string) => {
+  // Ensure isLong is properly interpreted as "Buy" or "Sell"
+  const isBuy = isLong === "Buy";
+  
+  // Calculate position size to ensure risk matches the intended riskAmount
+  const positionSize = riskAmount / Math.abs(entry - sl);
+  
+  // Adjusted risk remains exactly as intended
+  const adjustedRisk = riskAmount;
+  
+  // Adjust reward calculation to align with the correct position size
+  const reward = Math.abs(tp - entry) * positionSize;
+  
+  // Calculate Risk-Reward Ratio (RRR)
+  const rrr = reward / adjustedRisk;
+  
+  // Determine realized PnL to ensure proper scaling
+  const realizedPnl = isBuy 
+      ? (tp > entry ? reward : -adjustedRisk) 
+      : (tp < entry ? reward : -adjustedRisk);
+
+  return {
+      positionSize,
+      risk: adjustedRisk,
+      reward,
+      rrr,
+      realizedPnl
+  };
+};

@@ -28,6 +28,7 @@ import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 import { format } from "date-fns";
 import {
   AccountType,
+  calculateTradeMetrics,
   listOfCoins,
   TradeSession,
   TradeStatus,
@@ -66,14 +67,14 @@ export default function FormComponent() {
       tradeSession: TradeSession.NEW_YORK,
       timeframe: TradeTimeframe.M3,
       tradeType: TradeType.BUY,
-      entryPrice: 10,
-      takeProfit: 10,
-      stopLoss: 10,
-      riskAmount: 10,
-      leverage: 10,
-      positionSize: 10,
-      realizedPnL: 10,
-      risk_Reward: 10,
+      entryPrice: 169.84,
+      takeProfit: 178.67,
+      stopLoss: 167.64,
+      riskAmount: 50,
+      leverage: 5,
+      positionSize: 22.7,
+      realizedPnL: 0,
+      risk_Reward: 0,
       date: new Date(),
       tradeStatus: TradeStatus.WIN,
       strategy: {
@@ -131,7 +132,24 @@ export default function FormComponent() {
     }
     setIsUploading(false);
   };
-  
+
+  const entry = form.getValues("entryPrice");
+  const tp = form.getValues("takeProfit");
+  const sl = form.getValues("stopLoss");
+  const risk = form.getValues("riskAmount");
+  const isLong = form.getValues("tradeType");
+
+  const result = calculateTradeMetrics(entry, tp, sl, risk, isLong);
+
+  const PnL = parseFloat(result.realizedPnl.toFixed(3)); // Convert to number
+  const RR = parseFloat(result.rrr.toFixed(2));
+
+  console.log(PnL);
+  form.setValue("realizedPnL", PnL);
+
+  console.log(RR);
+  form.setValue("risk_Reward", RR);
+
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit(onSubmit)} className="h-full py-5">
