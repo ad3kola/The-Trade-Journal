@@ -43,6 +43,7 @@ export async function POST( req: NextRequest ) {
     email: data.email,
     fullName: data.fullName,
     phone: data.phone,
+    profile: data.profile,
   };
 
   try {
