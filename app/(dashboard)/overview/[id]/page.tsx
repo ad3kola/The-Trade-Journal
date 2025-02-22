@@ -12,7 +12,7 @@ import { setUser } from "@/config/redux/features/userSlice";
 import { UserProps } from "@/lib/typings";
 import { useAppDispatch } from "@/config/redux/hooks";
 
-export const Page = () => {
+export default function Page() {
   const { id } = useParams<{ id: string }>();
 
   const dispatch = useAppDispatch();
@@ -26,7 +26,7 @@ export const Page = () => {
         });
         if (res.ok) {
           const userData: UserProps = await res.json();
-          console.log(userData)
+          console.log(userData);
           dispatch(setUser(userData));
         }
       } catch (err) {
