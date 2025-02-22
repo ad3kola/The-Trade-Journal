@@ -5,22 +5,25 @@ import {
   TradeStatus,
   TradeTimeframe,
   TradeType,
-} from "../constants/ind4x";
+} from "../lib/constants/ind4x";
 
 export const userSchema = z.object({
   fullName: z.string().min(2, "Must be more than 2 characters"),
   email: z.string().email(),
+  profile: z.string(),
   phone: z
     .string()
     .refine((phone) => /^\+\d{10,15}$/.test(phone), "Invalid phone number"),
 });
 
 export const formSchema = z.object({
-  coinSymbol: z.object({
-    logo: z.string(),
-    name: z.string(),
-    value: z.string(),
-  }).strict(),
+  coinSymbol: z
+    .object({
+      logo: z.string(),
+      name: z.string(),
+      value: z.string(),
+    })
+    .strict(),
   accountType: z.nativeEnum(AccountType),
   tradeSession: z.nativeEnum(TradeSession),
   timeframe: z.nativeEnum(TradeTimeframe),
@@ -35,20 +38,20 @@ export const formSchema = z.object({
   risk_Reward: z.coerce.number(),
   date: z.coerce.date(),
   tradeStatus: z.nativeEnum(TradeStatus),
-  strategy: z.object({
-    divergence: z.boolean(),
-    head_Shoulders: z.boolean(),
-    proTrendBias: z.boolean(),
-    trendlineRetest: z.boolean(),
-    fibKeyLevels: z.boolean(),
-    indicatorHighlight: z.boolean(),
-  }).strict(),
-  
+  strategy: z
+    .object({
+      divergence: z.boolean(),
+      head_Shoulders: z.boolean(),
+      proTrendBias: z.boolean(),
+      trendlineRetest: z.boolean(),
+      fibKeyLevels: z.boolean(),
+      indicatorHighlight: z.boolean(),
+    })
+    .strict(),
+
   confidence: z.array(z.number()),
 
-  tradeScreenshot: z.string(), 
-  
+  tradeScreenshot: z.string(),
+
   tradeReview: z.string().min(5, "Review must be at least 5 characters"),
-
-
 });

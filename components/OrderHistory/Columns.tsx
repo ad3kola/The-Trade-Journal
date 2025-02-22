@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Button } from "../ui/button";
 import { z } from "zod";
 import { format } from "date-fns";
-import { formSchema } from "@/lib/config/zod";
+import { formSchema } from "@/config/zod";
 
 const StatusCell = ({ value }: { value: boolean }) => (
   <div

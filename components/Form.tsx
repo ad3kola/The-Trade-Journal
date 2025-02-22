@@ -7,7 +7,7 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import { formSchema } from "@/lib/config/zod";
+import { formSchema } from "@/config/zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -54,7 +54,6 @@ export enum FormFieldType {
 }
 
 export default function FormComponent() {
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -133,18 +132,23 @@ export default function FormComponent() {
     setIsUploading(false);
   };
 
-  const calculateRR = (riskAmount: number, entry: number, takeProfit: number, stopLoss: number) => {
+  const calculateRR = (
+    riskAmount: number,
+    entry: number,
+    takeProfit: number,
+    stopLoss: number
+  ) => {
     const lossDistance = Math.abs(entry - stopLoss); // Ensure it's always positive
     const potentialReward = Math.abs(takeProfit - entry); // Ensure it's always positive
 
     if (lossDistance === 0) {
-        throw new Error("Stop loss cannot be the same as entry price."); // Prevent division by zero
+      throw new Error("Stop loss cannot be the same as entry price."); // Prevent division by zero
     }
 
     const RR = potentialReward / lossDistance;
-    
+
     return RR;
-};
+  };
 
   return (
     <Form {...form}>
@@ -410,7 +414,7 @@ export default function FormComponent() {
             <div className="flex flex-col w-full gap-2">
               <h3 className="text-lg font-bold tracking-wider">
                 Trade Strategy Metrics
-              </h3> 
+              </h3>
               <div className="flex flex-col w-full gap-4 px-5 py-3 max-w-[650px]">
                 <div className="w-full flex flex-wrap gap-7 ">
                   <CustomFormField
@@ -530,7 +534,11 @@ export default function FormComponent() {
           </div>{" "}
           <Button
             type="submit"
-            className={`${isUploading ? "bg-primary text-foreground" : "bg-foreground text-background"}`}
+            className={`${
+              isUploading
+                ? "bg-primary text-foreground"
+                : "bg-foreground text-background"
+            }`}
           >
             {isUploading ? (
               <div className="flex items-center gap-4">

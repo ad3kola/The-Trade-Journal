@@ -6,22 +6,42 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import CustomFormField from "@/components/CustomFormField";
 import { Button } from "@/components/ui/button";
-import { userSchema } from "@/lib/config/zod";
+import { userSchema } from "@/config/zod";
 import { FormFieldType } from "@/components/Form";
 import { ModeToggle } from "@/components/ModeToggle";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { UserProps } from "@/lib/typings";
 
 export default function FormComponent() {
+  const router = useRouter();
   const form = useForm<z.infer<typeof userSchema>>({
     resolver: zodResolver(userSchema),
     defaultValues: {
       fullName: "",
       email: "",
+      profile: "",
       phone: "",
     },
   });
-  function onSubmit(data: z.infer<typeof userSchema>) {
-    console.log("clicked");
-    console.log(data);
+  async function onSubmit(userData: z.infer<typeof userSchema>) {
+    try {
+      const res = await fetch("/api/user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData),
+      });
+
+      if (!res.ok) throw new Error("User creation failed");
+
+      const data: UserProps = await res.json();
+      const { email, fullName, phone, id, profile } = data;
+
+      router.push(`/overview/${id}`);
+      toast.success("Pls wait as you're being redirected 😊");
+    } catch (err) {
+      toast.error("An error occurred while creating user, try again");
+    }
   }
 
   return (

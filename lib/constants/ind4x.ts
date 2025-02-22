@@ -2,7 +2,7 @@ import { HomeIcon } from "@heroicons/react/24/solid";
 import { CoinsList, DailySummaryData, NavLinks } from "@/lib/typings";
 import { BadgeIcon, ChartBarIcon, Clock, PlusIcon, Table } from "lucide-react";
 import { z } from "zod";
-import { formSchema } from "../config/zod";
+import { formSchema } from "../../config/zod";
 
 export const navLinks: NavLinks[] = [
   { Icon: HomeIcon, title: "Dashboard", url: "/overview" },

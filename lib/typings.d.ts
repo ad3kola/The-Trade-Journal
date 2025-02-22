@@ -77,3 +77,10 @@ export interface Coin {
   current_price: number;
 }
 
+export interface UserProps {
+  email: string;
+  fullName: string;
+  phone: string;
+  id?: string;
+  profile?: string;
+}

@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../globals.css";
 import { ThemeProvider } from "@/components/Theme";
-
+import { Toaster } from "react-hot-toast";
+import ReduxProvider from "@/components/ReduxProvider";
 const inter = Inter({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -21,9 +22,20 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${inter.className} antialiased`}>
-      <ThemeProvider attribute="class" defaultTheme="system">
-        {children}
-        </ThemeProvider>
+        <ReduxProvider>
+          <ThemeProvider attribute="class" defaultTheme="system">
+            {children}
+          </ThemeProvider>
+        </ReduxProvider>
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            style: {
+              fontSize: "0.85rem",
+              borderRadius: "8px",
+            },
+          }}
+        />
       </body>
     </html>
   );
