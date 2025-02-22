@@ -1,6 +1,6 @@
 "use client";
 
-import { Form, FormControl, FormField, FormLabel } from "@/components/ui/form";
+import { Form, FormControl, FormField } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -75,9 +75,9 @@ export default function FormComponent() {
     }
   };
 
-  // if (userID) {
-  //   router.push(`/overview/${userID}`);
-  // }
+  if (userID) {
+    router.push(`/overview/${userID}`);
+  }
   return (
     <div className="w-full h-screen flex flex-col gap-5 items-center justify-center overflow-hidden bg-background p-5">
       <ModeToggle />
