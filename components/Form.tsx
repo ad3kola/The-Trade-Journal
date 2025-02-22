@@ -131,25 +131,7 @@ export default function FormComponent() {
     }
     setIsUploading(false);
   };
-
-  const calculateRR = (
-    riskAmount: number,
-    entry: number,
-    takeProfit: number,
-    stopLoss: number
-  ) => {
-    const lossDistance = Math.abs(entry - stopLoss); // Ensure it's always positive
-    const potentialReward = Math.abs(takeProfit - entry); // Ensure it's always positive
-
-    if (lossDistance === 0) {
-      throw new Error("Stop loss cannot be the same as entry price."); // Prevent division by zero
-    }
-
-    const RR = potentialReward / lossDistance;
-
-    return RR;
-  };
-
+  
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit(onSubmit)} className="h-full py-5">
