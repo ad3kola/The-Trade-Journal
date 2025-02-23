@@ -10,7 +10,6 @@ import { useAppSelector } from "@/config/redux/hooks";
 const Header = () => {
   const user = useAppSelector((state) => state.user);
   console.log(user);
-  if (!user) return;
   return (
     <header className="flex w-full items-center bg-sidebar justify-between p-4 pb-3 shadow shadow-primary sticky top-0 z-50">
       {user && (

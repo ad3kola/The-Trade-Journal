@@ -6,14 +6,14 @@ import RecentTransactions from "@/components/Dashboard/RecentTransactions";
 import TradeCalendar from "@/components/Dashboard/TradeCalendar";
 import WeekSummary from "@/components/Dashboard/WeekSummary";
 import WinRate from "@/components/Dashboard/WinRate";
-import { useParams } from "next/navigation";
+import { useParams  } from "next/navigation";
 import { useEffect } from "react";
 import { setUser } from "@/config/redux/features/userSlice";
 import { UserProps } from "@/lib/typings";
 import { useAppDispatch } from "@/config/redux/hooks";
 
 export default function Page() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>();  
 
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -38,7 +38,6 @@ export default function Page() {
     };
     fetchUserData();
   }, [id, dispatch]);
-
   
   return (
     <main className="w-full px-2 py-4">

@@ -3,11 +3,10 @@
 import {
   ChartBarIcon,
   ChartPieIcon,
-  ChevronDown,
+  ExternalLink,
   HomeIcon,
   PlusIcon,
   Table,
-  User2,
 } from "lucide-react";
 
 import {
@@ -22,26 +21,17 @@ import {
   SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
   SidebarSeparator,
 } from "./ui/sidebar";
-import { usePathname } from "next/navigation";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "./ui/collapsible";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+import { usePathname, useRouter } from "next/navigation";
 import { NavLinks } from "@/lib/typings";
-import { useAppSelector } from "@/config/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/config/redux/hooks";
 import Link from "next/link";
+import { Button } from "./ui/button";
+import { clearUser } from "@/config/redux/features/userSlice";
 const SideBar = () => {
   const userID = useAppSelector((state) => state.user.id);
+  const router = useRouter()
 
   const navLinks: NavLinks[] = [
     { Icon: HomeIcon, title: "Dashboard", url: "/overview" },
@@ -51,6 +41,7 @@ const SideBar = () => {
     { Icon: PlusIcon, title: "Log a Trade", url: "/upload" },
   ];
   const activeRoute = usePathname();
+  const dispatch = useAppDispatch();
 
   return (
     <Sidebar collapsible="icon">
@@ -88,45 +79,19 @@ const SideBar = () => {
                   </SidebarMenuItem>
                 ))}
               <SidebarSeparator className="mt-7 " />
-              <Collapsible defaultOpen className="group/collapsible">
-                <SidebarGroup>
-                  <SidebarGroupLabel asChild>
-                    <CollapsibleTrigger>
-                      Settings
-                      <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                    </CollapsibleTrigger>
-                  </SidebarGroupLabel>
-                  <CollapsibleContent>
-                    <SidebarGroupContent className="mt-2">
-                      <SidebarMenuSub>
-                        <SidebarMenuItem>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <SidebarMenuButton>
-                                <User2 /> Username
-                              </SidebarMenuButton>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent
-                              side="top"
-                              className="w-[--radix-popper-anchor-width]"
-                            >
-                              <DropdownMenuItem>
-                                <span>Account</span>
-                              </DropdownMenuItem>
-                              <DropdownMenuItem>
-                                <span>Billing</span>
-                              </DropdownMenuItem>
-                              <DropdownMenuItem>
-                                <span>Sign out</span>
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </SidebarMenuItem>
-                      </SidebarMenuSub>
-                    </SidebarGroupContent>
-                  </CollapsibleContent>
-                </SidebarGroup>
-              </Collapsible>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  className="font-bold transition duration-100 ease-in-out text-sm tracking-wider gap-4 py-6 hover:bg-primary hover:text-foreground hover:font-medium"
+                >
+                  <Button variant = 'outline' className='w-full flex items-center justify-start' onClick={() => {dispatch(clearUser())
+                    router.push('/')
+                  }}>
+                    <ExternalLink  className='h-10 w-10'/>
+                    Log Out</Button>
+                </SidebarMenuButton>
+                <SidebarMenuBadge>10</SidebarMenuBadge>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
