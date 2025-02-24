@@ -18,12 +18,8 @@ export const navLinks: NavLinks[] = [
 
 export const topRowData = [
   { title: "Realized PnL($)", Icon: BadgeIcon, value: "798.48USDT" },
-  {
-    title: "Win Rate",
-    Icon: BadgeIcon,
-    value: "46.36%",
-  },
-  { title: "Risk Factors", Icon: BadgeIcon, value: "+12.8R" },
+  { title: "Total Risk Factors", Icon: BadgeIcon, value: "+12.8R" },
+  { title: "Trade of the Week", Icon: BadgeIcon, value: "+12.8R" },
   {
     title: "Average Holding Time",
     Icon: Clock,

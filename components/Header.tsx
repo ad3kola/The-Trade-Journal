@@ -26,7 +26,7 @@ const Header = () => {
             />
             <span className="absolute right-0.5 bottom-0.5 h-2.5 w-2.5 flex">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-purple-600" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-foreground" />
             </span>
           </div>
           <div className="flex flex-col text-base justify-center -space-y-1 w-full">

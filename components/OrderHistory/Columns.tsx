@@ -110,7 +110,17 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
       );
     },
   },
-
+  {
+    accessorKey: "riskAmount",
+    enableHiding: false,
+    header: () => <div className="">Risk Amount</div>,
+    cell: ({ row }) => {
+      const formatted = Number(row.getValue("riskAmount")).toFixed(1);
+      return (
+        <div className="tracking-wider font-semibold">${formatted}USD</div>
+      );
+    },
+  },
   {
     accessorKey: "realizedPnL",
     enableHiding: false,

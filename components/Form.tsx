@@ -96,7 +96,6 @@ export default function FormComponent() {
   const {
     control,
     handleSubmit,
-    reset,
     watch,
     getValues,
     setValue,
@@ -134,8 +133,21 @@ export default function FormComponent() {
       }
     );
 
-    // Reset the form with an empty object or initial values
-    reset();
+    form.setValue("entryPrice", 0);
+    form.setValue("stopLoss", 0);
+    form.setValue("takeProfit", 0);
+    form.setValue("positionSize", 0);
+    form.setValue("leverage", 0);
+    form.setValue("riskAmount", 0);
+    form.setValue("strategy.divergence", false);
+    form.setValue("strategy.fibKeyLevels", false);
+    form.setValue("strategy.head_Shoulders", false);
+    form.setValue("strategy.indicatorHighlight", false);
+    form.setValue("strategy.proTrendBias", false);
+    form.setValue("strategy.trendlineRetest", false);
+    form.setValue("tradeReview", "");
+    form.setValue("tradeScreenshot", "");
+    setFileURL("")
     setIsUploading(false);
   }
 
