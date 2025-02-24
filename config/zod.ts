@@ -13,7 +13,7 @@ export const userSchema = z.object({
   profile: z.string(),
   phone: z
     .string()
-    .refine((phone) => /^\+\d{10,15}$/.test(phone), "Invalid phone number"),
+    .refine((phone) => /^\+?\d{10,15}$/.test(phone.replace(/\D/g, "")), "Invalid phone number"),
 });
 
 export const formSchema = z.object({
@@ -35,7 +35,7 @@ export const formSchema = z.object({
   leverage: z.coerce.number().positive(),
   positionSize: z.coerce.number().positive(),
   realizedPnL: z.coerce.number(),
-  risk_Reward: z.coerce.number(),
+  risk_Reward: z.coerce.number().positive(),
   date: z.coerce.date(),
   tradeStatus: z.nativeEnum(TradeStatus),
   strategy: z
@@ -46,12 +46,8 @@ export const formSchema = z.object({
       trendlineRetest: z.boolean(),
       fibKeyLevels: z.boolean(),
       indicatorHighlight: z.boolean(),
-    })
-    .strict(),
-
-  confidence: z.array(z.number()),
-
+    }),
+  confidence: z.array(z.number()).default([0]),
   tradeScreenshot: z.string(),
-
   tradeReview: z.string().min(5, "Review must be at least 5 characters"),
 });

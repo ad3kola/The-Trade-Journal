@@ -103,25 +103,31 @@ export default function FormComponent() {
   } = form;
   console.log(errors);
 
+  const [fileURL, setFileURL] = useState<string>("");
   const userID = useAppSelector((state) => state.user.id);
+  
+  const [isUploading, setIsUploading] = useState<boolean>(false);
   async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsUploading(true);
+  
+if (fileURL) {
+ data.tradeScreenshot = fileURL;
+}   
+    // Format date only for API submission
+    const formattedDate = format(new Date(data.date), "yyyy-MM-dd");
+    data.date =  new Date(formattedDate)
 
-    if (fileURL) {
-      data.tradeScreenshot = fileURL;
-    }
-    if (data.date) {
-      const formattedDate = new Date(format(new Date(data.date), "PP"));
-      data = { ...data, date: formattedDate };
-    }
-
-    await toast.promise(
+  console.log(data)
+  await toast.promise(
       fetch("/api/trade", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ data, userID }),
+        body: JSON.stringify({
+          userID,
+          ...data,
+        }),
       }).then((res) => {
         if (!res.ok) throw new Error("Error logging trade, please try again.");
         return res.json();
@@ -132,27 +138,30 @@ export default function FormComponent() {
         error: "Error logging trade, please try again.",
       }
     );
-
-    form.setValue("entryPrice", 0);
-    form.setValue("stopLoss", 0);
-    form.setValue("takeProfit", 0);
-    form.setValue("positionSize", 0);
-    form.setValue("leverage", 0);
-    form.setValue("riskAmount", 0);
-    form.setValue("strategy.divergence", false);
-    form.setValue("strategy.fibKeyLevels", false);
-    form.setValue("strategy.head_Shoulders", false);
-    form.setValue("strategy.indicatorHighlight", false);
-    form.setValue("strategy.proTrendBias", false);
-    form.setValue("strategy.trendlineRetest", false);
-    form.setValue("tradeReview", "");
-    form.setValue("tradeScreenshot", "");
-    setFileURL("")
+  
+    // Reset form values
+    form.reset({
+      entryPrice: 0,
+      stopLoss: 0,
+      takeProfit: 0,
+      positionSize: 0,
+      leverage: 0,
+      riskAmount: 0,
+      strategy: {
+        divergence: false,
+        fibKeyLevels: false,
+        head_Shoulders: false,
+        indicatorHighlight: false,
+        proTrendBias: false,
+        trendlineRetest: false,
+      },
+      tradeReview: "",
+      tradeScreenshot: "",
+    });
+  
+    setFileURL("");
     setIsUploading(false);
   }
-
-  const [fileURL, setFileURL] = useState<string>("");
-  const [isUploading, setIsUploading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
@@ -517,7 +526,7 @@ export default function FormComponent() {
             <FormField
               name="tradeScreenshot"
               control={control}
-              render={({ field }) => (
+              render={({field}) => (
                 <FormControl>
                   <div className="h-full w-full flex flex-col gap-4">
                     <FormLabel className="pl-2 whitespace-nowrap">

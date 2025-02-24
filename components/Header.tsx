@@ -9,7 +9,6 @@ import { useAppSelector } from "@/config/redux/hooks";
 
 const Header = () => {
   const user = useAppSelector((state) => state.user);
-  console.log(user);
   return (
     <header className="flex w-full items-center bg-sidebar justify-between p-4 pb-3 shadow shadow-primary sticky top-0 z-50">
       {user && (
@@ -17,6 +16,7 @@ const Header = () => {
           <div className="relative ">
             <Image
               className="object-cover rounded-full"
+              
               width={60}
               height={60}
               src={
@@ -24,6 +24,7 @@ const Header = () => {
               }
               alt="profile"
             />
+
             <span className="absolute right-0.5 bottom-0.5 h-2.5 w-2.5 flex">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-foreground" />
