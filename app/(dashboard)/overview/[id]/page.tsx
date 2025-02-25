@@ -8,14 +8,11 @@ import WeekSummary from "@/components/Dashboard/WeekSummary";
 import WinRate from "@/components/Dashboard/WinRate";
 import { useParams  } from "next/navigation";
 import { useEffect } from "react";
-import { setUser } from "@/config/redux/features/userSlice";
 import { UserProps } from "@/lib/typings";
-import { useAppDispatch } from "@/config/redux/hooks";
+import { SearchParams } from "next/dist/server/request/search-params";
 
-export default function Page() {
-  const { id } = useParams<{ id: string }>();  
+export default function Page({id}: {id: SearchParams}) {
 
-  const dispatch = useAppDispatch();
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -30,14 +27,13 @@ export default function Page() {
             ...data,
             id
           }
-          dispatch(setUser(userData));
         }
       } catch (err) {
         console.log(err);
       }
     };
     fetchUserData();
-  }, [id, dispatch]);
+  }, [id]);
   
   return (
     <main className="w-full px-2 py-4">

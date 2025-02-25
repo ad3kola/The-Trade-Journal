@@ -25,12 +25,9 @@ import {
 } from "./ui/sidebar";
 import { usePathname, useRouter } from "next/navigation";
 import { NavLinks } from "@/lib/typings";
-import { useAppDispatch, useAppSelector } from "@/config/redux/hooks";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { clearUser } from "@/config/redux/features/userSlice";
 const SideBar = () => {
-  const userID = useAppSelector((state) => state.user.id);
   const router = useRouter()
 
   const navLinks: NavLinks[] = [
@@ -41,7 +38,6 @@ const SideBar = () => {
     { Icon: PlusIcon, title: "Log a Trade", url: "/upload" },
   ];
   const activeRoute = usePathname();
-  const dispatch = useAppDispatch();
 
   return (
     <Sidebar collapsible="icon">
@@ -66,11 +62,10 @@ const SideBar = () => {
                     <SidebarMenuButton
                       asChild
                       className={`font-bold transition duration-100 ease-in-out text-sm tracking-wider gap-4 py-6 ${
-                        activeRoute == `${url}/${userID}` &&
                         "bg-primary hover:bg-primary hover:text-foreground hover:font-medium"
                       }`}
                     >
-                      <Link href={`${url}/${userID}`}>
+                      <Link href={`${url}`}>
                         <Icon className="h-10 w-10" />
                         <span>{title}</span>
                       </Link>

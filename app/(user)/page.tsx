@@ -12,131 +12,59 @@ import { ModeToggle } from "@/components/ModeToggle";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { UserProps } from "@/lib/typings";
-import { useAppSelector } from "@/config/redux/hooks";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { CameraIcon } from "lucide-react";
 import { ChangeEvent, useRef, useState } from "react";
 import { getImageString } from "@/actions/getmageString";
+import { createUser } from "@/actions/user/user.actions";
 
 export default function FormComponent() {
   const router = useRouter();
-  const userID = useAppSelector((state) => state.user.id);
 
   const form = useForm<z.infer<typeof userSchema>>({
     resolver: zodResolver(userSchema),
     defaultValues: {
-      fullName: "",
+      name: "",
       email: "",
-      profile: "",
       phone: "",
     },
   });
 
-  const [fileURL, setFileURL] = useState<string>("");
   const {
-    control,
     formState: { errors },
   } = form;
   console.log(errors);
-  async function onSubmit(userData: z.infer<typeof userSchema>) {
-    if (fileURL) {
-      userData.profile = fileURL;
-    }
-    console.log(userData)
-    try {
-      const res = await fetch("/api/user", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData),
-      });
 
-      if (!res.ok) throw new Error("User creation failed");
-
-      const data: UserProps = await res.json();
-      const { id } = data;
-
-      router.push(`/overview/${id}`);
-      toast.success("Pls wait as you're being redirected 😊");
-    } catch {
-      toast.error("An error occurred while creating user, try again");
-    }
-  }
-
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    const file = e.target.files[0];
-    try {
-      const imageURL = await getImageString(file);
-      setFileURL(imageURL);
-    } catch (error) {
-      console.log("Error: ", error);
-    }
+  const validateUser = async (data: z.infer<typeof userSchema>) => {
+    const id = await createUser(data);
+    router.push(`/overview/${id}`);
   };
 
-  if (userID) {
-    router.push(`/overview/${userID}`);
-  }
   return (
     <div className="w-full h-screen flex flex-col gap-5 items-center justify-center overflow-hidden bg-background p-5">
       <ModeToggle />
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(validateUser)}
           className="flex flex-col w-full max-w-md max-h-max bg-sidebar rounded-md shadow shadow-accent border border-input mx-auto py-3"
         >
-          <div className="w-full flex flex-col px-6 py-0">
-            <div className="text-center flex justify-center w-full gap-2">
-              <h2 className="text-center text-lg font-semibold flex items-center justify-center gap-2">
-                Welcome to The Trade Journal
-              </h2>{" "}
-              <span className="animate-wave text-2xl block">👋</span>
+          <div className="w-full flex flex-col p-6 gap-8 font-semibold ">
+            <div className="flex flex-col w-full gap-2">
+              <div className="flex text-4xl w-full ">
+                <h2>Hi</h2>{" "}
+                <span className="animate-wave text-4xl -mt-1 before: block">
+                  👋
+                </span>
+              </div>
+              <h4 className="text-lg font-medium">Welcome to Trade Vault</h4>
             </div>
 
-            <FormField
-              name="profile"
-              control={control}
-              render={({ field }) => (
-                <FormControl>
-                  <div className="h-full w-full flex flex-col">
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      {...field}
-                      ref={fileInputRef}
-                      onChange={(e) => handleFileUpload(e)} // Calling the function here
-                    />
-                    <div
-                      onClick={() => fileInputRef.current?.click()}
-                      className="bg-background h-40 mt-3 w-40 rounded-full border mx-auto hover:bg-input border-accent overflow-hidden flex items-center justify-center text-white/80 cursor-pointer hover:scale-[1.01] duration-200 transition flex-col relative"
-                    >
-                      {fileURL ? (
-                        <Image
-                          src={fileURL}
-                          alt="Screenshot"
-                          fill
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div className="p-3 flex items-center justify-center flex-col gap-2">
-                          <CameraIcon className="h-10 w-10 text-white/50" />
-                          <span className="text-[12px] md:text-sm">
-                            Upload Profile Pic
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </FormControl>
-              )}
-            />
-            <div className="grid grid-cols-1 gap-4 w-full">
+            <div className="grid grid-cols-1 gap-7 w-full">
               <CustomFormField
                 control={form.control}
                 fieldType={FormFieldType.INPUT}
-                name="fullName"
+                name="name"
                 label="Full Name"
                 placeholder="John Doe"
               />

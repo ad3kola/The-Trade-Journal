@@ -52,7 +52,6 @@ body {
     --primary: 262, 85%, 47%;
     --primary-foreground: 0 0% 9%;
     --secondary: 0 0% 14.9%;
-    --input: 242, 22%, 28%, 0.2;
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 14.9%;
     --muted-foreground: 0 0% 63.9%;
@@ -61,7 +60,7 @@ body {
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 242, 22%, 28%;
-    --input: 242 22% 28% / 20%;
+    --input: 242 22% 28% / 70%;
     --ring: 0 0% 83.1%;
     --chart-1: 220 70% 50%;
     --chart-2: 224, 100%, 58%;
@@ -147,6 +146,6 @@ body {
 
 @layer components {
   .custom-phone-input input {
-    @apply w-full bg-transparent text-foreground focus:outline-none;
+    @apply flex w-full rounded-md bg-transparent pl-4 h-11 text-[13px] placeholder:tracking-wider lg:text-base shadow-sm placeholder:font-medium  transition-colors placeholder:text-foreground/60 focus-visible:outline-none md:text-sm
   }
 }

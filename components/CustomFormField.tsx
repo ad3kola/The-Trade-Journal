@@ -93,7 +93,7 @@ const RenderField = <T extends FieldValues>({
             label={label}
             onChange={field.onChange}
             value={field.value as E164Number | undefined}
-            className="custom-phone-input w-full rounded-sm border-b border-primary bg-input px-4 py-3 text-[13px] lg:text-base shadow-sm transition-colors placeholder:text-foreground/60 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+            className="custom-phone-input flex w-full rounded-md border border-input bg-transparent pl-4 h-11 text-[13px] placeholder:tracking-wider lg:text-base shadow-sm placeholder:font-medium  transition-colors placeholder:text-foreground/60 focus-visible:outline-none md:text-sm"
           />
         </FormControl>
       );

@@ -5,23 +5,21 @@ import { Button } from "./ui/button";
 import Image from "next/image";
 import { ModeToggle } from "./ModeToggle";
 import { SidebarTrigger } from "./ui/sidebar";
-import { useAppSelector } from "@/config/redux/hooks";
+import { SignedIn, SignedOut, SignInButton, useUser } from "@clerk/nextjs";
 
 const Header = () => {
-  const user = useAppSelector((state) => state.user);
+  const { user } = useUser();
+
   return (
     <header className="flex w-full items-center bg-sidebar justify-between p-4 pb-3 shadow shadow-primary sticky top-0 z-50">
-      {user && (
+      {user ? (
         <div className="flex items-center h-full gap-3 shrink-0">
           <div className="relative ">
             <Image
               className="object-cover rounded-full"
-              
               width={60}
               height={60}
-              src={
-                user.profile ? (user.profile as string) : "/assets/avatar.jpg"
-              }
+              src={user?.imageUrl && (user.imageUrl as string)}
               alt="profile"
             />
 
@@ -31,25 +29,34 @@ const Header = () => {
             </span>
           </div>
           <div className="flex flex-col text-base justify-center -space-y-1 w-full">
-            <h3 className="font-bold tracking-wide">{user.fullName}</h3>
+            <h3 className="font-semibold tracking-wider">{user.fullName}</h3>
             <p className="text-[12px] text-foreground/65 font-medium">
               Hey, Welcome back!
             </p>
           </div>
         </div>
+      ) : (
+        <>hui</>
       )}
       <div className="flex items-center w-full h-full justify-end gap-1 md:gap-2">
         <SidebarTrigger />
-        <div className="bg-sidebar p-1 rounded-lg flex items-center justify-center border gap-2 border-sidebar-accent">
-          <BellAlertIcon className="w-5 h-5 text-foreground" />
-          <Button
-            suppressHydrationWarning
-            variant="default"
-            className="px-2 cursor-pointer text-[12px] h-7"
-          >
-            {Math.floor(Math.random() * 8) + 1} New{" "}
-          </Button>
-        </div>
+        <SignedIn>
+          <div className="bg-sidebar p-1 rounded-lg flex items-center justify-center border gap-2 border-sidebar-accent">
+            <BellAlertIcon className="w-5 h-5 text-foreground" />
+            <Button
+              suppressHydrationWarning
+              variant="default"
+              className="px-2 cursor-pointer text-[12px] h-7"
+            >
+              {Math.floor(Math.random() * 8) + 1} New{" "}
+            </Button>
+          </div>
+        </SignedIn>
+        <SignedOut>
+          <SignInButton>
+            <Button variant="outline" className="bg-accent" >Sign in</Button>
+          </SignInButton>
+        </SignedOut>
         <ModeToggle />
       </div>
     </header>

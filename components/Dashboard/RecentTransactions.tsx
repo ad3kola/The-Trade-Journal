@@ -17,18 +17,18 @@ import { z } from "zod";
 export default function RecentTransactions({ id }: { id: string }) {
   const [allTrades, setAllTrades] = useState<z.infer<typeof formSchema>[]>([]);
 
-  useEffect(() => {
-    const fetchAllTrades = async () => {
-      const res = await fetch(`/api/trade?id=${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await res.json();
-      setAllTrades(data.trades);
-    };
-    fetchAllTrades();
-  }, [id]);
+  // useEffect(() => {
+  //   const fetchAllTrades = async () => {
+  //     const res = await fetch(`/api/trade?id=${id}`, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  //     const data = await res.json();
+  //     setAllTrades(data.trades);
+  //   };
+  //   fetchAllTrades();
+  // }, [id]);
 
   console.log(allTrades);
   if (allTrades === null) {

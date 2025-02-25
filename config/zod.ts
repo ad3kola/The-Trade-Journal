@@ -8,9 +8,8 @@ import {
 } from "../lib/constants/ind4x";
 
 export const userSchema = z.object({
-  fullName: z.string().min(2, "Must be more than 2 characters"),
+  name: z.string().min(2, "Must be more than 2 characters"),
   email: z.string().email(),
-  profile: z.string(),
   phone: z
     .string()
     .refine((phone) => /^\+?\d{10,15}$/.test(phone.replace(/\D/g, "")), "Invalid phone number"),

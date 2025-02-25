@@ -5,8 +5,8 @@ import { ThemeProvider } from "@/components/Theme";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import SideBar from "@/components/Sidebar";
 import Header from "@/components/Header";
-import ReduxProvider from "@/components/ReduxProvider";
 import { Toaster } from "react-hot-toast";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const inter = Inter({
   variable: "--font-geist-sans",
@@ -24,18 +24,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${inter.className} antialiased`}>
-      <Toaster
-          position="top-center"
-          toastOptions={{
-            style: {
-              fontSize: "0.85rem",
-              borderRadius: "8px",
-            },
-          }}
-        />
-        <ReduxProvider>
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning>
+        <body className={`${inter.variable} ${inter.className} antialiased`}>
+          <Toaster
+            position="top-center"
+            toastOptions={{
+              style: {
+                fontSize: "0.85rem",
+                borderRadius: "8px",
+              },
+            }}
+          />
           <ThemeProvider attribute="class" defaultTheme="system">
             <SidebarProvider>
               <div className="flex h-screen w-full">
@@ -47,9 +47,8 @@ export default function RootLayout({
               </div>
             </SidebarProvider>
           </ThemeProvider>
-        </ReduxProvider>
-
-      </body>
-    </html>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

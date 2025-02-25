@@ -40,7 +40,6 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { CameraIcon, ChevronsUpDown } from "lucide-react";
 import Image from "next/image";
 import { Input } from "./ui/input";
-import { useAppSelector } from "@/config/redux/hooks";
 import toast from "react-hot-toast";
 
 export enum FormFieldType {
@@ -104,7 +103,6 @@ export default function FormComponent() {
   console.log(errors);
 
   const [fileURL, setFileURL] = useState<string>("");
-  const userID = useAppSelector((state) => state.user.id);
   
   const [isUploading, setIsUploading] = useState<boolean>(false);
   async function onSubmit(data: z.infer<typeof formSchema>) {
@@ -118,26 +116,7 @@ if (fileURL) {
     data.date =  new Date(formattedDate)
 
   console.log(data)
-  await toast.promise(
-      fetch("/api/trade", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userID,
-          ...data,
-        }),
-      }).then((res) => {
-        if (!res.ok) throw new Error("Error logging trade, please try again.");
-        return res.json();
-      }),
-      {
-        loading: "Uploading...",
-        success: "Trade logged successfully!",
-        error: "Error logging trade, please try again.",
-      }
-    );
+
   
     // Reset form values
     form.reset({

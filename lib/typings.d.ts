@@ -79,8 +79,7 @@ export interface Coin {
 
 export interface UserProps {
   email: string;
-  fullName: string;
+  name: string;
   phone: string;
   id?: string;
-  profile?: string;
 }
