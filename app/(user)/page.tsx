@@ -37,8 +37,19 @@ export default function FormComponent() {
   console.log(errors);
 
   const validateUser = async (data: z.infer<typeof userSchema>) => {
-    const id = await createUser(data);
-    router.push(`/overview/${id}`);
+    const res = await fetch("/api/create-user", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) throw new Error("Failed to create user");
+
+    const result = await res.json();
+
+    // router.push(`/overview/${result.user.id}`);
   };
 
   return (

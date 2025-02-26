@@ -6,19 +6,22 @@ import { addDoc, getDocs, query, where } from "firebase/firestore";
 
 export const createUser = async (data: UserProps) => {
   try {
-    // Check if user already exists
+    // Check if user exists in Firebase
     const q = query(usersCollection, where("email", "==", data.email));
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
-      const existingUser = querySnapshot.docs[0]; // Get first match
+      const existingUser = querySnapshot.docs[0];
       console.log("User exists: ", existingUser.id);
       return existingUser.id;
     }
 
-    // Create new user
-    const docRef = await addDoc(usersCollection, data);
-    console.log("User created: ", docRef.id);
+
+    const docRef = await addDoc(usersCollection, {
+      ...data,
+      // firebaseDocId: user.id
+    });
+
     return docRef.id;
   } catch (err) {
     console.error("Error creating user:", err);

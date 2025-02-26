@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import "../globals.css";
 import { ThemeProvider } from "@/components/Theme";
 import { Toaster } from "react-hot-toast";
-import {ClerkProvider} from "@clerk/nextjs"
 const inter = Inter({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -20,7 +19,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${inter.className} antialiased`}>
           <ThemeProvider attribute="class" defaultTheme="system">
@@ -37,6 +35,5 @@ export default function RootLayout({
         />
       </body>
     </html>
-    </ClerkProvider>
   );
 }

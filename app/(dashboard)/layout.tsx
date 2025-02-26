@@ -6,7 +6,6 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import SideBar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import { Toaster } from "react-hot-toast";
-import { ClerkProvider } from "@clerk/nextjs";
 
 const inter = Inter({
   variable: "--font-geist-sans",
@@ -24,7 +23,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body className={`${inter.variable} ${inter.className} antialiased`}>
           <Toaster
@@ -49,6 +47,5 @@ export default function RootLayout({
           </ThemeProvider>
         </body>
       </html>
-    </ClerkProvider>
   );
 }
