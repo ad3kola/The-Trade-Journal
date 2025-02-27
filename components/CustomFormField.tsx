@@ -30,7 +30,7 @@ import { Textarea } from "./ui/textarea";
 import { Switch } from "./ui/switch";
 import { Slider } from "./ui/slider";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
-import { DollarSign, LucideProps } from "lucide-react";
+import { LucideProps } from "lucide-react";
 
 interface CustomProps<T extends FieldValues> {
   control: Control<T>;
@@ -61,6 +61,8 @@ const RenderField = <T extends FieldValues>({
     value,
     label,
     renderSkeleton,
+
+    
     Icon,
   } = props;
   switch (fieldType) {

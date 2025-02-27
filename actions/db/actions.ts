@@ -1,15 +1,29 @@
 "use server";
 
 import { usersCollection } from "@/config/firebase";
+import { formSchema } from "@/config/zod";
 import { FormSchemaWithRefID } from "@/lib/typings";
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { z } from "zod";
 
 export const uploadTrade = async ({ docID, data }: FormSchemaWithRefID) => {
   const tradesCollectionRef = collection(usersCollection, docID, "trades");
+  console.log(docID)
 
   const docRef = await addDoc(tradesCollectionRef, data);
 
   console.log("Trade successfully created", docRef.id);
+};
+
+export const getAllTrades = async ({ docID }: { docID: string }) => {
+  const tradesCollectionRef = collection(usersCollection, docID, "trades");
+
+  const querySnapshot = await getDocs(tradesCollectionRef);
+  return querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...(doc.data() as z.infer<typeof formSchema>),
+    date: new Date(doc.data().date),
+  }));
 };
 
 export const getCurrentUserDoc = async (userID: string) => {
@@ -23,8 +37,8 @@ export const getCurrentUserDoc = async (userID: string) => {
 
   const doc = querySnapshot.docs[0]; // Get the first document
   return {
-    docRefID: doc.id,
-    userID: doc.data().id,
+    docRefID: doc.id as string,
+    userID: doc.data().id as string,
     ...doc.data(),
   };
 };
@@ -52,19 +66,21 @@ export const fetchPnLData = async ({ docID }: { docID: string }) => {
 
 export const fetchRRData = async ({ docID }: { docID: string }) => {
   const tradesCollectionRef = collection(usersCollection, docID, "trades");
-
   const querySnapshot = await getDocs(tradesCollectionRef);
 
   const realizedRRArray = querySnapshot.docs.map(
     (doc) => doc.data().risk_Reward
   );
 
+  const totalTrades = realizedRRArray.length;
   const totalRR = realizedRRArray.reduce((acc, rr) => acc + rr, 0);
 
-  const highestPositiveRR =
-    realizedRRArray.length > 0 ? Math.max(...realizedRRArray) : 0;
+  const positiveTrades = realizedRRArray.filter((rr) => rr > 0).length;
+  const winRate = totalTrades > 0 ? (positiveTrades / totalTrades) * 100 : 0;
 
-  return { totalRR, highestPositiveRR };
+  const highestPositiveRR = Math.max(...realizedRRArray);
+
+  return { totalRR, highestPositiveRR, winRate, totalTrades };
 };
 
 export const totalTrades = async ({ docID }: { docID: string }) => {
@@ -85,7 +101,6 @@ export const tradeCalendar = async ({ docID }: { docID: string }) => {
   return formattedDates;
 };
 
-export const winRate = async ({ docID }: { docID: string }) => {
-  const tradesCollectionRef = collection(usersCollection, docID, "trades");
-  const querySnapshot = await getDocs(tradesCollectionRef);
-};
+export const PnLOnAreaChart = async ({ docID }: { docID: string }) => {
+    
+}

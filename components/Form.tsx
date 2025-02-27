@@ -42,14 +42,11 @@ import {
   CameraIcon,
   ChartCandlestickIcon,
   ChevronsUpDown,
-  Clock12Icon,
   DollarSignIcon,
-  TimerIcon,
   UserIcon,
 } from "lucide-react";
 import Image from "next/image";
 import { Input } from "./ui/input";
-import toast from "react-hot-toast";
 import { uploadTrade } from "@/actions/db/actions";
 
 export enum FormFieldType {
@@ -106,6 +103,7 @@ export default function FormComponent({ docID }: { docID: string }) {
     control,
     handleSubmit,
     watch,
+    reset,
     getValues,
     setValue,
     formState: { errors },
@@ -115,6 +113,7 @@ export default function FormComponent({ docID }: { docID: string }) {
   const [fileURL, setFileURL] = useState<string>("");
 
   const [isUploading, setIsUploading] = useState<boolean>(false);
+
   async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsUploading(true);
 
@@ -122,12 +121,11 @@ export default function FormComponent({ docID }: { docID: string }) {
       data.tradeScreenshot = fileURL;
     }
     // Format date only for API submission
-    const formattedDate = format(new Date(data.date), "yyyy-MM-dd");
-    data.date = new Date(formattedDate);
+    data.date = new Date(data.date);
 
     console.log(data);
 
-    const res = await uploadTrade({ docID, data });
+    await uploadTrade({ docID, data });
 
     // Reset form values
     form.reset({
@@ -150,6 +148,7 @@ export default function FormComponent({ docID }: { docID: string }) {
     });
 
     setFileURL("");
+    reset();
     setIsUploading(false);
   }
   const fileInputRef = useRef<HTMLInputElement | null>(null);

@@ -23,7 +23,7 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "./ui/sidebar";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { NavLinks } from "@/lib/typings";
 import Link from "next/link";
 import { Button } from "./ui/button";
@@ -32,8 +32,7 @@ import { auth } from "@/config/firebase";
 import { getCurrentUserDoc } from "@/actions/db/actions";
 import { cn } from "@/lib/utils";
 const SideBar = () => {
-  const router = useRouter();
-  const [user, setUser] = useState(auth.currentUser);
+  const [user, setUser] = useState(auth.currentUser)
   const [currentID, setCurrentID] = useState<string>("");
 
   useEffect(() => {
@@ -111,6 +110,16 @@ const SideBar = () => {
                     <ExternalLink className="h-10 w-10" />
                     Log Out
                   </Button>
+                </SidebarMenuButton>
+                <SidebarMenuBadge>10</SidebarMenuBadge>
+              </SidebarMenuItem>
+              <SidebarSeparator className="mt-7 " />
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  className="font-bold transition duration-100 ease-in-out text-sm tracking-wider gap-4 py-6 hover:bg-primary hover:text-foreground hover:font-medium"
+                >
+                  {user?.displayName}
                 </SidebarMenuButton>
                 <SidebarMenuBadge>10</SidebarMenuBadge>
               </SidebarMenuItem>

@@ -19,6 +19,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+
 const chartData = [
   { month: "January", desktop: 400, mobile: 430 },
   { month: "February", desktop: 505, mobile: 200 },

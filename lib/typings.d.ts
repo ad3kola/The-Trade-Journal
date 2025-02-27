@@ -1,3 +1,4 @@
+import { formSchema } from "@/config/zod";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
 
 export interface NavLinks {
@@ -44,34 +45,9 @@ export interface CoinsList {
   value: string;
 }
 
-export interface FormSchema {
-  id?: string;
-  date: Date;
-  outcome: string;
-  coinSymbol: string;
-  directionBias: string;
-  timeFrame: string;
-  leverage: string;
-  session: string;
-  entryPrice: number;
-  takeProfitPrice: number;
-  stopLossPrice: number;
-  riskAmount: number;
-  positionSize: number;
-  divergence: boolean;
-  head_Shoulders: boolean;
-  proTrendBias: boolean;
-  trendlineRetest: boolean;
-  fibKeyLevels: boolean;
-  indicatorHighlight: boolean;
-  confidenceLevel: number;
-  tradeScreenshot: string;
-  tradeReview: string;
-}
-
 export interface FormSchemaWithRefID {
   docID: string,
-  data: FormSchema,
+  data: z.infer<typeof formSchema>,
 }
 
 export interface Coin {

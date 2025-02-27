@@ -2,7 +2,7 @@
 
 import { usersCollection } from "@/config/firebase";
 import { UserProps } from "@/lib/typings";
-import { addDoc, doc, getDocs, query, setDoc, where } from "firebase/firestore";
+import { addDoc, getDocs, query, where } from "firebase/firestore";
 
 export const validateUser = async (data: UserProps) => {
     console.log(data)

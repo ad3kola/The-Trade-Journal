@@ -1,6 +1,6 @@
 "use client";
 
-import { Form, FormControl, FormField } from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -11,18 +11,12 @@ import { FormFieldType } from "@/components/Form";
 import { ModeToggle } from "@/components/ModeToggle";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { UserProps } from "@/lib/typings";
-import { Input } from "@/components/ui/input";
-import Image from "next/image";
-import { CameraIcon } from "lucide-react";
-import { ChangeEvent, useRef, useState } from "react";
-import { getImageString } from "@/actions/getmageString";
+import { useState } from "react";
 import {
-  createUser,
   signInUser,
   signUpUser,
 } from "@/actions/user/user.actions";
-import { userInDB, validateUser } from "@/actions/user/db.actions";
+import { validateUser } from "@/actions/user/db.actions";
 
 export default function FormComponent() {
   const router = useRouter();
