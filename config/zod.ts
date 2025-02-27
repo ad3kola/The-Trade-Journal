@@ -8,11 +8,12 @@ import {
 } from "../lib/constants/ind4x";
 
 export const userSchema = z.object({
-  name: z.string().min(2, "Must be more than 2 characters"),
+  name: z.string().min(2, "Must be more than 2 characters").optional().or(z.literal("")),
   email: z.string().email(),
-  phone: z
-    .string()
-    .refine((phone) => /^\+?\d{10,15}$/.test(phone.replace(/\D/g, "")), "Invalid phone number"),
+  // phone: z
+  //   .string()
+  //   .refine((phone) => /^\+?\d{10,15}$/.test(phone.replace(/\D/g, "")), "Invalid phone number"),
+  password: z.string().min(2, "Must be more than 2 characters")
 });
 
 export const formSchema = z.object({

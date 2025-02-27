@@ -29,6 +29,8 @@ import { Select, SelectContent, SelectTrigger, SelectValue } from "./ui/select";
 import { Textarea } from "./ui/textarea";
 import { Switch } from "./ui/switch";
 import { Slider } from "./ui/slider";
+import { ForwardRefExoticComponent, RefAttributes } from "react";
+import { DollarSign, LucideProps } from "lucide-react";
 
 interface CustomProps<T extends FieldValues> {
   control: Control<T>;
@@ -37,6 +39,9 @@ interface CustomProps<T extends FieldValues> {
   label?: string;
   placeholder?: string;
   value?: number;
+  Icon?: ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
+  >;
   disabled?: boolean;
   dateFormat?: string;
   children?: React.ReactNode;
@@ -49,8 +54,15 @@ const RenderField = <T extends FieldValues>({
   field: ControllerRenderProps<T, Path<T>>;
   props: CustomProps<T>;
 }) => {
-  const { fieldType, disabled, placeholder, value, label, renderSkeleton } =
-    props;
+  const {
+    fieldType,
+    disabled,
+    placeholder,
+    value,
+    label,
+    renderSkeleton,
+    Icon,
+  } = props;
   switch (fieldType) {
     case FormFieldType.SLIDER:
       return (
@@ -74,12 +86,15 @@ const RenderField = <T extends FieldValues>({
     case FormFieldType.INPUT:
       return (
         <FormControl>
-          <Input
-            placeholder={placeholder}
-            {...field}
-            disabled={disabled}
-            value={value && field.value}
-          />
+          <div className="flex gap-1 w-full items-center rounded-md border border-input bg-transparent px-4 h-11 text-[13px] placeholder:tracking-wider lg:text-base shadow-sm placeholder:font-medium  transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-foreground/60 focus-visible:outline-none">
+            {Icon && <Icon className="w-4 h-4" />}
+            <Input
+              placeholder={placeholder}
+              {...field}
+              disabled={disabled}
+              value={value && field.value}
+            />
+          </div>
         </FormControl>
       );
     case FormFieldType.PHONE_INPUT:
@@ -106,16 +121,16 @@ const RenderField = <T extends FieldValues>({
                 <Button
                   variant={"outline"}
                   className={cn(
-                    "w-full pl-3 bg-input text-left font-normal text-[13px] border-b border-accent",
+                    "w-full pl=x-4 h-11 text-left font-normal text-[13px] border-none bg-background flex justify-start gap-3", 
                     !field.value && "text-muted-foreground"
                   )}
                 >
+                  <CalendarIcon className="shrink-0 h-10 w-10 opacity-80" />
                   {field.value ? (
                     format(new Date(field.value), "PPPP") // Format the date here, ensuring it's a Date object
                   ) : (
                     <span>Pick a date</span>
                   )}
-                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                 </Button>
               </FormControl>
             </PopoverTrigger>
@@ -143,7 +158,11 @@ const RenderField = <T extends FieldValues>({
           <Select onValueChange={field.onChange} defaultValue={field.value}>
             <FormControl>
               <SelectTrigger>
-                <SelectValue placeholder={placeholder} />
+                <div className="flex items-center w-full 
+                gap-3">
+                  {Icon && <Icon className="w-5 h-5" />}
+                  <SelectValue placeholder={placeholder} />
+                </div>
               </SelectTrigger>
             </FormControl>
             <SelectContent>{props.children}</SelectContent>

@@ -6,70 +6,14 @@ import { Card } from "../ui/card";
 import { cn } from "@/lib/utils";
 import { ChartPieIcon } from "@heroicons/react/24/solid";
 
-// Assuming this function fetches the data from the API
-const fetchTotalPnL = async (id: string) => {
-  try {
-    const response = await fetch(`/api/trade?id=${id}`);
-    if (!response.ok) {
-      throw new Error("Failed to fetch total PnL");
-    }
-    const data = await response.json();
-    return data.totalPnL; // Assuming the API returns { totalPnL: number }
-  } catch (error) {
-    console.error("Error fetching PnL:", error);
-    return 0; // Default to 0 in case of error
-  }
-};
-
-const fetchRRData = async (id: string) => {
-  try {
-    const response = await fetch(`/api/trade?id=${id}`);
-    if (!response.ok) {
-      throw new Error("Failed to fetch total PnL");
-    }
-    const data = await response.json();
-    return data.totalRR; // Assuming the API returns { totalPnL: number }
-  } catch (error) {
-    console.error("Error fetching PnL:", error);
-    return 0; // Default to 0 in case of error
-  }
-};
-
 const WeekSummary = ({ id }: { id: string }) => {
-  const [totalPnL, setTotalPnL] = useState<number | null>(null);
+  const [totalPnL, setTotalPnL] = useState<number>(0);
   const [tradeCount, setTradeCount] = useState<number>(0);
   const [totalRR, setTotalRR] = useState<number>(0);
+  const [highestPnL, setHighestPnL] = useState<number>(0);
   // Fetch the data when the component mounts
-  useEffect(() => {
 
-    const fetchAllTrades = async () => {
-      const res = await fetch(`/api/trade?id=${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await res.json();
-      setTradeCount(data.trades.length);
-    };
-    const fetchPnLData = async () => {
-      const data = await fetchTotalPnL(id);
-      setTotalPnL(data); // Store the fetched data
-    };
-    const fetchTotalRR = async () => {
-      const data = await fetchRRData(id);
-      setTotalRR(data);
-    };
-
-
-    fetchTotalRR();
-    fetchAllTrades();
-    fetchPnLData();
-  }, [id]); 
-  console.log(totalRR)
-
-  if (totalPnL === null) {
-    return <div>Loading...</div>;
-  }
+  console.log(totalRR);
 
   const content = [
     {
@@ -94,7 +38,7 @@ const WeekSummary = ({ id }: { id: string }) => {
       title: "Highest PnL",
       Icon: Percent,
       color: "bg-pink-500",
-      value: 12.8, // Replace with actual highest PnL data
+      value: highestPnL.toFixed(2), // Replace with actual highest PnL data
     },
   ];
 

@@ -37,10 +37,20 @@ import {
 } from "@/lib/constants/ind4x";
 import { getImageString } from "@/actions/getmageString";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { CameraIcon, ChevronsUpDown } from "lucide-react";
+import {
+  AlarmClockIcon,
+  CameraIcon,
+  ChartCandlestickIcon,
+  ChevronsUpDown,
+  Clock12Icon,
+  DollarSignIcon,
+  TimerIcon,
+  UserIcon,
+} from "lucide-react";
 import Image from "next/image";
 import { Input } from "./ui/input";
 import toast from "react-hot-toast";
+import { uploadTrade } from "@/actions/db/actions";
 
 export enum FormFieldType {
   INPUT = "input",
@@ -55,7 +65,7 @@ export enum FormFieldType {
   SLIDER = "slider",
 }
 
-export default function FormComponent() {
+export default function FormComponent({ docID }: { docID: string }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -103,21 +113,22 @@ export default function FormComponent() {
   console.log(errors);
 
   const [fileURL, setFileURL] = useState<string>("");
-  
+
   const [isUploading, setIsUploading] = useState<boolean>(false);
   async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsUploading(true);
-  
-if (fileURL) {
- data.tradeScreenshot = fileURL;
-}   
+
+    if (fileURL) {
+      data.tradeScreenshot = fileURL;
+    }
     // Format date only for API submission
     const formattedDate = format(new Date(data.date), "yyyy-MM-dd");
-    data.date =  new Date(formattedDate)
+    data.date = new Date(formattedDate);
 
-  console.log(data)
+    console.log(data);
 
-  
+    const res = await uploadTrade({ docID, data });
+
     // Reset form values
     form.reset({
       entryPrice: 0,
@@ -137,7 +148,7 @@ if (fileURL) {
       tradeReview: "",
       tradeScreenshot: "",
     });
-  
+
     setFileURL("");
     setIsUploading(false);
   }
@@ -276,6 +287,7 @@ if (fileURL) {
                 control={control}
                 fieldType={FormFieldType.SELECT}
                 name="accountType"
+                Icon={UserIcon}
                 label="Trade Account Type"
                 placeholder="Select session"
               >
@@ -294,6 +306,7 @@ if (fileURL) {
               <CustomFormField
                 control={control}
                 fieldType={FormFieldType.SELECT}
+                Icon={AlarmClockIcon}
                 name="tradeSession"
                 label="Trade Session"
                 placeholder="Select session"
@@ -312,6 +325,7 @@ if (fileURL) {
                 control={control}
                 fieldType={FormFieldType.SELECT}
                 name="timeframe"
+                Icon={AlarmClockIcon}
                 label="Timeframe"
                 placeholder="Select timeframe"
               >
@@ -327,6 +341,7 @@ if (fileURL) {
                 control={control}
                 fieldType={FormFieldType.SELECT}
                 name="tradeType"
+                Icon={ChartCandlestickIcon}
                 label="Trade Type"
                 placeholder="Select bias"
               >
@@ -344,6 +359,7 @@ if (fileURL) {
             <CustomFormField
               control={control}
               fieldType={FormFieldType.INPUT}
+              Icon={DollarSignIcon}
               name="entryPrice"
               label="Entry Price"
               placeholder="0.00"
@@ -352,6 +368,7 @@ if (fileURL) {
               <CustomFormField
                 control={control}
                 fieldType={FormFieldType.INPUT}
+                Icon={DollarSignIcon}
                 name="takeProfit"
                 label="Take Profit"
                 placeholder="0.00"
@@ -359,6 +376,7 @@ if (fileURL) {
               <CustomFormField
                 control={control}
                 fieldType={FormFieldType.INPUT}
+                Icon={DollarSignIcon}
                 name="stopLoss"
                 label="Stop Loss"
                 placeholder="0.00"
@@ -368,6 +386,7 @@ if (fileURL) {
             <CustomFormField
               control={control}
               fieldType={FormFieldType.INPUT}
+              Icon={DollarSignIcon}
               name="riskAmount"
               label="Risk Amount"
               placeholder="0.00"
@@ -376,6 +395,7 @@ if (fileURL) {
               <CustomFormField
                 control={control}
                 fieldType={FormFieldType.INPUT}
+                Icon={DollarSignIcon}
                 name="leverage"
                 label="Leverage Used"
                 placeholder="0.00"
@@ -383,6 +403,7 @@ if (fileURL) {
               <CustomFormField
                 control={control}
                 fieldType={FormFieldType.INPUT}
+                Icon={DollarSignIcon}
                 name="positionSize"
                 label="Quantity | Pos. Size"
                 placeholder="0.00"
@@ -394,6 +415,7 @@ if (fileURL) {
             <CustomFormField
               control={control}
               fieldType={FormFieldType.INPUT}
+              Icon={DollarSignIcon}
               name="realizedPnL"
               disabled={true}
               label="Realized PnL"
@@ -403,6 +425,7 @@ if (fileURL) {
             <CustomFormField
               control={control}
               fieldType={FormFieldType.INPUT}
+              Icon={DollarSignIcon}
               name="risk_Reward"
               disabled={true}
               label="Risk : Reward"
@@ -436,7 +459,7 @@ if (fileURL) {
                         <Label
                           key={status}
                           htmlFor={status} // Links label to radio input
-                          className="flex h-full flex-1 items-center gap-4 w-full rounded-md border-2 border-dashed cursor-pointer border-accent bg-input p-3 whitespace-nowrap"
+                          className="flex h-full flex-1 items-center gap-4 w-full rounded-md border border-dashed cursor-pointer border-accent bg-background p-3 whitespace-nowrap"
                         >
                           <FormControl>
                             <RadioGroupItem value={status} id={status} />
@@ -505,7 +528,7 @@ if (fileURL) {
             <FormField
               name="tradeScreenshot"
               control={control}
-              render={({field}) => (
+              render={({ field }) => (
                 <FormControl>
                   <div className="h-full w-full flex flex-col gap-4">
                     <FormLabel className="pl-2 whitespace-nowrap">

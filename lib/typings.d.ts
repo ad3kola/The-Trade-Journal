@@ -69,6 +69,11 @@ export interface FormSchema {
   tradeReview: string;
 }
 
+export interface FormSchemaWithRefID {
+  docID: string,
+  data: FormSchema,
+}
+
 export interface Coin {
   id: string;
   symbol: string;
@@ -79,7 +84,7 @@ export interface Coin {
 
 export interface UserProps {
   email: string;
-  name: string;
-  phone: string;
+  name?: string;
+  password: string;
   id?: string;
 }

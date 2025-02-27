@@ -10,7 +10,7 @@ export default function TradeCalendar() {
     <Calendar
       mode="multiple"
       selected={selectedDates}
-      onSelect={(dates) => setSelectedDates(dates || [])} // ✅ Handles undefined case
+      onSelect={(dates) => setSelectedDates(dates || [])} 
       className="rounded-md border shadow "
     />
   );

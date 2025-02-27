@@ -30,6 +30,7 @@ export default function RootLayout({
             style: {
               fontSize: "0.85rem",
               borderRadius: "8px",
+              fontWeight: "bold"
             },
           }}
         />
