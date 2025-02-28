@@ -17,25 +17,29 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-const chartData = [{ month: "january", mobile: 68, desktop: 32 }];
 
 const chartConfig = {
   mobile: {
-    label: "Mobile",
-    color: "hsl(var(--primary))",
+    label: "Losses",
+    color: "hsl(var(--chart-3))",
   },
   desktop: {
-    label: "Desktop",
-    color: "hsl(var(--chart-3))",
+    label: "Wins",
+    color: "hsl(var(--primary))",
   },
 } satisfies ChartConfig;
 
-export default function WinRate() {
+export default function WinRate({ winRate }: { winRate: number | null }) {
+  const wins = winRate !== null ? winRate : 0;
+  const losses = 100 - wins;
+
+  const chartData = [{ wins, losses }];
+
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Radial Chart - Stacked</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Win Rate</CardTitle>
+        <CardDescription>Based on all recorded trades</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-1 items-center pb-0">
         <ChartContainer
@@ -63,7 +67,7 @@ export default function WinRate() {
                           y={(viewBox.cy || 0) - 16}
                           className="fill-foreground text-3xl font-bold"
                         >
-                          {chartData[0].desktop.toLocaleString()}%
+                          {wins.toFixed(1)}%
                         </tspan>
                         <tspan
                           x={viewBox.cx}
@@ -79,17 +83,17 @@ export default function WinRate() {
               />
             </PolarRadiusAxis>
             <RadialBar
-              dataKey="desktop"
-              stackId="a"
-              cornerRadius={5}
-              fill="var(--color-desktop)"
-              className="stroke-transparent stroke-2"
-            />
-            <RadialBar
-              dataKey="mobile"
+              dataKey="losses"
               fill="var(--color-mobile)"
               stackId="a"
               cornerRadius={5}
+              className="stroke-transparent stroke-2"
+            />
+            <RadialBar
+              dataKey="wins"
+              stackId="a"
+              cornerRadius={5}
+              fill="var(--color-desktop)"
               className="stroke-transparent stroke-2"
             />
           </RadialBarChart>
@@ -100,7 +104,7 @@ export default function WinRate() {
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
         <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
+          Based on all trades recorded in your journal.
         </div>
       </CardFooter>
     </Card>

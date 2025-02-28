@@ -39,15 +39,10 @@ export interface DailySummaryData {
   trades: number;
   trendlineRetest: true;
 }
-export interface CoinsList {
-  name: string;
-  logo: string;
-  value: string;
-}
 
 export interface FormSchemaWithRefID {
-  docID: string,
-  data: z.infer<typeof formSchema>,
+  docID: string;
+  data: z.infer<typeof formSchema>;
 }
 
 export interface Coin {
@@ -63,4 +58,20 @@ export interface UserProps {
   name?: string;
   password: string;
   id?: string;
+}
+
+export interface Profits {
+  date: string;
+  Profit: number;
+}
+
+
+export interface Losses {
+  date: string;
+  Loss: number;
+}
+
+export interface PnLOverviewCharts {
+profits: Profits[]
+losses: Losses[]
 }

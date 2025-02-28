@@ -7,10 +7,15 @@ import { ModeToggle } from "./ModeToggle";
 import { SidebarTrigger } from "./ui/sidebar";
 import { auth } from "@/config/firebase";
 import { Skeleton } from "./ui/skeleton";
+import { useEffect, useState } from "react";
 
 const Header = () => {
-  const user = auth.currentUser;
-  console.log(user);
+  const [user, setUser] = useState(auth.currentUser);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => setUser(user));
+    return () => unsubscribe(); // Cleanup on unmount
+  }, []);
 
   return (
     <header className="grid grid-cols-2 w-full items-center bg-sidebar justify-between p-4 pb-3 shadow shadow-primary sticky top-0 z-50">

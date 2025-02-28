@@ -1,5 +1,6 @@
 "use client";
 
+import { getAllTrades, getCurrentUserDoc } from "@/actions/db/actions";
 import { columns } from "@/components/OrderHistory/Columns";
 import { DataTable } from "@/components/OrderHistory/DataTable";
 import { formSchema } from "@/config/zod";
@@ -12,20 +13,17 @@ function Page() {
   const [allTrades, setAllTrades] = useState<z.infer<typeof formSchema>[]>([]);
 
   useEffect(() => {
-    const fetchAllTrades = async () => {
-      const res = await fetch(`/api/trade?id=${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await res.json();
-      setAllTrades(data);
+    const fetchTrades = async () => {
+      const docID = await getCurrentUserDoc(id)
+      if (docID) {
+        const res = await getAllTrades(docID.docRefID);
+        setAllTrades(res);
+      } 
     };
-    fetchAllTrades();
+    fetchTrades();
   }, [id]);
+  console.log(allTrades);
 
-  console.log(allTrades)
-  
   return (
     <main className="p-4 flex flex-col w-full gap-3">
       <div className="px-4 mt-5 font-semibold">

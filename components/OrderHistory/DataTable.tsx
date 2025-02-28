@@ -6,6 +6,7 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
@@ -27,6 +28,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
+import { SlidersHorizontalIcon } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -45,6 +47,7 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     state: {
       columnFilters,
@@ -54,19 +57,19 @@ export function DataTable<TData, TValue>({
   return (
     <div className="rounded-none">
       <div className="flex items-center pb-4 gap-3">
-        <Input
-          placeholder="Filter emails..."
-          value={
-            (table.getColumn("coinSymbol")?.getFilterValue() as string) ??
-            ""
-          }
-          onChange={(event) =>
-            table
-              .getColumn("coinSymbol")
-              ?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
+        <div className="max-w-sm flex gap-2 w-full items-center rounded-md border border-input bg-sidebar pl-4 h-10 text-[13px] placeholder:tracking-wider lg:text-base shadow-sm placeholder:font-medium  transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-foreground/60 focus-visible:outline-none">
+          <SlidersHorizontalIcon className="h-4 w-4" />
+          <Input
+            placeholder="Filter emails..."
+            value={
+              (table.getColumn("coinSymbol")?.getFilterValue() as string) ?? ""
+            }
+            onChange={(event) =>
+              table.getColumn("coinSymbol")?.setFilterValue(event.target.value)
+            }
+            className="flex-1 pl-1"
+          />
+        </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="h-auto py-2">
@@ -145,6 +148,24 @@ export function DataTable<TData, TValue>({
           )}
         </TableBody>
       </Table>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 }

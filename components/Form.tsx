@@ -23,13 +23,12 @@ import {
   CommandList,
   CommandItem,
   CommandEmpty,
+  CommandGroup,
 } from "./ui/command";
 import { CheckBadgeIcon } from "@heroicons/react/24/solid";
-import { format } from "date-fns";
 import {
   AccountType,
   calculateTradeMetrics,
-  listOfCoins,
   TradeSession,
   TradeStatus,
   TradeTimeframe,
@@ -48,11 +47,15 @@ import {
 import Image from "next/image";
 import { Input } from "./ui/input";
 import { uploadTrade } from "@/actions/db/actions";
+import { Coin } from "@/lib/typings";
+import fetchAllCoins from "@/actions/fetchAllCoins";
+import { useRouter } from "next/navigation";
 
 export enum FormFieldType {
   INPUT = "input",
   PHONE_INPUT = "phoneInput",
   FILE_INPUT = "fileInput",
+  PASSWORD = "password",
   SELECT = "select",
   TEXTAREA = "textarea",
   DATE_PICKER = "datePicker",
@@ -62,14 +65,23 @@ export enum FormFieldType {
   SLIDER = "slider",
 }
 
-export default function FormComponent({ docID }: { docID: string }) {
+export default function FormComponent({
+  docID,
+  userID,
+}: {
+  docID: string;
+  userID: string;
+}) {
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       coinSymbol: {
-        logo: "",
+        id: "",
+        symbol: "",
         name: "",
-        value: "",
+        image: "",
+        current_price: 0,
       },
       accountType: AccountType.PERSONAL,
       tradeSession: TradeSession.NEW_YORK,
@@ -99,6 +111,7 @@ export default function FormComponent({ docID }: { docID: string }) {
       confidence: [0],
     },
   });
+
   const {
     control,
     handleSubmit,
@@ -149,8 +162,10 @@ export default function FormComponent({ docID }: { docID: string }) {
 
     setFileURL("");
     reset();
+    router.push(`/orders-list/${userID}`);
     setIsUploading(false);
   }
+  console.log(userID);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
@@ -162,22 +177,46 @@ export default function FormComponent({ docID }: { docID: string }) {
       console.log("Error: ", error);
     }
   };
+
+  const [allCoins, setAllCoins] = useState<Coin[]>([]);
+
   useEffect(() => {
-    const entry = getValues("entryPrice");
-    const tp = getValues("takeProfit");
-    const sl = getValues("stopLoss");
-    const risk = getValues("riskAmount");
-    const isLong = getValues("tradeType");
+    const fetchCoins = async () => {
+      try {
+        const res = await fetchAllCoins();
+        setAllCoins(res);
+        console.log(res);
+      } catch (error) {
+        console.error("Failed to fetch coins: ", error);
+      }
+    };
 
-    if (entry && tp && sl && risk) {
-      const result = calculateTradeMetrics(entry, tp, sl, risk, isLong);
+    fetchCoins();
+  }, []);
 
+  useEffect(() => {
+    const entry = Number(getValues("entryPrice"));
+    const tp = Number(getValues("takeProfit"));
+    const sl = Number(getValues("stopLoss"));
+    const risk = Number(getValues("riskAmount"));
+    const tradeStatus = getValues("tradeStatus") as "Win" | "Loss"; // ✅ "Win" or "Loss"
+    const tradeType = getValues("tradeType") as "Buy" | "Sell"; // ✅ "Buy" (Long) or "Sell" (Short)
+
+    if (entry && tp && sl && risk && tradeStatus && tradeType) {
+      const result = calculateTradeMetrics(
+        entry,
+        tp,
+        sl,
+        risk,
+        tradeStatus,
+        tradeType
+      );
       setValue("realizedPnL", parseFloat(result.realizedPnl.toFixed(3)));
       setValue("risk_Reward", parseFloat(result.rrr.toFixed(2)));
     }
 
     if (entry && sl && risk) {
-      const positionSize = risk / Math.abs(entry - sl); // Handles both long & short trades
+      const positionSize = risk / Math.abs(entry - sl); // ✅ Correct for both buy & sell
       setValue("positionSize", parseFloat(positionSize.toFixed(3)));
     }
   }, [
@@ -185,8 +224,11 @@ export default function FormComponent({ docID }: { docID: string }) {
     watch("takeProfit"),
     watch("stopLoss"),
     watch("riskAmount"),
-    watch("tradeType"),
+    watch("tradeStatus"),
+    watch("tradeType"), // ✅ Now watching for Buy/Sell changes
   ]);
+
+  console.log(allCoins);
 
   const PnL = watch("realizedPnL");
   const RR = watch("risk_Reward");
@@ -197,89 +239,98 @@ export default function FormComponent({ docID }: { docID: string }) {
 
   // console.log(RR);
   // form.setValue("risk_Reward", RR);
-
+  console.log(allCoins);
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit(onSubmit)} className="h-full py-5">
         <div className="w-full flex flex-col gap-6 p-2 max-w-6xl mx-auto">
-          <FormField
-            control={control}
-            name="coinSymbol"
-            render={({}) => (
-              <FormItem className="flex flex-col">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant={"outline"}
-                      className="w-[280px] bg-background mx-auto gap-7 h-14 flex items-center"
-                    >
-                      {form.getValues("coinSymbol").value ? (
-                        <div className="flex items-center gap-4">
-                          <Image
-                            src={form.getValues("coinSymbol").logo}
-                            alt="logo"
-                            width={35}
-                            height={35}
-                          />
-                          <div className="flex flex-col items-start -space-y-1">
-                            <span className="uppercase font-bold text-base">
-                              {form.getValues("coinSymbol").value} / USDT
-                            </span>
-                            <span className="text-[9px] text-foreground">
-                              {form.getValues("coinSymbol").name} TetherUS
-                              Perpetual
-                            </span>
-                          </div>
-                        </div>
-                      ) : (
-                        "Select coin"
-                      )}
-                      <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-70" />{" "}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[280px] p-0">
-                    <Command>
-                      <CommandInput placeholder="Search for coin" />
-                      <CommandList>
-                        <CommandEmpty>No coin found</CommandEmpty>
-                        {listOfCoins.map((coin, index) => (
-                          <CommandItem
-                            key={index}
-                            onSelect={() => setValue("coinSymbol", coin)}
-                          >
-                            <div className="w-full flex gap-4 items-center">
-                              <Image
-                                src={coin.logo}
-                                alt="logo"
-                                width={30}
-                                height={30}
-                              />
-                              <div className="flex flex-col -space-y-1">
-                                <span className="uppercase font-bold">
-                                  {coin.value} / USDT
-                                </span>
-                                <span className="text-[10px] text-foreground">
-                                  {coin.name} TetherUS Perpetual
-                                </span>
-                              </div>
-                              <CheckBadgeIcon
-                                className={`ml-auto ${
-                                  coin.value ===
-                                  form.getValues("coinSymbol").value
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                }`}
-                              />
+          {allCoins && (
+            <FormField
+              control={control}
+              name="coinSymbol"
+              render={({}) => (
+                <FormItem className="flex flex-col">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={"outline"}
+                        className="w-[280px] bg-background mx-auto gap-7 h-14 flex items-center"
+                      >
+                        {getValues("coinSymbol")?.symbol ? (
+                          <div className="flex items-center gap-4">
+                            <Image
+                              src={
+                                getValues("coinSymbol")?.image ||
+                                "/default-image.png"
+                              } // Avoid undefined image error
+                              alt="logo"
+                              width={35}
+                              height={35}
+                            />
+                            <div className="flex flex-col items-start -space-y-1">
+                              <span className="uppercase font-bold text-base">
+                                {getValues("coinSymbol")?.symbol}USDT
+                              </span>
+                              <span className="text-[9px] text-foreground">
+                                {getValues("coinSymbol")?.name ||
+                                  "Select a coin"}{" "}
+                                TetherUS Perpetual
+                              </span>
                             </div>
-                          </CommandItem>
-                        ))}
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </FormItem>
-            )}
-          />
+                          </div>
+                        ) : (
+                          "Select coin"
+                        )}
+                        <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-70" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[280px] p-0">
+                      <Command>
+                        <CommandInput placeholder="Search for coin" />
+                        <CommandGroup>
+                          <CommandList>
+                            <CommandEmpty>No coin found</CommandEmpty>
+                            {allCoins.map((coin) => (
+                              <CommandItem
+                                key={coin.id}
+                                onSelect={() => setValue("coinSymbol", coin)}
+                              >
+                                <div className="w-full flex gap-4 items-center px-3 mt-1">
+                                  <Image
+                                    className="rounded-full"
+                                    src={coin.image}
+                                    alt="logo"
+                                    width={35}
+                                    height={35}
+                                  />
+                                  <div className="flex flex-col -space-y-1">
+                                    <span className="uppercase font-bold">
+                                      {coin.symbol} USDT
+                                    </span>
+                                    <span className="text-[10px] whitespace-nowrap text-foreground">
+                                      {coin.name} TetherUS Perpetual
+                                    </span>
+                                  </div>
+                                  <CheckBadgeIcon
+                                    className={`ml-auto ${
+                                      coin.symbol ===
+                                      form.getValues("coinSymbol").symbol
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    }`}
+                                  />
+                                </div>
+                              </CommandItem>
+                            ))}
+                          </CommandList>
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </FormItem>
+              )}
+            />
+          )}
           <div className="grid grid-cols-2 w-full gap-4 lg:grid-cols-4">
             <div className="col-span-2 w-full">
               <CustomFormField

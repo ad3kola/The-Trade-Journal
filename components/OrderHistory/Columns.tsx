@@ -25,23 +25,23 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
     cell: ({ row }) => (
       <div className="w-[215px] flex items-center gap-3 tracking-wide">
         <Image
-          src={row.original.coinSymbol.logo}
+          src={row.original.coinSymbol.image as string} 
           alt="logo"
           width={35}
-          height={35}
+          height={35} className='rounded-full'
         />
         <div className="flex flex-col -space-y-1">
           <span className="uppercase text-left font-bold text-base">
-            {row.original.coinSymbol.value.toUpperCase()} / USDT
+            {row.original.coinSymbol.symbol?.toUpperCase()} / USDT
           </span>
-          <span className="text-[10px] font-medium text-muted-foreground">
+          <span className="max-w-52 text-[10px] font-medium text-muted-foreground truncate whitespace-nowrap">
             {row.original.coinSymbol.name} TetherUS Perpetual
           </span>
         </div>
       </div>
     ),
     filterFn: (row, columnId, filterValue) => {
-      return row.original.coinSymbol.value
+      return row.original.coinSymbol.symbol!
         .toLowerCase()
         .includes(filterValue.toLowerCase());
     },
@@ -51,8 +51,8 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
     enableHiding: false,
     header: "Date",
     cell: ({ row }) => {
-      const formattedDate = format(row.getValue("date"), "PP");
-      return formattedDate;
+      const date = new Date(row.getValue("date")); 
+      return format(date, "PP");
     },
   },
   {
@@ -100,9 +100,7 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
           className={`px-2 py-0.5 text-center rounded-md text-[12px] font-semibold w-fit mx-auto text-foreground tracking-wider ${
             status.toLowerCase() == "win"
               ? "bg-green-500"
-              : status.toLowerCase() == "loss"
-              ? "bg-red-600"
-              : "bg-accent"
+              : "bg-red-600"
           }`}
         >
           {status}

@@ -17,6 +17,9 @@ import {
   signUpUser,
 } from "@/actions/user/user.actions";
 import { validateUser } from "@/actions/user/db.actions";
+import { EyeOffIcon, UserIcon } from "lucide-react";
+import PasswordStrengthBar from "react-password-strength-bar";
+
 
 export default function FormComponent() {
   const router = useRouter();
@@ -31,6 +34,7 @@ export default function FormComponent() {
   });
 
   const {
+    watch,
     formState: { errors },
   } = form;
   console.log(errors);
@@ -71,6 +75,9 @@ export default function FormComponent() {
       toast.error("Something went wrong. Please try again.");
     }
   };
+
+  const [password, setPassword] = useState("");
+
   
   return (
     <div className="w-full h-screen flex flex-col gap-5 items-center justify-center overflow-hidden bg-background p-5">
@@ -118,6 +125,7 @@ export default function FormComponent() {
                     name="name"
                     label="Full Name"
                     placeholder="John Doe"
+                    Icon={UserIcon}
                   />
                 )}
                 <CustomFormField
@@ -125,16 +133,19 @@ export default function FormComponent() {
                   fieldType={FormFieldType.INPUT}
                   name="email"
                   label="Email Address"
+                  Icon={UserIcon}
                   placeholder="m@example.com"
-                />
+                  />
                 <CustomFormField
                   control={form.control}
-                  fieldType={FormFieldType.INPUT}
+                  fieldType={FormFieldType.PASSWORD}
+                  
                   name="password"
                   label="Password"
+                  Icon={EyeOffIcon}
                   placeholder="JDoe_123"
                 />
-                {/* <CustomFormField
+      {/* <CustomFormField
                 control={form.control}
                 fieldType={FormFieldType.PHONE_INPUT}
                 name="phone"
