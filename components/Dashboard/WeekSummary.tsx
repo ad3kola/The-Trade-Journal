@@ -22,8 +22,8 @@ const AnimatedNumber = ({
       targets: { val: 0 },
       val: value,
       easing: "easeOutExpo",
-      duration: 3000,
-      round: isInteger ? 0 : 2,
+      duration: 2250,
+      round: 100,
       update: (anim) => {
         setDisplayValue(Number(anim.animations[0].currentValue)); // Ensure it's a number
       },

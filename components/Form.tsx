@@ -72,6 +72,20 @@ export default function FormComponent({
   docID: string;
   userID: string;
 }) {
+  const [selectedCoin, setSelectedCoin] = useState<Coin | null>(null)
+  useEffect(() => {
+    const fetchCoins = async () => {
+      try {
+        const res = await fetchAllCoins();
+        setAllCoins(res);
+        console.log(res);
+      } catch (error) {
+        console.error("Failed to fetch coins: ", error);
+      }
+    };
+
+    fetchCoins();
+  }, []);
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -87,7 +101,7 @@ export default function FormComponent({
       tradeSession: TradeSession.NEW_YORK,
       timeframe: TradeTimeframe.M3,
       tradeType: TradeType.BUY,
-      entryPrice: 0,
+      entryPrice: selectedCoin ? selectedCoin.current_price : 0,
       takeProfit: 0,
       stopLoss: 0,
       riskAmount: 0,
@@ -179,20 +193,6 @@ export default function FormComponent({
   };
 
   const [allCoins, setAllCoins] = useState<Coin[]>([]);
-
-  useEffect(() => {
-    const fetchCoins = async () => {
-      try {
-        const res = await fetchAllCoins();
-        setAllCoins(res);
-        console.log(res);
-      } catch (error) {
-        console.error("Failed to fetch coins: ", error);
-      }
-    };
-
-    fetchCoins();
-  }, []);
 
   useEffect(() => {
     const entry = Number(getValues("entryPrice"));
@@ -293,7 +293,10 @@ export default function FormComponent({
                             {allCoins.map((coin) => (
                               <CommandItem
                                 key={coin.id}
-                                onSelect={() => setValue("coinSymbol", coin)}
+                                onSelect={() => {
+                                  setValue("coinSymbol", coin);
+                                  setSelectedCoin(coin);
+                                }}
                               >
                                 <div className="w-full flex gap-4 items-center px-3 mt-1">
                                   <Image
@@ -412,7 +415,7 @@ export default function FormComponent({
               Icon={DollarSignIcon}
               name="entryPrice"
               label="Entry Price"
-              placeholder="0.00"
+              placeholder={selectedCoin ? selectedCoin.current_price.toString() : '0.00'}
             />
             <div className="grid w-full gap-4 grid-cols-2">
               <CustomFormField

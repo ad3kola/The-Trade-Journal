@@ -98,12 +98,16 @@ export const fetchRRData = async (docID: string) => {
   const tradesCollectionRef = collection(usersCollection, docID, "trades");
   const querySnapshot = await getDocs(tradesCollectionRef);
 
-  const realizedRRArray = querySnapshot.docs.map(
-    (doc) => doc.data().risk_Reward
-  );
+  const realizedRRArray = querySnapshot.docs.map((doc) => {
+    const data = doc.data();
+    return data.tradeStatus == "Loss" ? -1 : data.risk_Reward;
+  });
+  console.log(realizedRRArray)
 
   const totalTrades = realizedRRArray.length;
   const totalRR = realizedRRArray.reduce((acc, rr) => acc + rr, 0);
+
+  console.log("Total RR: ",totalRR)
   const highestPositiveRR =
     realizedRRArray.length > 0 ? Math.max(...realizedRRArray) : 0;
 

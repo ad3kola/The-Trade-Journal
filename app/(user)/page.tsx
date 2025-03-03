@@ -12,14 +12,9 @@ import { ModeToggle } from "@/components/ModeToggle";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import {
-  signInUser,
-  signUpUser,
-} from "@/actions/user/user.actions";
+import { signInUser, signUpUser } from "@/actions/user/user.actions";
 import { validateUser } from "@/actions/user/db.actions";
 import { EyeOffIcon, UserIcon } from "lucide-react";
-import PasswordStrengthBar from "react-password-strength-bar";
-
 
 export default function FormComponent() {
   const router = useRouter();
@@ -34,7 +29,6 @@ export default function FormComponent() {
   });
 
   const {
-    watch,
     formState: { errors },
   } = form;
   console.log(errors);
@@ -46,28 +40,30 @@ export default function FormComponent() {
     try {
       let userID: string | undefined = undefined;
       let response;
-  
+
       if (currentState == "sign-in") {
         response = await signInUser(data);
       } else if (currentState == "sign-up") {
         response = await signUpUser(data);
       }
-  
+
       if (response?.error) {
         toast.error(response.error); // Show error toast if authentication fails
         return;
       }
-  
+
       userID = response?.uid; // Get the user ID
-  
+
       if (userID) {
         const { name, email, password } = data;
         await validateUser({ id: userID, name, email, password });
-  
+
         toast.success(
-          currentState === "sign-in" ? "Signed in successfully!" : "Account created!"
+          currentState === "sign-in"
+            ? "Signed in successfully!"
+            : "Account created!"
         );
-  
+
         router.push(`/overview/${userID}`);
       }
     } catch (error) {
@@ -76,15 +72,12 @@ export default function FormComponent() {
     }
   };
 
-  const [password, setPassword] = useState("");
-
-  
   return (
     <div className="w-full h-screen flex flex-col gap-5 items-center justify-center overflow-hidden bg-background p-5">
       <ModeToggle />
       <Form {...form}>
-        <div className="flex flex-col w-full max-w-md max-h-max bg-sidebar rounded-md shadow border border-input mx-auto py-3">
-          <div className="mx-auto grid grid-cols-2 max-w-52 border border-input rounded-full p-1 space-x-0.5">
+        <div className="flex flex-col w-full max-w-md max-h-max bg-sidebar rounded-md shadow border border-input mx-auto relative">
+          <div className="mx-auto grid grid-cols-2 max-w-52 border border-input rounded-full p-1 space-x-0.5 mt-3">
             <Button
               variant={currentState == "sign-in" ? "default" : "ghost"}
               className="rounded-full text-[12px] h-7"
@@ -102,7 +95,7 @@ export default function FormComponent() {
           </div>
           <form
             onSubmit={form.handleSubmit(handleSignUpOrSignIn)}
-            className="flex flex-col w-full mx-auto"
+            className="flex flex-col w-full py-3 mx-auto z-50"
           >
             <div className="w-full flex flex-col p-6 gap-8 font-semibold ">
               <div className="flex flex-col w-full gap-2">
@@ -135,17 +128,16 @@ export default function FormComponent() {
                   label="Email Address"
                   Icon={UserIcon}
                   placeholder="m@example.com"
-                  />
+                />
                 <CustomFormField
                   control={form.control}
                   fieldType={FormFieldType.PASSWORD}
-                  
                   name="password"
                   label="Password"
                   Icon={EyeOffIcon}
                   placeholder="JDoe_123"
                 />
-      {/* <CustomFormField
+                {/* <CustomFormField
                 control={form.control}
                 fieldType={FormFieldType.PHONE_INPUT}
                 name="phone"

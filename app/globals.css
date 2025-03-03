@@ -148,4 +148,7 @@ body {
   .custom-phone-input input {
     @apply flex w-full rounded-md bg-transparent pl-4 h-11 text-[13px] placeholder:tracking-wider lg:text-base shadow-sm placeholder:font-medium  transition-colors placeholder:text-foreground/60 focus-visible:outline-none md:text-sm
   }
+  .skeleton-card {
+    @apply p-5 flex flex-col items-center gap-4 border border-input text-card-foreground shadow rounded-2xl w-full
+  }
 }
