@@ -36,9 +36,9 @@ export default function RootLayout({
           />
           <ThemeProvider attribute="class" defaultTheme="system">
             <SidebarProvider>
-              <div className="flex h-screen w-full">
+              <div className="flex h-screen w-full mt-5">
                 <SideBar />
-                <main className="flex-1 overflow-y-auto pb-10 relative ">
+                <main className="flex-1 overflow-y-auto pb-10 relative">
                   <Header />
                   {children}
                 </main>

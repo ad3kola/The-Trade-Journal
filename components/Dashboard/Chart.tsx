@@ -85,13 +85,13 @@ export default function GradientChart({
             <SelectItem value="losses" className="rounded-lg">
               Losses
             </SelectItem>
-          </SelectContent>
+          </SelectContent>  
         </Select>
       </CardHeader>
       <CardContent className="px-2 pt-4">
         <ChartContainer
           config={chartConfig}
-          className="aspect-auto h-[250px] w-full"
+          className="aspect-auto h-[300px] lg:h-[400px] w-full"
         >
           <AreaChart data={filteredData}>
             <defs>

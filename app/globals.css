@@ -67,7 +67,7 @@ body {
     --chart-3: 243 76% 95%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-    --sidebar-background:  269 94% 6%;
+    --sidebar-background: 269 94% 6%;
     --sidebar-foreground: 243 76% 95%;
     --sidebar-primary: 224.3 76.3% 48%;
     --sidebar-primary-foreground: 243 76% 95%;
@@ -91,7 +91,8 @@ body {
 
 /* Move only to the right */
 @keyframes moveRight {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateX(0);
   }
   50% {
@@ -101,7 +102,8 @@ body {
 
 /* Move only to the left */
 @keyframes moveLeft {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateX(0);
   }
   50% {
@@ -111,7 +113,8 @@ body {
 
 /* Move both ways: left and right */
 @keyframes moveLeftRight {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateX(0);
   }
   25% {
@@ -135,7 +138,8 @@ body {
 }
 
 .animate-left-right {
-  animation: moveLeftRight 1.5s ease-in-out infinite, pulse 2s ease-in-out infinite;
+  animation: moveLeftRight 1.5s ease-in-out infinite,
+    pulse 2s ease-in-out infinite;
 }
 
 @layer utilities {
@@ -146,9 +150,9 @@ body {
 
 @layer components {
   .custom-phone-input input {
-    @apply flex w-full rounded-md bg-transparent pl-4 h-11 text-[13px] placeholder:tracking-wider lg:text-base shadow-sm placeholder:font-medium  transition-colors placeholder:text-foreground/60 focus-visible:outline-none md:text-sm
+    @apply flex w-full rounded-md bg-transparent pl-4 h-11 text-[13px] placeholder:tracking-wider lg:text-base shadow-sm placeholder:font-medium  transition-colors placeholder:text-foreground/60 focus-visible:outline-none md:text-sm;
   }
   .skeleton-card {
-    @apply p-5 flex flex-col items-center gap-4 border border-input text-card-foreground shadow rounded-2xl w-full
+    @apply p-5 flex flex-col items-center gap-4 border border-input text-card-foreground shadow w-full;
   }
 }

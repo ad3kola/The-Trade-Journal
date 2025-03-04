@@ -18,7 +18,7 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="grid grid-cols-2 w-full items-center bg-sidebar justify-between p-4 pb-3 shadow shadow-primary sticky top-0 z-50">
+    <header suppressHydrationWarning className="grid grid-cols-2 w-full items-center bg-sidebar justify-between p-4 pb-3 shadow shadow-primary sticky top-0 z-50">
       {user ? (
         <div className="flex items-center h-full gap-3 shrink-0">
           <div className="relative ">

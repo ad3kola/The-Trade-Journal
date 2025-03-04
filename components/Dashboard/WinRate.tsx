@@ -21,7 +21,7 @@ import {
 const chartConfig = {
   mobile: {
     label: "Losses",
-    color: "hsl(var(--chart-3))",
+    color: "hsl(var(--input))",
   },
   desktop: {
     label: "Wins",

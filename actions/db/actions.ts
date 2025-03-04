@@ -4,14 +4,7 @@ import { usersCollection } from "@/config/firebase";
 import { formSchema } from "@/config/zod";
 import { FormSchemaWithRefID } from "@/lib/typings";
 import { format } from "date-fns";
-
-import {
-  addDoc,
-  collection,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { z } from "zod";
 
 export const uploadTrade = async ({ docID, data }: FormSchemaWithRefID) => {
@@ -102,12 +95,10 @@ export const fetchRRData = async (docID: string) => {
     const data = doc.data();
     return data.tradeStatus == "Loss" ? -1 : data.risk_Reward;
   });
-  console.log(realizedRRArray)
 
   const totalTrades = realizedRRArray.length;
   const totalRR = realizedRRArray.reduce((acc, rr) => acc + rr, 0);
 
-  console.log("Total RR: ",totalRR)
   const highestPositiveRR =
     realizedRRArray.length > 0 ? Math.max(...realizedRRArray) : 0;
 
@@ -139,11 +130,17 @@ export async function fetchTradeDataForLast7Trades(docID: string) {
   const trades = await getAllTrades(docID);
 
   // Sort trades by date (oldest first)
-  trades.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  trades.sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
 
   // Separate wins and losses
-  const winTrades = trades.filter((trade) => trade.tradeStatus.toLowerCase() === "win");
-  const lossTrades = trades.filter((trade) => trade.tradeStatus.toLowerCase() === "loss");
+  const winTrades = trades.filter(
+    (trade) => trade.tradeStatus.toLowerCase() === "win"
+  );
+  const lossTrades = trades.filter(
+    (trade) => trade.tradeStatus.toLowerCase() === "loss"
+  );
 
   // Aggregate last 7 winning trades
   const profits = winTrades
@@ -166,8 +163,14 @@ export async function fetchTradeDataForLast7Trades(docID: string) {
     }, {} as Record<string, number>);
 
   // Convert to array format for charts
-  const profitsArray = Object.entries(profits).map(([date, Profit]) => ({ date, Profit }));
-  const lossesArray = Object.entries(losses).map(([date, Loss]) => ({ date, Loss }));
+  const profitsArray = Object.entries(profits).map(([date, Profit]) => ({
+    date,
+    Profit,
+  }));
+  const lossesArray = Object.entries(losses).map(([date, Loss]) => ({
+    date,
+    Loss,
+  }));
 
   console.log({ profits: profitsArray, losses: lossesArray });
   return { profits: profitsArray, losses: lossesArray };
