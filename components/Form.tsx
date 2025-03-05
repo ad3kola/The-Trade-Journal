@@ -199,8 +199,8 @@ export default function FormComponent({
     const tp = Number(getValues("takeProfit"));
     const sl = Number(getValues("stopLoss"));
     const risk = Number(getValues("riskAmount"));
-    const tradeStatus = getValues("tradeStatus") as "Win" | "Loss"; // ✅ "Win" or "Loss"
-    const tradeType = getValues("tradeType") as "Buy" | "Sell"; // ✅ "Buy" (Long) or "Sell" (Short)
+    const tradeStatus = getValues("tradeStatus") as "Win" | "Loss"; 
+    const tradeType = getValues("tradeType") as "Buy" | "Sell"; 
 
     if (entry && tp && sl && risk && tradeStatus && tradeType) {
       const result = calculateTradeMetrics(

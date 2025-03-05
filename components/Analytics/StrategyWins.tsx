@@ -30,12 +30,14 @@ import { fetchStrategyWins, fetchUserMetrics } from "@/actions/db/actions"; // E
 // Function to format metric names
 function formatMetric(metric: string) {
   return metric
-    .replace(/_/g, ' ') // Replace underscores with spaces
+    .replace(/_/g, " ") // Replace underscores with spaces
     .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize the first letter of each word
 }
 
 export default function StrategyWins({ docID }: { docID: string | null }) {
-  const [chartData, setChartData] = useState<{ metric: string; wins: number }[]>([]);
+  const [chartData, setChartData] = useState<
+    { metric: string; wins: number }[]
+  >([]);
 
   useEffect(() => {
     const loadMetricsAndWins = async () => {
@@ -58,7 +60,7 @@ export default function StrategyWins({ docID }: { docID: string | null }) {
   const chartConfig: ChartConfig = chartData.reduce((acc, { metric }) => {
     acc[metric] = {
       label: metric,
-      color: `hsl(var(--primary))`, 
+      color: `hsl(var(--primary))`,
     };
     return acc;
   }, {} as ChartConfig);
@@ -70,7 +72,7 @@ export default function StrategyWins({ docID }: { docID: string | null }) {
         <CardDescription>Performance per strategy metric</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer className='aspect-auto h-[250px]' config={chartConfig}>
+        <ChartContainer className="aspect-auto h-[250px]" config={chartConfig}>
           <BarChart
             accessibilityLayer
             data={chartData}

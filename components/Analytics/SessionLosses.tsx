@@ -46,7 +46,7 @@ export default function SessionLosses({ docID }: { docID: string | null }) {
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
         <CardTitle>Losses</CardTitle>
-        <CardDescription>January - June 2024 - {docID} </CardDescription>
+      <CardDescription>January - June 2024 - {docID} </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer

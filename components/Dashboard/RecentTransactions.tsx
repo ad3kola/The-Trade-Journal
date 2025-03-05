@@ -7,6 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formSchema } from "@/config/zod";
+import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import Image from "next/image";
 import { z } from "zod";
@@ -43,14 +44,15 @@ export default function RecentTransactions({
         <TableBody>
           {allTrades &&
             allTrades.length > 0 &&
-            allTrades.slice(0,5).map((trade, indx) => (
+            allTrades.slice(0, 5).map((trade, indx) => (
               <TableRow key={indx} className="hover:bg-input">
                 {/* Coin Symbol */}
                 <TableCell className="w-[230px] flex items-center gap-3 whitespace-nowrap">
                   <Image
                     src={trade.coinSymbol.image as string}
                     alt="logo"
-                    width={35} className="rounded-full"
+                    width={35}
+                    className="rounded-full"
                     height={35}
                   />
                   <div className="flex flex-col">
@@ -75,21 +77,26 @@ export default function RecentTransactions({
                     className={`px-2 py-1 rounded-md text-[11px] font-medium w-fit tracking-wide text-foreground ${
                       trade.tradeStatus.toLowerCase() === "win"
                         ? "bg-green-500"
-                        :  "bg-red-500"
+                        : "bg-red-500"
                     }`}
                   >
                     {trade.tradeStatus}
                   </span>
                 </TableCell>
 
-                {/* Amount */}
+                {/* Realized PnL */}
                 <TableCell className="text-right whitespace-nowrap">
-                  <div className="flex flex-col items-end -space-y-1">
+                  <div
+                    className={cn(
+                      "flex flex-col items-end -space-y-1",
+                      trade.realizedPnL > 0 ? "text-green-500" : "text-red-500"
+                    )}
+                  >
                     <span className="font-bold text-base tracking-wide">
-                      {trade.realizedPnL.toFixed(2)} USD
+                      {trade.realizedPnL.toFixed()} USD
                     </span>
                     <span className="text-[11px] font-medium text-muted-foreground">
-                       {trade.realizedPnL.toFixed(2)} CAD
+                      {trade.realizedPnL.toFixed(2)} CAD
                     </span>
                   </div>
                 </TableCell>

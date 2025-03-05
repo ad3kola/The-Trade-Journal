@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Label, Pie, PieChart, Sector } from "recharts"
-import { PieSectorDataItem } from "recharts/types/polar/Pie"
+import { useEffect, useMemo, useState } from "react";
+import { Cell, Label, Pie, PieChart, Sector } from "recharts";
+import { PieSectorDataItem } from "recharts/types/polar/Pie";
 
 import {
   Card,
@@ -10,132 +10,113 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartStyle,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-const desktopData = [
-  { month: "january", desktop: 186, fill: "var(--color-january)" },
-  { month: "february", desktop: 305, fill: "var(--color-february)" },
-  { month: "march", desktop: 237, fill: "var(--color-march)" },
-  { month: "april", desktop: 173, fill: "var(--color-april)" },
-  { month: "may", desktop: 209, fill: "var(--color-may)" },
-]
+} from "@/components/ui/select";
+import { fetchMostTradedCoins } from "@/actions/db/actions";
 
-const chartConfig = {
-  visitors: {
-    label: "Visitors",
-  },
-  desktop: {
-    label: "Desktop",
-  },
-  mobile: {
-    label: "Mobile",
-  },
-  january: {
-    label: "January",
-    color: "hsl(var(--primary))",
-  },
-  february: {
-    label: "February",
-    color: "hsl(262 85% 47% / 70%)",
-  },
-  march: {
-    label: "March",
-    color: "hsl(262 85% 47% / 50%)",
-  },
-  april: {
-    label: "April",
-    color: "hsl(262 85% 47% / 30%)",
-  },
-  may: {
-    label: "May",
-    color: "hsl(262 85% 47% / 1 0%)",
-  },
-} satisfies ChartConfig
+interface CoinData {
+  id: number;
+  name: string;
+  count: number;
+  fill: string;
+}
 
-export default function MostTradedCoins() {
-  const id = "pie-interactive"
-  const [activeMonth, setActiveMonth] = React.useState(desktopData[0].month)
+export default function MostTradedCoins({ docID }: { docID: string | null }) {
+  const [coins, setCoins] = useState<CoinData[]>([]);
+  const [selectedName, setSelectedName] = useState<string | undefined>();
 
-  const activeIndex = React.useMemo(
-    () => desktopData.findIndex((item) => item.month === activeMonth),
-    [activeMonth]
-  )
-  const months = React.useMemo(() => desktopData.map((item) => item.month), [])
+  useEffect(() => {
+    if (docID) {
+      const fetchData = async () => {
+        const data = await fetchMostTradedCoins(docID);
+        setCoins(data);
+        if (data.length > 0) setSelectedName(data[0].name);
+      };
+      fetchData();
+    }
+  }, [docID]);
+
+  const activeIndex = useMemo(
+    () => coins.findIndex((coin) => coin.name === selectedName),
+    [selectedName, coins]
+  );
+  // Generate chartConfig dynamically based on coin data
+  const chartConfig: ChartConfig = useMemo(() => {
+    return coins.reduce((acc, coin, index) => {
+      acc[coin.name] = {
+        label: coin.name,
+        color: `hsl(${(index * 60 + 270) % 360}, 70%, 50%)`, // Generate distinct purplish colors
+      };
+      return acc;
+    }, {} as ChartConfig);
+  }, [coins]);
+
+  console.log(coins);
 
   return (
-    <Card data-chart={id} className="flex flex-col">
-      <ChartStyle id={id} config={chartConfig} />
+    <Card className="flex flex-col">
+      <ChartStyle id="pie-interactive" config={chartConfig} />
       <CardHeader className="flex-row items-start space-y-0 pb-0">
         <div className="grid gap-1">
-          <CardTitle>Most Traded Coins</CardTitle>
-          <CardDescription>January - June 2024</CardDescription>
+          <CardTitle className="text-lg">Most Traded Coins by Volume</CardTitle>
+          <div className="grid grid-cols-1 md:grid-cols-3 items-start gap-2">
+            <CardDescription className="md:col-span-2">
+              An Interactive pie chart showing the distribution of your most
+              traded coins by volume. Use the dropdown to explore.
+            </CardDescription>
+            <div className="md:col-span-2">
+              <Select value={selectedName} onValueChange={setSelectedName}>
+                <SelectTrigger className="h-11 w-[180px] rounded-lg pl-3.5">
+                  <SelectValue placeholder="Select a coin" />
+                </SelectTrigger>
+                <SelectContent align="end" className="rounded-xl">
+                  {coins.map((coin) => (
+                    <SelectItem
+                      key={coin.name}
+                      value={coin.name}
+                      className="rounded-lg"
+                    >
+                      <div className="flex items-center gap-2 text-sm">
+                        <span
+                          className="flex h-4 w-4 shrink-0 rounded-sm"
+                          style={{
+                            backgroundColor: chartConfig[coin.name]?.color,
+                          }}
+                        />
+                        {coin.name}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </div>
-        <Select value={activeMonth} onValueChange={setActiveMonth}>
-          <SelectTrigger
-            className="ml-auto h-7 w-[130px] rounded-lg pl-2.5"
-            aria-label="Select a value"
-          >
-            <SelectValue placeholder="Select month" />
-          </SelectTrigger>
-          <SelectContent align="end" className="rounded-xl">
-            {months.map((key) => {
-              const config = chartConfig[key as keyof typeof chartConfig]
-
-              if (!config) {
-                return null
-              }
-
-              return (
-                <SelectItem
-                  key={key}
-                  value={key}
-                  className="rounded-lg [&_span]:flex"
-                >
-                  <div className="flex items-center gap-2 text-xs">
-                    <span
-                      className="flex h-3 w-3 shrink-0 rounded-sm"
-                      style={{
-                        backgroundColor: `var(--color-${key})`,
-                      }}
-                    />
-                    {config?.label}
-                  </div>
-                </SelectItem>
-              )
-            })}
-          </SelectContent>
-        </Select>
       </CardHeader>
-      <CardContent className="flex flex-1 justify-center pb-0">
+      <CardContent className="flex flex-1 justify-center pb-4">
         <ChartContainer
-          id={id}
-          config={chartConfig}
           className="mx-auto aspect-square w-full max-w-[300px]"
+          config={chartConfig}
         >
           <PieChart>
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
             <Pie
-              data={desktopData}
-              dataKey="desktop"
-              nameKey="month"
+              data={coins}
+              dataKey="count"
+              nameKey="name"
               innerRadius={60}
               strokeWidth={5}
+              fill="red"
               activeIndex={activeIndex}
               activeShape={({
                 outerRadius = 0,
@@ -151,39 +132,40 @@ export default function MostTradedCoins() {
                 </g>
               )}
             >
+              {coins.map((coin) => (
+                <Cell key={coin.name} fill={chartConfig[coin.name]?.color} />
+              ))}
               <Label
-                content={({ viewBox }) => {
-                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                    return (
-                      <text
+                content={({ viewBox }) =>
+                  viewBox && "cx" in viewBox && "cy" in viewBox ? (
+                    <text
+                      x={viewBox.cx}
+                      y={viewBox.cy}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                    >
+                      <tspan
                         x={viewBox.cx}
                         y={viewBox.cy}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
+                        className="fill-foreground text-3xl font-bold"
                       >
-                        <tspan
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          className="fill-foreground text-3xl font-bold"
-                        >
-                          {desktopData[activeIndex].desktop.toLocaleString()}
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 24}
-                          className="fill-muted-foreground"
-                        >
-                          Visitors
-                        </tspan>
-                      </text>
-                    )
-                  }
-                }}
+                        {coins[activeIndex]?.count?.toLocaleString() || "0"}
+                      </tspan>
+                      <tspan
+                        x={viewBox.cx}
+                        y={(viewBox.cy || 0) + 24}
+                        className="fill-muted-foreground"
+                      >
+                        Trades
+                      </tspan>
+                    </text>
+                  ) : null
+                }
               />
             </Pie>
           </PieChart>
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }

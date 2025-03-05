@@ -6,6 +6,7 @@ import { Button } from "../ui/button";
 import { z } from "zod";
 import { format } from "date-fns";
 import { formSchema } from "@/config/zod";
+import { cn } from "@/lib/utils";
 
 const StatusCell = ({ value }: { value: boolean }) => (
   <div
@@ -25,10 +26,11 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
     cell: ({ row }) => (
       <div className="w-[215px] flex items-center gap-3 tracking-wide">
         <Image
-          src={row.original.coinSymbol.image as string} 
+          src={row.original.coinSymbol.image as string}
           alt="logo"
           width={35}
-          height={35} className='rounded-full'
+          height={35}
+          className="rounded-full"
         />
         <div className="flex flex-col -space-y-1">
           <span className="uppercase text-left font-bold text-base">
@@ -41,8 +43,8 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
       </div>
     ),
     filterFn: (row, columnId, filterValue) => {
-      return row.original.coinSymbol.symbol!
-        .toLowerCase()
+      return row.original.coinSymbol
+        .symbol!.toLowerCase()
         .includes(filterValue.toLowerCase());
     },
   },
@@ -51,7 +53,7 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
     enableHiding: false,
     header: "Date",
     cell: ({ row }) => {
-      const date = new Date(row.getValue("date")); 
+      const date = new Date(row.getValue("date"));
       return format(date, "PP");
     },
   },
@@ -98,9 +100,7 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
       return (
         <div
           className={`px-2 py-0.5 text-center rounded-md text-[12px] font-semibold w-fit mx-auto text-foreground tracking-wider ${
-            status.toLowerCase() == "win"
-              ? "bg-green-500"
-              : "bg-red-600"
+            status.toLowerCase() == "win" ? "bg-green-500" : "bg-red-600"
           }`}
         >
           {status}
@@ -124,9 +124,17 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
     enableHiding: false,
     header: () => <div className="">Realized PnL</div>,
     cell: ({ row }) => {
-      const formatted = Number(row.getValue("realizedPnL")).toFixed(1);
+      const value = Number(row.getValue("realizedPnL"));
+      const formatted = value.toFixed();
       return (
-        <div className="tracking-wider font-semibold">${formatted}USD</div>
+        <div
+          className={cn(
+            "tracking-wider font-semibold",
+            value > 0 ? "text-green-500" : "text-red-500"
+          )}
+        >
+          ${formatted}USD
+        </div>
       );
     },
   },
@@ -205,7 +213,7 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
     cell: ({ row }) => {
       const strategy = row.original.strategy;
       if (!strategy) return null;
-      return <StatusCell value={strategy.head_Shoulders} />;
+      return <StatusCell value={strategy.head_and_Shoulders} />;
     },
   },
   {
@@ -223,7 +231,7 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
     cell: ({ row }) => {
       const strategy = row.original.strategy;
       if (!strategy) return null;
-      return <StatusCell value={strategy.fibKeyLevels} />;
+      return <StatusCell value={strategy.fib_Key_Levels} />;
     },
   },
   {
@@ -232,7 +240,7 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
     cell: ({ row }) => {
       const strategy = row.original.strategy;
       if (!strategy) return null;
-      return <StatusCell value={strategy.proTrendBias} />;
+      return <StatusCell value={strategy.pro_Trend_Bias} />;
     },
   },
   {
@@ -241,7 +249,7 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
     cell: ({ row }) => {
       const strategy = row.original.strategy;
       if (!strategy) return null;
-      return <StatusCell value={strategy.trendlineRetest} />;
+      return <StatusCell value={strategy.trendline_Retest} />;
     },
   },
 ];
