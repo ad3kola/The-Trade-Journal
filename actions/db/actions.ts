@@ -175,3 +175,42 @@ export async function fetchTradeDataForLast7Trades(docID: string) {
   console.log({ profits: profitsArray, losses: lossesArray });
   return { profits: profitsArray, losses: lossesArray };
 }
+
+export async function fetchUserMetrics() {
+  const querySnapshot = await getDocs(usersCollection); // Fix: Should use tradesCollectionRef
+
+  // Flatten and get unique metrics
+  const metrics = querySnapshot.docs
+    .flatMap((doc) => doc.data().strategy) // Flatten arrays
+    .filter(Boolean); // Remove null/undefined values
+
+  const uniqueMetrics = [...new Set(metrics)]; // Ensure uniqueness
+  console.log(uniqueMetrics);
+  return uniqueMetrics;
+}
+
+export async function fetchStrategyWins(docID: string, metric: string) {
+  const tradesCollectionRef = collection(usersCollection, docID, "trades");
+  const querySnapshot = await getDocs(tradesCollectionRef);
+
+  const wins = querySnapshot.docs.filter((doc) => {
+    const tradeData = doc.data();
+    return tradeData.strategy[metric] === true && tradeData.tradeStatus.toLowerCase() == "win";
+  }).length;
+
+  console.log(wins);
+  return wins;
+}
+
+export async function fetchStrategyLosses(docID: string, metric: string) {
+  const tradesCollectionRef = collection(usersCollection, docID, "trades");
+  const querySnapshot = await getDocs(tradesCollectionRef);
+
+  const wins = querySnapshot.docs.filter((doc) => {
+    const tradeData = doc.data();
+    return tradeData.strategy[metric] === true && tradeData.tradeStatus.toLowerCase() == "loss";
+  }).length;
+
+  console.log(wins);
+  return wins;
+}

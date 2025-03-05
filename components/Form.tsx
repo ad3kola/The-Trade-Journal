@@ -113,11 +113,11 @@ export default function FormComponent({
       tradeStatus: TradeStatus.WIN,
       strategy: {
         divergence: false,
-        head_Shoulders: false,
-        trendlineRetest: false,
-        fibKeyLevels: false,
-        proTrendBias: false,
-        indicatorHighlight: false,
+        head_and_Shoulders: false,
+        trendline_Retest: false,
+        fib_Key_Levels: false,
+        pro_Trend_Bias: false,
+        indicator_Highlight: false,
       },
       tradeReview: "",
       tradeScreenshot: "",
@@ -164,11 +164,11 @@ export default function FormComponent({
       riskAmount: 0,
       strategy: {
         divergence: false,
-        fibKeyLevels: false,
-        head_Shoulders: false,
-        indicatorHighlight: false,
-        proTrendBias: false,
-        trendlineRetest: false,
+        fib_Key_Levels: false,
+        head_and_Shoulders: false,
+        indicator_Highlight: false,
+        pro_Trend_Bias: false,
+        trendline_Retest: false,
       },
       tradeReview: "",
       tradeScreenshot: "",
@@ -225,21 +225,14 @@ export default function FormComponent({
     watch("stopLoss"),
     watch("riskAmount"),
     watch("tradeStatus"),
-    watch("tradeType"), // ✅ Now watching for Buy/Sell changes
+    watch("tradeType"), 
   ]);
-
   console.log(allCoins);
 
   const PnL = watch("realizedPnL");
   const RR = watch("risk_Reward");
   const qty = watch("positionSize");
 
-  // console.log(PnL);
-  // form.setValue("realizedPnL", PnL);
-
-  // console.log(RR);
-  // form.setValue("risk_Reward", RR);
-  console.log(allCoins);
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit(onSubmit)} className="h-full py-5">
@@ -542,31 +535,31 @@ export default function FormComponent({
                   />
                   <CustomFormField
                     control={control}
-                    name="strategy.head_Shoulders"
+                    name="strategy.head_and_Shoulders"
                     label="Head & Shoulders"
                     fieldType={FormFieldType.SWITCH}
                   />
                   <CustomFormField
                     control={control}
-                    name="strategy.trendlineRetest"
+                    name="strategy.trendline_Retest"
                     label="Trendline Retest"
                     fieldType={FormFieldType.SWITCH}
                   />{" "}
                   <CustomFormField
                     control={control}
-                    name="strategy.fibKeyLevels"
+                    name="strategy.fib_Key_Levels"
                     label="Fib Key Levels"
                     fieldType={FormFieldType.SWITCH}
                   />
                   <CustomFormField
                     control={control}
-                    name="strategy.proTrendBias"
+                    name="strategy.pro_Trend_Bias"
                     label="Aligns with 15min Trend Bias"
                     fieldType={FormFieldType.SWITCH}
                   />
                   <CustomFormField
                     control={control}
-                    name="strategy.indicatorHighlight"
+                    name="strategy.indicator_Highlight"
                     label="Highlight on IT Pro+ Indicatr"
                     fieldType={FormFieldType.SWITCH}
                   />

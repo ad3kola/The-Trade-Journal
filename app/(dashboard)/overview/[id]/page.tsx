@@ -72,7 +72,7 @@ export default function Page() {
           fetchTradeDataForLast7Trades(docID),
         ]);
 
-        setAllTrades(trades);
+        setAllTrades(trades.map(trade => ({ ...trade, date: new Date(trade.date) })));
         setPnLStats(pnL);
         setRRStats(RR);
         setCalendarDates(dates);

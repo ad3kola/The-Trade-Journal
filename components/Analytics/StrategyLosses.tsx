@@ -1,7 +1,15 @@
-"use client"
+"use client";
 
-import { TrendingUp } from "lucide-react"
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
+import { useEffect, useState } from "react";
+import { TrendingUp } from "lucide-react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  LabelList,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 import {
   Card,
@@ -10,52 +18,98 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
-const chartData = [
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 305 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 73 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 214 },
-]
+} from "@/components/ui/chart";
+import { fetchStrategyLosses, fetchUserMetrics } from "@/actions/db/actions"; // Ensure these functions are imported correctly
 
-const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "hsl(var(--chart-1))",
-  },
-} satisfies ChartConfig
+// Function to format metric names
+function formatMetric(metric: string) {
+  return metric
+    .replace(/_/g, ' ') // Replace underscores with spaces
+    .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize the first letter of each word
+}
 
-export default function StrategyLosses() {
+export default function StrategyLosses({ docID }: { docID: string | null }) {
+  const [chartData, setChartData] = useState<{ metric: string; losses: number }[]>([]);
+
+  useEffect(() => {
+    const loadMetricsAndLosses = async () => {
+      const fetchedMetrics = await fetchUserMetrics(); // Fetch metrics
+      if (docID) {
+        const lossesData = await Promise.all(
+          fetchedMetrics.map(async (metric) => ({
+            metric: formatMetric(metric), // Format the metric names
+            losses: await fetchStrategyLosses(docID, metric), // Fetch wins for each metric
+          }))
+        );
+
+        setChartData(lossesData); // Update chart data
+      }
+    };
+
+    loadMetricsAndLosses();
+  }, [docID]);
+
+  const chartConfig: ChartConfig = chartData.reduce((acc, { metric }) => {
+    acc[metric] = {
+      label: metric,
+      color: `hsl(var(--foreground))`, 
+    };
+    return acc;
+  }, {} as ChartConfig);
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Bar Chart</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Strategy Loss Rate</CardTitle>
+        <CardDescription>Performance per strategy metric</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig}>
-          <BarChart accessibilityLayer data={chartData}>
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="month"
+        <ChartContainer className='aspect-auto h-[250px]' config={chartConfig}>
+          <BarChart
+            accessibilityLayer
+            data={chartData}
+            layout="vertical"
+            margin={{
+              right: 16,
+            }}
+          >
+            <CartesianGrid horizontal={false} />
+            <YAxis
+              dataKey="metric"
+              type="category"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 3)}
+              tickFormatter={(value) => value.slice(0, 3)} // Abbreviate the metric names
+              hide
             />
+            <XAxis dataKey="losses" type="number" hide />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              content={<ChartTooltipContent indicator="line" />}
             />
-            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={8} />
+            <Bar dataKey="losses" radius={4} fill="hsl(var(--foreground))">
+              <LabelList
+                dataKey="metric"
+                position="insideLeft"
+                offset={8}
+                className="fill-background tracking-wide font-bold"
+                tracking-wider fontSize={12}
+              />
+              <LabelList
+                dataKey="losses"
+                position="right"
+                offset={8}
+                className="fill-foreground font-bold"
+                fontSize={12}
+              />
+            </Bar>
           </BarChart>
         </ChartContainer>
       </CardContent>
@@ -64,9 +118,9 @@ export default function StrategyLosses() {
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
         <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
+          Showing strategy performance data for the last few months
         </div>
       </CardFooter>
     </Card>
-  )
+  );
 }
