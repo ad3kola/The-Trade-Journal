@@ -12,7 +12,7 @@ const AnimatedCounter = ({ finalValue }: { finalValue: number }) => {
       round: 1, // Makes sure it's a whole number
       easing: "easeOutExpo", // Starts fast, slows down
       duration: 2000, // Adjust speed (2 seconds)
-      update: (anim) => setDisplayValue(anim.animations[0].currentValue),
+      update: (anim) => setDisplayValue(Number(anim.animations[0].currentValue)),
     });
   }, [finalValue]);
 
