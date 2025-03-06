@@ -23,7 +23,7 @@ export const getAllTrades = async (docID: string) => {
       .map((doc) => ({
         id: doc.id,
         ...(doc.data() as z.infer<typeof formSchema>),
-        date: new Date(doc.data().date.seconds * 1000).toISOString(),
+        date: new Date(doc.data().date.seconds * 1000),
       }))
       .sort((b, a) => new Date(a.date).getTime() - new Date(b.date).getTime());
   } catch (err) {
