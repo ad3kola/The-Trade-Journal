@@ -23,11 +23,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-interface PageProps {
-  className?: string;
-}
-
-export default function Page({ className }: PageProps) {
+export default function Page() {
   const [date, setDate] = useState<DateRange | undefined>({
     from: subMonths(new Date(), 1),
     to: new Date(),
@@ -43,16 +39,20 @@ export default function Page({ className }: PageProps) {
     });
     return () => unsubscribe();
   }, []);
-  
+
   console.log(date);
-  
+
   return (
     <main className="w-full px-2 py-4 flex flex-col gap-4">
-      <div className={cn("grid gap-2", className)}>
+      <div className={cn("grid gap-2")}>
         <Popover>
           <PopoverTrigger asChild>
-            <div className={cn("flex justify-center items-center text-center h-12 mx-auto tracking-wider font-normal gap-2")}>
-              <Button variant={'outline'}>
+            <div
+              className={cn(
+                "flex justify-center items-center text-center h-12 mx-auto tracking-wider font-normal gap-2"
+              )}
+            >
+              <Button variant={"outline"}>
                 <FilterIcon />
               </Button>
               <Button
