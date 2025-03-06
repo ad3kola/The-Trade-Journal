@@ -16,7 +16,8 @@ function Calendar({
   ...props
 }: CalendarProps) {
   const isSingleMode = props.mode === "single";
-
+  const isMultipleMode = props.mode === "multiple";
+  const isRangeMode = props.mode === "range";
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
@@ -26,7 +27,10 @@ function Calendar({
           "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 w-full h-full",
         month: "space-y-4 w-full",
         caption: "flex justify-center pt-1 relative items-center w-full",
-        caption_label: cn("text-sm font-medium", isSingleMode && "text-foreground"),
+        caption_label: cn(
+          "text-sm font-medium",
+          isSingleMode || isRangeMode && "text-foreground"
+        ),
         nav: "space-x-1 flex items-center",
         nav_button: cn(
           buttonVariants({ variant: "outline" }),
@@ -38,7 +42,7 @@ function Calendar({
         head_row: "flex w-full",
         head_cell: cn(
           "rounded-md w-full font-semibold text-sm py-2",
-          isSingleMode && "text-foreground"
+          isSingleMode || isRangeMode && "text-foreground"
         ),
         row: "flex w-full mt-2",
         cell: cn(
@@ -52,28 +56,45 @@ function Calendar({
         ),
         day: cn(
           buttonVariants({ variant: "ghost" }),
-          "h-8 w-8 p-0 font-normal aria-selected:opacity-100 hover:bg-primary aria-selected:font-bold rounded-lg",
-          isSingleMode && "text-foreground"
+          "h-8 w-8 p-0 font-normal aria-selected:opacity-100 hover:bg-primary hover:text-foreground rounded-lg font-bold",
+          isSingleMode && "text-primary", 
+          isRangeMode && "text-foreground"
         ),
-        day_range_start: "day-range-start",
-        day_range_end: "day-range-end",
-        day_selected:
-          "bg-foreground text-primary hover:bg-primary hover:text-primary-foreground",
-        day_today: cn("bg-accent text-accent-foreground", isSingleMode && "text-foreground"),
-        day_outside:
-          "day-outside text-muted-foreground aria-selected:bg-accent/50 aria-selected:text-muted-foreground",
-        day_disabled: "text-muted-foreground opacity-50",
-        day_range_middle:
-          "aria-selected:bg-accent aria-selected:text-accent-foreground",
+
+        day_selected: cn(
+          isSingleMode
+            ? "bg-primary text-foreground rounded-md" // Single mode
+            : isMultipleMode
+            ? "bg-foreground text-primary rounded-lg" // Multiple mode
+            : "bg-foreground text-background" // Range mode (no border-radius to connect)
+        ),
+        
+        day_range_start: cn(
+          isRangeMode && "bg-primary text-background rounded-l-md"
+        ),
+        day_range_end: cn(
+          isRangeMode && "bg-primary text-background rounded-r-md"
+        ),
+        day_range_middle: cn(
+          isRangeMode && "bg-primary text-background"
+        ),
+        
+        
         day_hidden: "invisible",
         ...classNames,
       }}
       components={{
         IconLeft: ({ className, ...props }) => (
-          <ChevronLeft className={cn("h-4 w-4 text-foreground", className)} {...props} />
+          <ChevronLeft
+            className={cn("h-4 w-4 text-foreground", className)}
+            {...props}
+          />
         ),
         IconRight: ({ className, ...props }) => (
-          <ChevronRight className={cn("h-4 w-4 text-foreground", className)} {...props} />
+          <ChevronRight
+            className={cn("h-4 w-4 text-foreground", className)}
+            {...props}
+          />
         ),
       }}
       {...props}

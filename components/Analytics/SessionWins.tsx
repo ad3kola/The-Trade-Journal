@@ -1,7 +1,12 @@
 "use client";
 
 import { TrendingUp } from "lucide-react";
-import { LabelList, Pie, PieChart } from "recharts";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  XAxis,
+} from "recharts";
 
 import {
   Card,
@@ -11,22 +16,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
 import { useEffect, useState } from "react";
-import { fetchMostWinsInTradedSessionTimes } from "@/actions/db/actions";
+import { fetchTradingSessionData } from "@/actions/db/actions";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../ui/chart";
 
 export default function SessionWins({ docID }: { docID: string | null }) {
-  const [data, setData] = useState<{ sessionName: string; count: number }[]>([]);
+  const [data, setData] = useState<
+    { sessionName: string; wins: number; losses: number }[]
+  >([]);
 
   useEffect(() => {
     if (docID) {
       const getSessionData = async () => {
-        const res = await fetchMostWinsInTradedSessionTimes(docID);
+        const res = await fetchTradingSessionData(docID);
         setData(res);
       };
 
@@ -34,55 +36,60 @@ export default function SessionWins({ docID }: { docID: string | null }) {
     }
   }, [docID]);
 
-  // Dynamically generating the chart configuration based on session data
-  const chartConfig = data.reduce((acc, { sessionName }, index) => {
-    acc[sessionName] = {
-      label: sessionName,
-      color: `hsl(${(index * 60 +260) % 360}, 70%, 50%)`, // Generate distinct color for each session
-    };
-    return acc;
-  }, {} as ChartConfig);
+  const chartConfig = {
+    wins: {
+      label: "Wins",
+      color: "hsl(var(--primary))", // Example color
+    },
+    losses: {
+      label: "Losses",
+      color: "hsl(var(--foreground))", // Example color
+    },
+  };
 
-  // Preparing the chart data for PieChart rendering
-  const chartData = data.map(({ sessionName, count }) => ({
+  const chartData = data.map(({ sessionName, wins, losses }) => ({
     session: sessionName,
-    Trades: count,
-    fill: chartConfig[sessionName]?.color || "gray", 
+    wins,
+    losses,
   }));
 
+  console.log(chartData);
+
   return (
-    <Card className="flex flex-col">
-      <CardHeader className="items-center pb-0">
-        <CardTitle>Wins</CardTitle>
-        <CardDescription>January - June 2024 - {docID}</CardDescription>
+    <Card>
+      <CardHeader>
+        <CardTitle>Trade Session Wins & Losses</CardTitle>
+        <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 pb-0">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square h-[250px] [&_.recharts-text]:fill-background"
-        >
-          <PieChart>
-            <ChartTooltip
-              content={<ChartTooltipContent nameKey="session" hideLabel />}
-            />
-            <Pie data={chartData} dataKey="Trades">
-              <LabelList
+      <CardContent>
+        <ChartContainer config={chartConfig} className="aspect-auto h-[250px]">
+            <BarChart accessibilityLayer data={chartData}>
+              <CartesianGrid vertical={false} />
+              <XAxis
                 dataKey="session"
-                className="fill-foreground"
-                stroke="none"
-                fontSize={12}
-                formatter={(value: string) => chartConfig[value]?.label || value}
+                tickLine={false}
+                tickMargin={10}
+                axisLine={false}
               />
-            </Pie>
-          </PieChart>
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent indicator="dashed" />}
+              />
+              <Bar dataKey="wins" fill={chartConfig.wins.color} radius={4} />
+              <Bar
+                dataKey="losses"
+                fill={chartConfig.losses.color}
+                radius={4}
+              />
+            </BarChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 font-medium leading-none">
+      <CardFooter className="flex-col items-start gap-2 text-sm">
+        <div className="flex gap-2 font-medium leading-none">
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
         <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
+          Showing trade data for the last session periods
         </div>
       </CardFooter>
     </Card>

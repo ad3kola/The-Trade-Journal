@@ -237,12 +237,17 @@ export async function fetchMostTradedCoins(docID: string) {
         fill: "var(--color-february)",
       }
     : {
-      title: "",
-      id: 0,
-      name: sortedCoins[0][0],
-      count: 0,
-      fill: "var(--color-february)",
-    };
+        title: "",
+        id: 0,
+        name: "N/A",
+        count: 0,
+        fill: "var(--color-february)",
+      };
+
+  // If there is only one trade, don't return secondMostTraded and others
+  if (sortedCoins.length === 1) {
+    return [mostTraded];
+  }
 
   const secondMostTraded = sortedCoins[1]
     ? {
@@ -253,12 +258,12 @@ export async function fetchMostTradedCoins(docID: string) {
         fill: "var(--color-february)",
       }
     : {
-      title: "",
-      id: 0,
-      name: sortedCoins[0][0],
-      count: 0,
-      fill: "var(--color-february)",
-    };;
+        title: "",
+        id: 0,
+        name: "N/A",
+        count: 0,
+        fill: "var(--color-february)",
+      };
 
   const othersCount = sortedCoins
     .slice(2)
@@ -274,56 +279,85 @@ export async function fetchMostTradedCoins(docID: string) {
   return [mostTraded, secondMostTraded, others].filter(Boolean);
 }
 
-export async function fetchMostWinsInTradedSessionTimes(docID: string) {
+
+export async function fetchTradingSessionData(docID: string) {
   const tradesCollectionRef = collection(usersCollection, docID, "trades");
   const querySnapshot = await getDocs(tradesCollectionRef);
 
-  const tradedSessions: Record<string, number> = {};
+  const tradedSessions: Record<string, { wins: number; losses: number }> = {};
 
-  // Count occurrences of each tradeSession where the tradeStatus is "win"
+  // Count occurrences of each tradeSession where the tradeStatus is "win" or "loss"
   querySnapshot.docs.forEach((doc) => {
     const data = doc.data();
     const session = data.tradeSession;
-    const tradeStatus = data.tradeStatus;
+    const tradeStatus = data.tradeStatus.toLowerCase();
 
-    if (session && tradeStatus.toLowerCase() == "win") {
-      tradedSessions[session] = (tradedSessions[session] || 0) + 1;
+    if (session) {
+      if (tradeStatus === "win") {
+        tradedSessions[session] = {
+          ...tradedSessions[session],
+          wins: (tradedSessions[session]?.wins || 0) + 1,
+        };
+      } else if (tradeStatus === "loss") {
+        tradedSessions[session] = {
+          ...tradedSessions[session],
+          losses: (tradedSessions[session]?.losses || 0) + 1,
+        };
+      }
     }
   });
 
-  // Convert to an array and sort by frequency
-  const sortedTradeSessions = Object.entries(tradedSessions).sort((a, b) => b[1] - a[1]);
+  // Convert to an array and sort by wins first, then losses
+  const sortedTradeSessions = Object.entries(tradedSessions).sort((a, b) => {
+    const winsDifference = b[1].wins - a[1].wins;
+    if (winsDifference !== 0) {
+      return winsDifference;
+    }
+    return b[1].losses - a[1].losses; // Sort by losses if wins are the same
+  });
 
   const mostTraded = sortedTradeSessions[0]
     ? {
         sessionName: sortedTradeSessions[0][0],
-        count: sortedTradeSessions[0][1],
+        wins: sortedTradeSessions[0][1].wins,
+        losses: sortedTradeSessions[0][1].losses,
       }
     : {
-        sessionName: sortedTradeSessions[0]?.[0] || "N/A", // Safeguard if no data found
-        count: 0,
+        sessionName: "N/A",
+        wins: 0,
+        losses: 0,
       };
 
   const secondMostTraded = sortedTradeSessions[1]
     ? {
         sessionName: sortedTradeSessions[1][0],
-        count: sortedTradeSessions[1][1],
+        wins: sortedTradeSessions[1][1].wins,
+        losses: sortedTradeSessions[1][1].losses,
       }
     : {
-        sessionName: sortedTradeSessions[1]?.[0] || "N/A", // Safeguard if no data found
-        count: 0,
+        sessionName: "N/A",
+        wins: 0,
+        losses: 0,
       };
 
   const lastSession = sortedTradeSessions[2]
     ? {
         sessionName: sortedTradeSessions[2][0],
-        count: sortedTradeSessions[2][1],
+        wins: sortedTradeSessions[2][1].wins,
+        losses: sortedTradeSessions[2][1].losses,
       }
     : {
-        sessionName: "N/A", // Safeguard if no data found
-        count: 0,
+        sessionName: "N/A",
+        wins: 0,
+        losses: 0,
       };
 
   console.log([mostTraded, secondMostTraded, lastSession].filter(Boolean));
   return [mostTraded, secondMostTraded, lastSession].filter(Boolean);
 }
+
+
+// export async function fetchPnLByDateRange(docID, dateRange) {
+//   const tradesCollectionRef = collection(usersCollection, docID, "trades");
+//   const querySnapshot = await getDocs(tradesCollectionRef);
+// }

@@ -53,7 +53,7 @@ export default function PnL() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="aspect-auto h-[180px]">
+        <ChartContainer config={chartConfig} className="aspect-auto h-[300px]">
           <AreaChart
             accessibilityLayer
             data={chartData}

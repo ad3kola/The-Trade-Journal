@@ -11,11 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartStyle,
-} from "@/components/ui/chart";
+import { ChartConfig, ChartContainer, ChartStyle } from "@/components/ui/chart";
 import {
   Select,
   SelectContent,
@@ -81,9 +77,9 @@ export default function MostTradedCoins({ docID }: { docID: string | null }) {
                   <SelectValue placeholder="Select a coin" />
                 </SelectTrigger>
                 <SelectContent align="end" className="rounded-xl">
-                  {coins.map((coin) => (
+                  {coins.map((coin, indx) => (
                     <SelectItem
-                      key={coin.name}
+                      key={indx}
                       value={coin.name}
                       className="rounded-lg"
                     >
@@ -106,7 +102,7 @@ export default function MostTradedCoins({ docID }: { docID: string | null }) {
       </CardHeader>
       <CardContent className="flex flex-1 justify-center pb-4">
         <ChartContainer
-          className="mx-auto aspect-square w-full max-w-[300px]"
+          className="mx-auto aspect-square w-full max-h-[300px]"
           config={chartConfig}
         >
           <PieChart>
