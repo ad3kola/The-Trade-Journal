@@ -1,12 +1,7 @@
 "use client";
 
 import { TrendingUp } from "lucide-react";
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  XAxis,
-} from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
 import {
   Card,
@@ -17,10 +12,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useEffect, useState } from "react";
-import { fetchTradingSessionData } from "@/actions/db/actions";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../ui/chart";
+import { fetchTradingSessionData } from "@/actions/db/actions";
+import { DateRange } from "react-day-picker";
 
-export default function SessionWins({ docID }: { docID: string | null }) {
+export default function SessionChart({
+  docID,
+  date,
+}: {
+  docID: string | null;
+  date: DateRange | undefined;
+}) {
   const [data, setData] = useState<
     { sessionName: string; wins: number; losses: number }[]
   >([]);
@@ -28,13 +30,13 @@ export default function SessionWins({ docID }: { docID: string | null }) {
   useEffect(() => {
     if (docID) {
       const getSessionData = async () => {
-        const res = await fetchTradingSessionData(docID);
+        const res = await fetchTradingSessionData(docID, date?.from, date?.to);
         setData(res);
       };
 
       getSessionData();
     }
-  }, [docID]);
+  }, [docID, date]);
 
   const chartConfig = {
     wins: {
@@ -53,8 +55,6 @@ export default function SessionWins({ docID }: { docID: string | null }) {
     losses,
   }));
 
-  console.log(chartData);
-
   return (
     <Card>
       <CardHeader>
@@ -63,25 +63,21 @@ export default function SessionWins({ docID }: { docID: string | null }) {
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="aspect-auto h-[250px]">
-            <BarChart accessibilityLayer data={chartData}>
-              <CartesianGrid vertical={false} />
-              <XAxis
-                dataKey="session"
-                tickLine={false}
-                tickMargin={10}
-                axisLine={false}
-              />
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent indicator="dashed" />}
-              />
-              <Bar dataKey="wins" fill={chartConfig.wins.color} radius={4} />
-              <Bar
-                dataKey="losses"
-                fill={chartConfig.losses.color}
-                radius={4}
-              />
-            </BarChart>
+          <BarChart accessibilityLayer data={chartData}>
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="session"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+            />
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent indicator="dashed" />}
+            />
+            <Bar dataKey="wins" fill={chartConfig.wins.color} radius={4} />
+            <Bar dataKey="losses" fill={chartConfig.losses.color} radius={4} />
+          </BarChart>
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">

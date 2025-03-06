@@ -26,6 +26,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { fetchStrategyWins, fetchUserMetrics } from "@/actions/db/actions"; // Ensure these functions are imported correctly
+import { DateRange } from "react-day-picker";
 
 // Function to format metric names
 function formatMetric(metric: string) {
@@ -34,7 +35,13 @@ function formatMetric(metric: string) {
     .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize the first letter of each word
 }
 
-export default function StrategyWins({ docID }: { docID: string | null }) {
+export default function StrategyWins({
+  docID,
+  date,
+}: {
+  docID: string | null;
+  date: DateRange | undefined;
+}) {
   const [chartData, setChartData] = useState<
     { metric: string; wins: number }[]
   >([]);
@@ -46,7 +53,7 @@ export default function StrategyWins({ docID }: { docID: string | null }) {
         const winData = await Promise.all(
           fetchedMetrics.map(async (metric) => ({
             metric: formatMetric(metric), // Format the metric names
-            wins: await fetchStrategyWins(docID, metric), // Fetch wins for each metric
+            wins: await fetchStrategyWins(docID, metric, date?.from, date?.to), // Fetch wins for each metric
           }))
         );
 
@@ -55,7 +62,7 @@ export default function StrategyWins({ docID }: { docID: string | null }) {
     };
 
     loadMetricsAndWins();
-  }, [docID]);
+  }, [docID, date]);
 
   const chartConfig: ChartConfig = chartData.reduce((acc, { metric }) => {
     acc[metric] = {

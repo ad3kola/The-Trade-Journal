@@ -2,8 +2,6 @@
 
 import { getCurrentUserDoc } from "@/actions/db/actions";
 import MostTradedCoins from "@/components/Analytics/MostTradedCoins";
-import PnL from "@/components/Analytics/PnL";
-import SessionWins from "@/components/Analytics/SessionWins";
 import StrategyLosses from "@/components/Analytics/StrategyLosses";
 import StrategyWins from "@/components/Analytics/StrategyWins";
 import { auth } from "@/config/firebase";
@@ -22,6 +20,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import SessionChart from "@/components/Analytics/SessionChart";
+import PersonalPnL from "@/components/Analytics/PersonalPnL";
+import PropFirmPnL from "@/components/Analytics/PropFirmPnL";
 
 export default function Page() {
   const [date, setDate] = useState<DateRange | undefined>({
@@ -40,7 +41,6 @@ export default function Page() {
     return () => unsubscribe();
   }, []);
 
-  console.log(date);
 
   return (
     <main className="w-full px-2 py-4 flex flex-col gap-4">
@@ -52,7 +52,7 @@ export default function Page() {
                 "flex justify-center items-center text-center h-12 mx-auto tracking-wider font-normal gap-2"
               )}
             >
-              <Button variant={"outline"}>
+              <Button id="date" variant={"outline"}>
                 <FilterIcon />
               </Button>
               <Button
@@ -92,15 +92,15 @@ export default function Page() {
           </PopoverContent>
         </Popover>
       </div>
-      <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <PnL />
-        <PnL />
-        <MostTradedCoins docID={docID} />
+      <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <PersonalPnL docID={docID} date={date} />
+        <PropFirmPnL docID={docID} date={date} />
+        <MostTradedCoins docID={docID} date={date} />
       </div>
-      <div className="flex flex-col lg:flex-row gap-4">
-        <StrategyWins docID={docID} />
-        <StrategyLosses docID={docID} />
-        <SessionWins docID={docID} />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 w-full">
+        <StrategyWins docID={docID} date={date} />
+        <StrategyLosses docID={docID} date={date} />
+        <SessionChart docID={docID} date={date} />
       </div>
     </main>
   );

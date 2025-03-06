@@ -9,16 +9,27 @@ import { z } from "zod";
 
 export const uploadTrade = async ({ docID, data }: FormSchemaWithRefID) => {
   const tradesCollectionRef = collection(usersCollection, docID, "trades");
-
   await addDoc(tradesCollectionRef, data);
-
 };
 
-export const getAllTrades = async (docID: string) => {
+export const getAllTrades = async (
+  docID: string,
+  startDate: Date | null = null,
+  endDate: Date | null = null
+) => {
   try {
     const tradesCollectionRef = collection(usersCollection, docID, "trades");
+    let queryRef = query(tradesCollectionRef);
 
-    const querySnapshot = await getDocs(tradesCollectionRef);
+    // Apply date filtering if dates are provided
+    if (startDate) {
+      queryRef = query(queryRef, where("date", ">=", startDate));
+    }
+    if (endDate) {
+      queryRef = query(queryRef, where("date", "<=", endDate));
+    }
+
+    const querySnapshot = await getDocs(queryRef);
     return querySnapshot.docs
       .map((doc) => ({
         id: doc.id,
@@ -27,14 +38,13 @@ export const getAllTrades = async (docID: string) => {
       }))
       .sort((b, a) => new Date(a.date).getTime() - new Date(b.date).getTime());
   } catch (err) {
-    console.log(err)
+    console.log(err);
     return [];
   }
 };
 
 export const getCurrentUserDoc = async (userID: string) => {
   const q = query(usersCollection, where("id", "==", userID));
-
   const querySnapshot = await getDocs(q);
   if (querySnapshot.empty) {
     console.warn("No user found in Firestore for ID:", userID);
@@ -49,10 +59,23 @@ export const getCurrentUserDoc = async (userID: string) => {
   };
 };
 
-export const fetchPnLData = async (docID: string) => {
+export const fetchPnLData = async (
+  docID: string,
+  startDate: Date | null = null,
+  endDate: Date | null = null
+) => {
   const tradesCollectionRef = collection(usersCollection, docID, "trades");
-  const querySnapshot = await getDocs(tradesCollectionRef);
+  let queryRef = query(tradesCollectionRef);
 
+  // Apply date filtering if dates are provided
+  if (startDate) {
+    queryRef = query(queryRef, where("date", ">=", startDate));
+  }
+  if (endDate) {
+    queryRef = query(queryRef, where("date", "<=", endDate));
+  }
+
+  const querySnapshot = await getDocs(queryRef);
   const realizedPnLArray = querySnapshot.docs.map(
     (doc) => doc.data().realizedPnL
   );
@@ -67,7 +90,7 @@ export const fetchPnLData = async (docID: string) => {
     ? Math.min(...realizedPnLArray)
     : 0;
 
-  // ✅ Calculate Win Rate from PnL
+  // Calculate Win Rate from PnL
   const positiveTrades = realizedPnLArray.filter((pnl) => pnl > 0).length;
   const winRate = totalTrades > 0 ? (positiveTrades / totalTrades) * 100 : 0;
 
@@ -80,13 +103,26 @@ export const fetchPnLData = async (docID: string) => {
   };
 };
 
-export const fetchRRData = async (docID: string) => {
+export const fetchRRData = async (
+  docID: string,
+  startDate: Date | null = null,
+  endDate: Date | null = null
+) => {
   const tradesCollectionRef = collection(usersCollection, docID, "trades");
-  const querySnapshot = await getDocs(tradesCollectionRef);
+  let queryRef = query(tradesCollectionRef);
 
+  // Apply date filtering if dates are provided
+  if (startDate) {
+    queryRef = query(queryRef, where("date", ">=", startDate));
+  }
+  if (endDate) {
+    queryRef = query(queryRef, where("date", "<=", endDate));
+  }
+
+  const querySnapshot = await getDocs(queryRef);
   const realizedRRArray = querySnapshot.docs.map((doc) => {
     const data = doc.data();
-    return data.tradeStatus == "Loss" ? -1 : data.risk_Reward;
+    return data.tradeStatus === "Loss" ? -1 : data.risk_Reward;
   });
 
   const totalTrades = realizedRRArray.length;
@@ -98,17 +134,43 @@ export const fetchRRData = async (docID: string) => {
   return { totalRR, highestPositiveRR, totalTrades };
 };
 
-export const totalTrades = async (docID: string) => {
+export const totalTrades = async (
+  docID: string,
+  startDate: Date | null = null,
+  endDate: Date | null = null
+) => {
   const tradesCollectionRef = collection(usersCollection, docID, "trades");
-  const querySnapshot = await getDocs(tradesCollectionRef);
+  let queryRef = query(tradesCollectionRef);
+
+  // Apply date filtering if dates are provided
+  if (startDate) {
+    queryRef = query(queryRef, where("date", ">=", startDate));
+  }
+  if (endDate) {
+    queryRef = query(queryRef, where("date", "<=", endDate));
+  }
+
+  const querySnapshot = await getDocs(queryRef);
   return { tradeCount: querySnapshot.docs.length };
 };
 
-export const tradeCalendar = async (docID: string) => {
+export const tradeCalendar = async (
+  docID: string,
+  startDate: Date | null = null,
+  endDate: Date | null = null
+) => {
   const tradesCollectionRef = collection(usersCollection, docID, "trades");
+  let queryRef = query(tradesCollectionRef);
 
-  const querySnapshot = await getDocs(tradesCollectionRef);
+  // Apply date filtering if dates are provided
+  if (startDate) {
+    queryRef = query(queryRef, where("date", ">=", startDate));
+  }
+  if (endDate) {
+    queryRef = query(queryRef, where("date", "<=", endDate));
+  }
 
+  const querySnapshot = await getDocs(queryRef);
   const formattedDates: Date[] = querySnapshot.docs
     .map((doc) => {
       const timestamp = doc.data().date;
@@ -119,15 +181,18 @@ export const tradeCalendar = async (docID: string) => {
   return formattedDates;
 };
 
-export async function fetchTradeDataForLast7Trades(docID: string) {
-  const trades = await getAllTrades(docID);
+export async function fetchTradeDataForLast7Trades(
+  docID: string,
+  startDate: Date | null = null,
+  endDate: Date | null = null
+) {
+  const trades = await getAllTrades(docID, startDate, endDate);
 
   // Sort trades by date (oldest first)
   trades.sort(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 
-  // Separate wins and losses
   const winTrades = trades.filter(
     (trade) => trade.tradeStatus.toLowerCase() === "win"
   );
@@ -135,7 +200,6 @@ export async function fetchTradeDataForLast7Trades(docID: string) {
     (trade) => trade.tradeStatus.toLowerCase() === "loss"
   );
 
-  // Aggregate last 7 winning trades
   const profits = winTrades
     .slice(-10) // Get last 7 winning trades
     .reduce((acc, trade) => {
@@ -145,7 +209,6 @@ export async function fetchTradeDataForLast7Trades(docID: string) {
       return acc;
     }, {} as Record<string, number>);
 
-  // Aggregate last 7 losing trades
   const losses = lossTrades
     .slice(-10) // Get last 7 losing trades
     .reduce((acc, trade) => {
@@ -155,7 +218,6 @@ export async function fetchTradeDataForLast7Trades(docID: string) {
       return acc;
     }, {} as Record<string, number>);
 
-  // Convert to array format for charts
   const profitsArray = Object.entries(profits).map(([date, Profit]) => ({
     date,
     Profit,
@@ -169,53 +231,92 @@ export async function fetchTradeDataForLast7Trades(docID: string) {
 }
 
 export async function fetchUserMetrics() {
-  const querySnapshot = await getDocs(usersCollection); 
-
+  const querySnapshot = await getDocs(usersCollection);
   const metrics = querySnapshot.docs
-    .flatMap((doc) => doc.data().strategy) 
-    .filter(Boolean); 
+    .flatMap((doc) => doc.data().strategy)
+    .filter(Boolean);
 
-  const uniqueMetrics = [...new Set(metrics)]; 
+  const uniqueMetrics = [...new Set(metrics)];
   return uniqueMetrics;
 }
 
-export async function fetchStrategyWins(docID: string, metric: string) {
+export async function fetchStrategyWins(
+  docID: string,
+  metric: string,
+  startDate: Date | null = null,
+  endDate: Date | null = null
+) {
   const tradesCollectionRef = collection(usersCollection, docID, "trades");
-  const querySnapshot = await getDocs(tradesCollectionRef);
+  let queryRef = query(tradesCollectionRef);
+
+  if (startDate) {
+    queryRef = query(queryRef, where("date", ">=", startDate));
+  }
+  if (endDate) {
+    queryRef = query(queryRef, where("date", "<=", endDate));
+  }
+
+  const querySnapshot = await getDocs(queryRef);
 
   const wins = querySnapshot.docs.filter((doc) => {
     const tradeData = doc.data();
     return (
       tradeData.strategy[metric] === true &&
-      tradeData.tradeStatus.toLowerCase() == "win"
+      tradeData.tradeStatus.toLowerCase() === "win"
     );
   }).length;
 
   return wins;
 }
 
-export async function fetchStrategyLosses(docID: string, metric: string) {
+export async function fetchStrategyLosses(
+  docID: string,
+  metric: string,
+  startDate: Date | null = null,
+  endDate: Date | null = null
+) {
   const tradesCollectionRef = collection(usersCollection, docID, "trades");
-  const querySnapshot = await getDocs(tradesCollectionRef);
+  let queryRef = query(tradesCollectionRef);
+
+  if (startDate) {
+    queryRef = query(queryRef, where("date", ">=", startDate));
+  }
+  if (endDate) {
+    queryRef = query(queryRef, where("date", "<=", endDate));
+  }
+
+  const querySnapshot = await getDocs(queryRef);
 
   const losses = querySnapshot.docs.filter((doc) => {
     const tradeData = doc.data();
     return (
       tradeData.strategy[metric] === true &&
-      tradeData.tradeStatus.toLowerCase() == "loss"
+      tradeData.tradeStatus.toLowerCase() === "loss"
     );
   }).length;
 
   return losses;
 }
 
-export async function fetchMostTradedCoins(docID: string) {
+export async function fetchMostTradedCoins(
+  docID: string,
+  startDate?: Date,
+  endDate?: Date
+) {
   const tradesCollectionRef = collection(usersCollection, docID, "trades");
-  const querySnapshot = await getDocs(tradesCollectionRef);
 
+  let queryRef = query(tradesCollectionRef);
+
+  if (startDate) {
+    queryRef = query(queryRef, where("date", ">=", startDate));
+  }
+  if (endDate) {
+    queryRef = query(queryRef, where("date", "<=", endDate));
+  }
+
+  const querySnapshot = await getDocs(queryRef);
   const tradedCoins: Record<string, number> = {};
 
-  // Count occurrences of each coinSymbol.id
   querySnapshot.docs.forEach((doc) => {
     const coinId = doc.data().coinSymbol?.name;
     if (coinId) {
@@ -223,10 +324,7 @@ export async function fetchMostTradedCoins(docID: string) {
     }
   });
 
-  // Convert to an array and sort by frequency
   const sortedCoins = Object.entries(tradedCoins).sort((a, b) => b[1] - a[1]);
-
-  console.log("SortedCoins: ", sortedCoins)
 
   const mostTraded = sortedCoins[0]
     ? {
@@ -244,7 +342,6 @@ export async function fetchMostTradedCoins(docID: string) {
         fill: "var(--color-february)",
       };
 
-  // If there is only one trade, don't return secondMostTraded and others
   if (sortedCoins.length === 1) {
     return [mostTraded];
   }
@@ -279,10 +376,22 @@ export async function fetchMostTradedCoins(docID: string) {
   return [mostTraded, secondMostTraded, others].filter(Boolean);
 }
 
-
-export async function fetchTradingSessionData(docID: string) {
+export async function fetchTradingSessionData(
+  docID: string,
+  startDate?: Date,
+  endDate?: Date
+) {
   const tradesCollectionRef = collection(usersCollection, docID, "trades");
-  const querySnapshot = await getDocs(tradesCollectionRef);
+  let queryRef = query(tradesCollectionRef);
+
+  if (startDate) {
+    queryRef = query(queryRef, where("date", ">=", startDate));
+  }
+  if (endDate) {
+    queryRef = query(queryRef, where("date", "<=", endDate));
+  }
+
+  const querySnapshot = await getDocs(queryRef);
 
   const tradedSessions: Record<string, { wins: number; losses: number }> = {};
 
@@ -352,12 +461,94 @@ export async function fetchTradingSessionData(docID: string) {
         losses: 0,
       };
 
-  console.log([mostTraded, secondMostTraded, lastSession].filter(Boolean));
   return [mostTraded, secondMostTraded, lastSession].filter(Boolean);
 }
 
+export const fetchAnalyticsPnL = async (
+  docID: string,
+  startDate: Date | null = null,
+  endDate: Date | null = null
+) => {
+  const tradesCollectionRef = collection(usersCollection, docID, "trades");
 
-// export async function fetchPnLByDateRange(docID, dateRange) {
-//   const tradesCollectionRef = collection(usersCollection, docID, "trades");
-//   const querySnapshot = await getDocs(tradesCollectionRef);
-// }
+  // Initialize queries for "Prop Firm" and "Personal"
+  let propFirmQuery = query(
+    tradesCollectionRef,
+    where("accountType", "==", "Prop Firm")
+  );
+  let personalQuery = query(
+    tradesCollectionRef,
+    where("accountType", "==", "Personal")
+  );
+
+  // Add date filters if startDate and endDate are provided
+  if (startDate) {
+    propFirmQuery = query(propFirmQuery, where("date", ">=", startDate));
+    personalQuery = query(personalQuery, where("date", ">=", startDate));
+  }
+  if (endDate) {
+    propFirmQuery = query(propFirmQuery, where("date", "<=", endDate));
+    personalQuery = query(personalQuery, where("date", "<=", endDate));
+  }
+
+  // Fetch data for both account types
+  const [propFirmQuerySnapshot, personalQuerySnapshot] = await Promise.all([
+    getDocs(propFirmQuery),
+    getDocs(personalQuery),
+  ]);
+
+  // Process Prop Firm trades
+  const propFirmData = propFirmQuerySnapshot.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      date: formatDate(new Date(data.date)), // Format the date as 'MM/DD'
+      value: data.realizedPnL,
+    };
+  });
+
+  // Process Personal trades
+  const personalData = personalQuerySnapshot.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      date: formatDate(new Date(data.date)), // Format the date as 'MM/DD'
+      value: data.realizedPnL,
+    };
+  });
+
+  // Calculate total PnL for both
+  const propfirmPnL = propFirmData.reduce((acc, item) => acc + item.value, 0);
+  const personalPnL = personalData.reduce((acc, item) => acc + item.value, 0);
+  console.log(
+    "propfirmPnL: ",
+    {
+      name: "Prop Firm",
+      value: propfirmPnL,
+      data: propFirmData,
+    },
+    "personalPnL: ",
+    {
+      name: "Personal",
+      value: personalPnL,
+      data: personalData,
+    }
+  );
+  return {
+    propfirmPnL: {
+      name: "Prop Firm",
+      value: propfirmPnL,
+      data: propFirmData,
+    },
+    personalPnL: {
+      name: "Personal",
+      value: personalPnL,
+      data: personalData,
+    },
+  };
+};
+
+// Helper function to format the date as 'MM/DD'
+const formatDate = (date: Date) => {
+  const month = date.getMonth() + 1; // Months are zero-indexed
+  const day = date.getDate();
+  return `${month < 10 ? "0" + month : month}/${day < 10 ? "0" + day : day}`;
+};

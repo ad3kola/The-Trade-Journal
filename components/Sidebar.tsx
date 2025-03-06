@@ -41,7 +41,6 @@ const SideBar = () => {
 
       if (authUser) {
         const userData = await getCurrentUserDoc(authUser.uid);
-        console.log(userData);
         if (userData) {
           setCurrentID(userData?.userID);
         }
@@ -51,7 +50,6 @@ const SideBar = () => {
     return () => unsubscribe(); // Cleanup the listener
   }, []);
 
-  console.log(currentID);
   const navLinks: NavLinks[] = [
     { Icon: HomeIcon, title: "Dashboard", url: "/overview" },
 

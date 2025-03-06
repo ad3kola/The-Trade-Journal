@@ -92,7 +92,7 @@ export default function RecentTransactions({
                       trade.realizedPnL > 0 ? "text-green-500" : "text-red-500"
                     )}
                   >
-                    <span className="font-bold text-base tracking-wide">
+                    <span className="font-semibold text-sm tracking-wide">
                       {trade.realizedPnL.toFixed()} USD
                     </span>
                     <span className="text-[11px] font-medium text-muted-foreground">

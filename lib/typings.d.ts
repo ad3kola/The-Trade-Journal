@@ -65,13 +65,30 @@ export interface Profits {
   Profit: number;
 }
 
-
 export interface Losses {
   date: string;
   Loss: number;
 }
 
 export interface PnLOverviewCharts {
-profits: Profits[]
-losses: Losses[]
+  profits: Profits[];
+  losses: Losses[];
+}
+
+export interface AccountTypeProps {
+  personalPnL: {
+    name: string;
+    value: number;
+    data: [
+      { date: string; value: number }[],
+
+    ];
+  };
+  propFirmPnL: {
+    name: string;
+    value: number;
+    data: [
+      { date: string; value: number }[],
+    ];
+  };
 }

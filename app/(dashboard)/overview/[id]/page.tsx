@@ -47,6 +47,7 @@ export default function Page() {
   const [chartData, setChartData] = useState<PnLOverviewCharts | null>(null);
 
   // Listen for Auth Changes
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -57,33 +58,36 @@ export default function Page() {
     return () => unsubscribe();
   }, []);
 
-  // Fetch Data when `docID` is available
-  useEffect(() => {
-    if (!docID) return;
-    setIsLoading(true);
+useEffect(() => {
+  if (!docID) return;
+  setIsLoading(true);
 
-    const fetchData = async () => {
-      try {
-        const [trades, pnL, RR, dates, chart] = await Promise.all([
-          getAllTrades(docID),
-          fetchPnLData(docID),
-          fetchRRData(docID),
-          tradeCalendar(docID),
-          fetchTradeDataForLast7Trades(docID),
-        ]);
+  const fetchData = async () => {
+    const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+    const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+    try {
+      const [trades, pnL, RR, dates, chart] = await Promise.all([
+        getAllTrades(docID, startOfMonth, endOfMonth),
+        fetchPnLData(docID, startOfMonth, endOfMonth),
+        fetchRRData(docID, startOfMonth, endOfMonth),
+        tradeCalendar(docID),
+        fetchTradeDataForLast7Trades(docID, startOfMonth, endOfMonth),
+      ]);
+      setAllTrades(trades)
+      setPnLStats(pnL);
+      setRRStats(RR);
+      setCalendarDates(dates);
+      setChartData(chart);
+    } catch(error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-        setAllTrades(trades.map(trade => ({ ...trade, date: new Date(trade.date) })));
-        setPnLStats(pnL);
-        setRRStats(RR);
-        setCalendarDates(dates);
-        setChartData(chart);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  fetchData();
+}, [docID]);
 
-    fetchData();
-  }, [docID]);
 
   // Set Win Rate when `pnLStats` is available
   useEffect(() => {

@@ -443,6 +443,7 @@ export default function FormComponent({
                 fieldType={FormFieldType.INPUT}
                 Icon={DollarSignIcon}
                 name="leverage"
+                value={5}
                 label="Leverage Used"
                 placeholder="0.00"
               />

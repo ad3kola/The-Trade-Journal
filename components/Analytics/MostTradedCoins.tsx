@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { fetchMostTradedCoins } from "@/actions/db/actions";
+import { DateRange } from "react-day-picker";
 
 interface CoinData {
   id: number;
@@ -28,20 +29,26 @@ interface CoinData {
   fill: string;
 }
 
-export default function MostTradedCoins({ docID }: { docID: string | null }) {
+export default function MostTradedCoins({
+  docID,
+  date,
+}: {
+  docID: string | null;
+  date: DateRange | undefined;
+}) {
   const [coins, setCoins] = useState<CoinData[]>([]);
   const [selectedName, setSelectedName] = useState<string | undefined>();
 
   useEffect(() => {
     if (docID) {
       const fetchData = async () => {
-        const data = await fetchMostTradedCoins(docID);
+        const data = await fetchMostTradedCoins(docID, date?.from, date?.to);
         setCoins(data);
         if (data.length > 0) setSelectedName(data[0].name);
       };
       fetchData();
     }
-  }, [docID]);
+  }, [docID, date]);
 
   const activeIndex = useMemo(
     () => coins.findIndex((coin) => coin.name === selectedName),
@@ -57,8 +64,6 @@ export default function MostTradedCoins({ docID }: { docID: string | null }) {
       return acc;
     }, {} as ChartConfig);
   }, [coins]);
-
-  console.log(coins);
 
   return (
     <Card className="flex flex-col">
@@ -102,7 +107,7 @@ export default function MostTradedCoins({ docID }: { docID: string | null }) {
       </CardHeader>
       <CardContent className="flex flex-1 justify-center pb-4">
         <ChartContainer
-          className="mx-auto aspect-square w-full max-h-[300px]"
+          className="mx-auto aspect-square w-full h-[300px]"
           config={chartConfig}
         >
           <PieChart>
