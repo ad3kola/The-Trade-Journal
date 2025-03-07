@@ -105,9 +105,9 @@ export default function MostTradedCoins({
           </div>
         </div>
       </CardHeader>
-      <CardContent className="flex flex-1 justify-center pb-4">
+      <CardContent className="flex flex-1 justify-center pb-0 mt-3">
         <ChartContainer
-          className="mx-auto aspect-square w-full h-[300px]"
+          className="mx-auto aspect-square w-full h-[250px]"
           config={chartConfig}
         >
           <PieChart>

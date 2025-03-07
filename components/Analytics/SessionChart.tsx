@@ -19,9 +19,12 @@ import { DateRange } from "react-day-picker";
 export default function SessionChart({
   docID,
   date,
+  colors
 }: {
   docID: string | null;
   date: DateRange | undefined;
+  colors: {up: string, down: string};
+
 }) {
   const [data, setData] = useState<
     { sessionName: string; wins: number; losses: number }[]
@@ -41,11 +44,11 @@ export default function SessionChart({
   const chartConfig = {
     wins: {
       label: "Wins",
-      color: "hsl(var(--primary))", // Example color
+      color: colors.up === "primary" ? `hsl(var(--${colors.up}))` : colors.up,
     },
     losses: {
       label: "Losses",
-      color: "hsl(var(--foreground))", // Example color
+      color: colors.down === "foreground" ? `hsl(var(--${colors.down}))` : colors.down,
     },
   };
 

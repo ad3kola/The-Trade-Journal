@@ -75,20 +75,19 @@ export interface PnLOverviewCharts {
   losses: Losses[];
 }
 
+export interface PnLDetails {
+    date: string; value: number | null,
+}
+
 export interface AccountTypeProps {
   personalPnL: {
     name: string;
-    value: number;
-    data: [
-      { date: string; value: number }[],
-
-    ];
+    totalPnL: number;
+    date: PnLDetails | null
   };
   propFirmPnL: {
     name: string;
     value: number;
-    data: [
-      { date: string; value: number }[],
-    ];
+    data: PnLDetails | null
   };
 }

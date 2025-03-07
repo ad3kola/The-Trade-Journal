@@ -31,12 +31,23 @@ import { DateRange } from "react-day-picker";
 // Function to format metric names
 function formatMetric(metric: string) {
   return metric
-    .replace(/_/g, ' ') // Replace underscores with spaces
+    .replace(/_/g, " ") // Replace underscores with spaces
     .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize the first letter of each word
 }
 
-export default function StrategyLosses({ docID, date }: { docID: string | null, date: DateRange | undefined }) {
-  const [chartData, setChartData] = useState<{ metric: string; losses: number }[]>([]);
+export default function StrategyLosses({
+  docID,
+  date,
+  colors
+}: {
+  docID: string | null;
+  date: DateRange | undefined;
+  colors: {up: string, down: string};
+
+}) {
+  const [chartData, setChartData] = useState<
+    { metric: string; losses: number }[]
+  >([]);
 
   useEffect(() => {
     const loadMetricsAndLosses = async () => {
@@ -45,7 +56,12 @@ export default function StrategyLosses({ docID, date }: { docID: string | null, 
         const lossesData = await Promise.all(
           fetchedMetrics.map(async (metric) => ({
             metric: formatMetric(metric), // Format the metric names
-            losses: await fetchStrategyLosses(docID, metric, date?.from, date?.to), // Fetch wins for each metric
+            losses: await fetchStrategyLosses(
+              docID,
+              metric,
+              date?.from,
+              date?.to
+            ), // Fetch wins for each metric
           }))
         );
 
@@ -59,7 +75,7 @@ export default function StrategyLosses({ docID, date }: { docID: string | null, 
   const chartConfig: ChartConfig = chartData.reduce((acc, { metric }) => {
     acc[metric] = {
       label: metric,
-      color: `hsl(var(--foreground))`, 
+      color: colors.down === "foreground" ? `hsl(var(--${colors.down}))` : colors.down,
     };
     return acc;
   }, {} as ChartConfig);
@@ -71,7 +87,7 @@ export default function StrategyLosses({ docID, date }: { docID: string | null, 
         <CardDescription>Performance per strategy metric</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer className='aspect-auto h-[250px]' config={chartConfig}>
+        <ChartContainer className="aspect-auto h-[250px]" config={chartConfig}>
           <BarChart
             accessibilityLayer
             data={chartData}
@@ -95,13 +111,14 @@ export default function StrategyLosses({ docID, date }: { docID: string | null, 
               cursor={false}
               content={<ChartTooltipContent indicator="line" />}
             />
-            <Bar dataKey="losses" radius={4} fill="hsl(var(--foreground))">
+            <Bar dataKey="losses" radius={4} fill={colors.down === "foreground" ? `hsl(var(--${colors.down}))` : colors.down}>
               <LabelList
                 dataKey="metric"
                 position="insideLeft"
                 offset={8}
                 className="fill-background tracking-wide font-bold"
-                tracking-wider fontSize={12}
+                tracking-wider
+                fontSize={12}
               />
               <LabelList
                 dataKey="losses"

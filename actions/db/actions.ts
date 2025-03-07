@@ -4,7 +4,15 @@ import { usersCollection } from "@/config/firebase";
 import { formSchema } from "@/config/zod";
 import { FormSchemaWithRefID } from "@/lib/typings";
 import { format } from "date-fns";
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  DocumentData,
+  getDocs,
+  query,
+  QuerySnapshot,
+  where,
+} from "firebase/firestore";
 import { z } from "zod";
 
 export const uploadTrade = async ({ docID, data }: FormSchemaWithRefID) => {
@@ -464,91 +472,69 @@ export async function fetchTradingSessionData(
   return [mostTraded, secondMostTraded, lastSession].filter(Boolean);
 }
 
-export const fetchAnalyticsPnL = async (
+export async function fetchAnalyticsPnL(
   docID: string,
   startDate: Date | null = null,
   endDate: Date | null = null
-) => {
+) {
+  
   const tradesCollectionRef = collection(usersCollection, docID, "trades");
 
-  // Initialize queries for "Prop Firm" and "Personal"
-  let propFirmQuery = query(
-    tradesCollectionRef,
-    where("accountType", "==", "Prop Firm")
-  );
-  let personalQuery = query(
-    tradesCollectionRef,
-    where("accountType", "==", "Personal")
-  );
+  const queries = {
+    propFirm: query(
+      tradesCollectionRef,
+      where("accountType", "==", "Prop Firm")
+    ),
+    personal: query(
+      tradesCollectionRef,
+      where("accountType", "==", "Personal")
+    ),
+  };
 
-  // Add date filters if startDate and endDate are provided
   if (startDate) {
-    propFirmQuery = query(propFirmQuery, where("date", ">=", startDate));
-    personalQuery = query(personalQuery, where("date", ">=", startDate));
+    queries.propFirm = query(queries.propFirm, where("date", ">=", startDate));
+    queries.personal = query(queries.personal, where("date", ">=", startDate));
   }
   if (endDate) {
-    propFirmQuery = query(propFirmQuery, where("date", "<=", endDate));
-    personalQuery = query(personalQuery, where("date", "<=", endDate));
+    queries.propFirm = query(queries.propFirm, where("date", "<=", endDate));
+    queries.personal = query(queries.personal, where("date", "<=", endDate));
   }
 
-  // Fetch data for both account types
-  const [propFirmQuerySnapshot, personalQuerySnapshot] = await Promise.all([
-    getDocs(propFirmQuery),
-    getDocs(personalQuery),
+  const [propFirmSnapshot, personalSnapshot] = await Promise.all([
+    getDocs(queries.propFirm),
+    getDocs(queries.personal),
   ]);
 
-  // Process Prop Firm trades
-  const propFirmData = propFirmQuerySnapshot.docs.map((doc) => {
-    const data = doc.data();
-    return {
-      date: formatDate(new Date(data.date)), // Format the date as 'MM/DD'
-      value: data.realizedPnL,
-    };
-  });
+  const processData = (snapshot: QuerySnapshot<DocumentData>, name: string) => {
+    let totalPnL = 0;
+    const wins: { date: string; value: number }[] = [];
+    const losses: { date: string; value: number }[] = [];
 
-  // Process Personal trades
-  const personalData = personalQuerySnapshot.docs.map((doc) => {
-    const data = doc.data();
-    return {
-      date: formatDate(new Date(data.date)), // Format the date as 'MM/DD'
-      value: data.realizedPnL,
-    };
-  });
+    snapshot.docs.forEach((doc) => {
+      const data = doc.data();
+      const formattedDate = formatDate(data.date.toDate());
+      totalPnL += data.realizedPnL;
 
-  // Calculate total PnL for both
-  const propfirmPnL = propFirmData.reduce((acc, item) => acc + item.value, 0);
-  const personalPnL = personalData.reduce((acc, item) => acc + item.value, 0);
+      if (data.tradeStatus.toLowerCase() == "win") {
+        wins.push({ date: formattedDate, value: Math.abs(data.realizedPnL.toFixed(2)) });
+      } else if (data.tradeStatus.toLowerCase() == "loss") {
+        losses.push({ date: formattedDate, value: Math.abs(data.realizedPnL.toFixed(2)) });
+      }
+    });
+
+    return { name, totalPnL, wins, losses };
+  };
   console.log(
-    "propfirmPnL: ",
-    {
-      name: "Prop Firm",
-      value: propfirmPnL,
-      data: propFirmData,
-    },
+    "propfirmPnL :",
+    processData(propFirmSnapshot, "Prop Firm"),
     "personalPnL: ",
-    {
-      name: "Personal",
-      value: personalPnL,
-      data: personalData,
-    }
+    processData(personalSnapshot, "Personal")
   );
   return {
-    propfirmPnL: {
-      name: "Prop Firm",
-      value: propfirmPnL,
-      data: propFirmData,
-    },
-    personalPnL: {
-      name: "Personal",
-      value: personalPnL,
-      data: personalData,
-    },
+    propfirmPnL: processData(propFirmSnapshot, "Prop Firm"),
+    personalPnL: processData(personalSnapshot, "Personal"),
   };
 };
 
 // Helper function to format the date as 'MM/DD'
-const formatDate = (date: Date) => {
-  const month = date.getMonth() + 1; // Months are zero-indexed
-  const day = date.getDate();
-  return `${month < 10 ? "0" + month : month}/${day < 10 ? "0" + day : day}`;
-};
+const formatDate = (date: Date) => format(date, "MM/dd");
