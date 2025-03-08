@@ -11,7 +11,6 @@ import { useEffect, useState } from "react";
 import { format, subMonths } from "date-fns";
 import {
   CalendarIcon,
-  FilterIcon,
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
@@ -61,9 +60,6 @@ export default function Page() {
                   "flex justify-center items-center text-center h-12 mx-auto tracking-wider font-normal gap-2"
                 )}
               >
-                <Button id="date" variant={"outline"}>
-                  <FilterIcon />
-                </Button>
                 <Button
                   id="date"
                   variant={"outline"}

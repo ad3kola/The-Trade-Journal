@@ -42,9 +42,7 @@ function Calendar({
         table: "w-full h-full border-collapse",
         head_row: "flex w-full",
         head_cell: cn(
-          "rounded-md w-full font-semibold text-sm py-2",
-          isSingleMode && "text-foreground",
-          isRangeMode && "text-foreground"
+          "rounded-md w-full font-semibold text-sm py-2 text-[#fff] dark:text-foreground",
         ),
         row: "flex w-full mt-2",
         cell: cn(
@@ -58,26 +56,26 @@ function Calendar({
         ),
         day: cn(
           buttonVariants({ variant: "ghost" }),
-          "h-8 w-8 p-0 font-normal aria-selected:opacity-100 hover:bg-primary hover:text-foreground rounded-lg font-bold",
-          isSingleMode && "text-foreground",
-          isRangeMode && "text-foreground"
+          "h-8 w-8 p-0 font-normal aria-selected:opacity-100 hover:bg-primary hover:text-[#fff] dark:hover:text-foreground rounded-lg font-bold",
+          isRangeMode && "text-{#fff] dark:text-foreground "
+
         ),
 
         day_selected: cn(
-          isSingleMode
-            ? "bg-primary text-foreground rounded-md" // Single mode
-            : isMultipleMode
-            ? "bg-foreground text-primary rounded-lg" // Multiple mode
+          isSingleMode,
+          isRangeMode && "text-[#fff] dark:text-foreground",
+            isMultipleMode
+            ? "bg-foreground text-[#fff] hover:text-[#fff] dark:text-primary rounded-lg" // Multiple mode
             : "bg-foreground text-background" // Range mode (no border-radius to connect)
         ),
 
         day_range_start: cn(
-          isRangeMode && "bg-primary text-background rounded-l-md"
+          isRangeMode && "bg-primary text-{#fff] dark:text-foreground rounded-l-md"
         ),
         day_range_end: cn(
-          isRangeMode && "bg-primary text-background rounded-r-md"
+          isRangeMode && "bg-primary text-{#fff] dark:text-foreground rounded-r-md"
         ),
-        day_range_middle: cn(isRangeMode && "bg-primary text-background"),
+        day_range_middle: cn(isRangeMode && "bg-primary text-{#fff] dark:text-foreground"),
 
         day_hidden: "invisible",
         ...classNames,

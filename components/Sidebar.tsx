@@ -18,7 +18,6 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
@@ -32,13 +31,10 @@ import { auth } from "@/config/firebase";
 import { getCurrentUserDoc } from "@/actions/db/actions";
 import { cn } from "@/lib/utils";
 const SideBar = () => {
-  const [user, setUser] = useState(auth.currentUser)
   const [currentID, setCurrentID] = useState<string>("");
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (authUser) => {
-      setUser(authUser);
-
       if (authUser) {
         const userData = await getCurrentUserDoc(authUser.uid);
         if (userData) {
@@ -84,7 +80,7 @@ const SideBar = () => {
                       className={cn(
                         "font-bold transition duration-100 ease-in-out text-sm tracking-wider gap-4 py-6",
                         currentRoute == `${url}/${currentID}` &&
-                          "bg-primary hover:bg-primary hover:text-foreground hover:font-medium"
+                          "bg-primary hover:bg-primary dark:hover:text-foreground text-[#fff] hover:font-medium"
                       )}
                     >
                       <Link href={`${url}/${currentID}`}>
@@ -92,14 +88,13 @@ const SideBar = () => {
                         <span>{title}</span>
                       </Link>
                     </SidebarMenuButton>
-                    <SidebarMenuBadge>10</SidebarMenuBadge>
                   </SidebarMenuItem>
                 ))}
-              <SidebarSeparator className="mt-7 " />
+              <SidebarSeparator className="my-5 " />
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
-                  className="font-bold transition duration-100 ease-in-out text-sm tracking-wider gap-4 py-6 hover:bg-primary hover:text-foreground hover:font-medium"
+                  className="font-bold transition duration-100 ease-in-out text-sm tracking-wider gap-4 py-6 hover:bg-primary dark:hover:text-foreground hover:font-medium"
                 >
                   <Button
                     variant="outline"
@@ -109,17 +104,6 @@ const SideBar = () => {
                     Log Out
                   </Button>
                 </SidebarMenuButton>
-                <SidebarMenuBadge>10</SidebarMenuBadge>
-              </SidebarMenuItem>
-              <SidebarSeparator className="mt-7 " />
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  className="font-bold transition duration-100 ease-in-out text-sm tracking-wider gap-4 py-6 hover:bg-primary hover:text-foreground hover:font-medium"
-                >
-                  {user?.displayName}
-                </SidebarMenuButton>
-                <SidebarMenuBadge>10</SidebarMenuBadge>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>

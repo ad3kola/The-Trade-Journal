@@ -11,6 +11,8 @@ import { useEffect, useState } from "react";
 
 const Header = () => {
   const [user, setUser] = useState(auth.currentUser);
+  const fullName = user?.displayName || "";
+  const [firstName] = fullName.split(" ");
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => setUser(user));
@@ -18,7 +20,10 @@ const Header = () => {
   }, []);
 
   return (
-    <header suppressHydrationWarning className="grid grid-cols-2 w-full items-center bg-sidebar justify-between p-4 pb-3 shadow shadow-primary sticky top-0 z-50">
+    <header
+      suppressHydrationWarning
+      className="grid grid-cols-2 w-full items-center bg-sidebar justify-between p-4 pb-3 shadow shadow-primary sticky top-0 z-50"
+    >
       {user ? (
         <div className="flex items-center h-full gap-3 shrink-0">
           <div className="relative ">
@@ -39,7 +44,10 @@ const Header = () => {
             </span>
           </div>
           <div className="flex flex-col text-base justify-center -space-y-1 w-full">
-            <h3 className="font-semibold tracking-wider">{user.displayName}</h3>
+            <h3 className="font-semibold tracking-wider">
+              <span className="block sm:hidden">{firstName}</span>{" "}
+              <span className="hidden sm:block">{fullName}</span>{" "}
+            </h3>
             <p className="text-[12px] text-foreground/65 font-medium">
               Hey, Welcome back!
             </p>

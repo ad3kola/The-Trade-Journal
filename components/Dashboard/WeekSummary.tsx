@@ -79,35 +79,38 @@ const WeekSummary = ({
   return (
     <section>
       <div className="w-full grid gap-4 grid-cols-2">
-        {content.map(
-          ({ title, Icon, value, prefix, isInteger }, indx) => {
-            return (
-              <Card key={indx}>
-                <div className="p-2 flex w-full gap-3 items-center justify-start h-full">
-                  <div
-                    className={cn(
-                      "text-foreground flex items-center justify-center rounded-lg h-full bg-primary shrink-0 px-3",
-                      indx % 2 && "order-2"
-                    )}
-                  >
-                    <Icon className="h-[22px] w-[22px] sm:w-[27px] sm:h-[27px]" />
-                  </div>
-                  <div className={cn("py-4 flex tracking-wide flex-col w-full flex-1 gap-1", indx % 2 && "pl-2")}>
-                    <p className="text-[12px] sm:text-sm uppercase font-medium text-foreground/60">
-                      {title}
-                    </p>
-                    <div className="flex w-full gap-2 items-center -mt-2">
-                      <h3 className="tracking-wider mt-1 text-xl sm:text-2xl md:text-3xl font-bold">
-                        {prefix}
-                        <AnimatedNumber value={value} isInteger={isInteger} />
-                      </h3>
-                    </div>
+        {content.map(({ title, Icon, value, prefix, isInteger }, indx) => {
+          return (
+            <Card key={indx}>
+              <div className="p-2 flex w-full gap-3 items-center justify-start h-full">
+                <div
+                  className={cn(
+                    "text-[#fff] flex items-center justify-center rounded-lg h-full bg-primary dark:text-foreground  shrink-0 px-3",
+                    indx % 2 && "order-2"
+                  )}
+                >
+                  <Icon className="h-[22px] w-[22px] sm:w-[27px] sm:h-[27px]" />
+                </div>
+                <div
+                  className={cn(
+                    "py-4 flex tracking-wide flex-col w-full flex-1 gap-1",
+                    indx % 2 && "pl-2"
+                  )}
+                >
+                  <p className="text-[12px] sm:text-sm uppercase font-medium text-foreground/60">
+                    {title}
+                  </p>
+                  <div className="flex w-full gap-2 items-center -mt-2">
+                    <h3 className="tracking-wider mt-1 text-xl sm:text-2xl md:text-3xl font-bold">
+                      {prefix}
+                      <AnimatedNumber value={value} isInteger={isInteger} />
+                    </h3>
                   </div>
                 </div>
-              </Card>
-            );
-          }
-        )}
+              </div>
+            </Card>
+          );
+        })}
       </div>
     </section>
   );
