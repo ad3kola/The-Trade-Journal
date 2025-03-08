@@ -57,12 +57,13 @@ function Calendar({
         day: cn(
           buttonVariants({ variant: "ghost" }),
           "h-8 w-8 p-0 font-normal aria-selected:opacity-100 hover:bg-primary hover:text-[#fff] dark:hover:text-foreground rounded-lg font-bold",
+          isSingleMode && "text-{#fff] dark:text-foreground ",
           isRangeMode && "text-{#fff] dark:text-foreground "
 
         ),
 
         day_selected: cn(
-          isSingleMode,
+          isSingleMode && "dark:text-background",
           isRangeMode && "text-[#fff] dark:text-foreground",
             isMultipleMode
             ? "bg-foreground text-[#fff] hover:text-[#fff] dark:text-primary rounded-lg" // Multiple mode
