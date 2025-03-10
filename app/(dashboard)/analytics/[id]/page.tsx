@@ -99,7 +99,10 @@ export default function Page() {
         <StrategyLosses docID={docID} date={date} />
         <SessionChart docID={docID} date={date} />
       </div>
+      <div className="grid grid-cols-1 xl:grid-cols-3">
+
       <MonthlyCalendar docID={docID} />
+      </div>
     </main>
   );
 }

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { fetchAnalyticsCalendarPnL } from "@/actions/db/actions";
+import { Button } from "../ui/button";
 
 const MonthlyCalendar = ({ docID }: { docID: string | null }) => {
   const [currentMonth, setCurrentMonth] = useState(dayjs());
@@ -44,37 +45,33 @@ const MonthlyCalendar = ({ docID }: { docID: string | null }) => {
   };
 
   return (
-    <Card>
+    <Card className="xl:col-span-2">
       <CardHeader>
         <div className="flex justify-between items-center">
-          <div className="flex items-center">
-            <button
+          <div className="flex items-center justify-between w-full">
+            <Button variant={'outline'}
               onClick={handlePreviousYear}
-              className="p-2 bg-gray-200 rounded-full hover:bg-gray-300"
             >
               &laquo;&laquo; {/* Double left arrow for previous year */}
-            </button>
-            <button
+            </Button>
+            <Button variant={'outline'}
               onClick={handlePreviousMonth}
-              className="p-2 bg-gray-200 rounded-full hover:bg-gray-300"
             >
               &laquo; {/* Single left arrow for previous month */}
-            </button>
+            </Button>
             <CardTitle className="mx-2">
               {currentMonth.format("MMMM YYYY")}
             </CardTitle>
-            <button
+            <Button variant={'outline'}
               onClick={handleNextMonth}
-              className="p-2 bg-gray-200 rounded-full hover:bg-gray-300"
             >
               &raquo; {/* Single right arrow for next month */}
-            </button>
-            <button
+            </Button>
+            <Button variant={'outline'}
               onClick={handleNextYear}
-              className="p-2 bg-gray-200 rounded-full hover:bg-gray-300"
             >
               &raquo;&raquo; {/* Double right arrow for next year */}
-            </button>
+            </Button>
           </div>
         </div>
       </CardHeader>
@@ -97,7 +94,7 @@ const MonthlyCalendar = ({ docID }: { docID: string | null }) => {
             return (
               <div
                 key={day}
-                className={`p-2 rounded-sm text-foreground sm:h-20 h-[60px] lg:h-24 flex flex-col items-end justify-start  ${
+                className={`p-2 rounded-sm text-foreground sm:h-20 h-[60px] lg:h-[84px] flex flex-col items-end justify-start  ${
                   pnl && pnl.total > 0
                     ? "bg-green-600"
                     : pnl && pnl.total < 0
@@ -110,7 +107,7 @@ const MonthlyCalendar = ({ docID }: { docID: string | null }) => {
                 </p>
                 {pnl !== null && (
                   <>
-                    <div className="text-sm sm:text-xl lg:text-3xl font-semibold lg:font-extrabold tracking-wide -mr-1">
+                    <div className="text-sm sm:text-xl lg:text-2xl font-semibold lg:font-extrabold tracking-wide -mr-1">
                       <span className="">$</span>
                       {Math.abs(pnl.total)}
                     </div>
