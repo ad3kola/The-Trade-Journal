@@ -38,12 +38,9 @@ function formatMetric(metric: string) {
 export default function StrategyWins({
   docID,
   date,
-  colors
 }: {
   docID: string | null;
   date: DateRange | undefined;
-  colors: {up: string, down: string};
-
 }) {
   const [chartData, setChartData] = useState<
     { metric: string; wins: number }[]
@@ -70,7 +67,7 @@ export default function StrategyWins({
   const chartConfig: ChartConfig = chartData.reduce((acc, { metric }) => {
     acc[metric] = {
       label: metric,
-      color: colors.up === "primary" ? `hsl(var(--${colors.up}))` : colors.up,
+      color: `hsl(var(--primary))`,
     };
     return acc;
   }, {} as ChartConfig);
@@ -106,7 +103,7 @@ export default function StrategyWins({
               cursor={false}
               content={<ChartTooltipContent indicator="line" />}
             />
-            <Bar dataKey="wins" radius={4} fill={colors.up === "primary" ? `hsl(var(--${colors.up}))` : colors.up}>
+            <Bar dataKey="wins" radius={4} fill={`hsl(var(--primary))`}>
               <LabelList
                 dataKey="metric"
                 position="insideLeft"

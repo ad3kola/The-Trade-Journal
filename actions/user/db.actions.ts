@@ -5,15 +5,12 @@ import { UserProps } from "@/lib/typings";
 import { addDoc, getDocs, query, where } from "firebase/firestore";
 
 export const validateUser = async (data: UserProps) => {
-    console.log(data)
     try {
 
     const q = query(usersCollection, where("email", "==", data.email));
     const querySnap = await getDocs(q)
 
-    if (!querySnap.empty) {
-        console.log('User already exists in firestore')
-        
+    if (!querySnap.empty) {        
         return;
     }
 

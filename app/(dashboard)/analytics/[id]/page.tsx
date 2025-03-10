@@ -9,11 +9,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 
 import { format, subMonths } from "date-fns";
-import {
-  CalendarIcon,
-  TrendingDown,
-  TrendingUp,
-} from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 
 import { cn } from "@/lib/utils";
@@ -27,6 +23,7 @@ import {
 import SessionChart from "@/components/Analytics/SessionChart";
 import PersonalAccountPnL from "@/components/Analytics/PersonalAccountPnL";
 import PropFirmAccountPnL from "@/components/Analytics/PropFirmAccountPnL";
+import MonthlyCalendar from "@/components/Analytics/MonthlyCalendar";
 
 export default function Page() {
   const [date, setDate] = useState<DateRange | undefined>({
@@ -34,10 +31,6 @@ export default function Page() {
     to: new Date(),
   });
   const [docID, setDocID] = useState<string | null>(null);
-  const [colors, setColors] = useState<{ up: string; down: string }>({
-    up: "primary",
-    down: "foreground",
-  });
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -97,34 +90,16 @@ export default function Page() {
             </PopoverContent>
           </Popover>
         </div>
-        <div
-          onClick={() => setColors({ up: "green", down: "red" })}
-          className="flex items-center cursor-pointer border rounded-lg h-auto py-[10px] px-1"
-        >
-          <TrendingUp className="h-4 w-4 text-green-500 -rotate-[32deg]" />
-          <TrendingDown className="h-4 w-4 text-red-500 rotate-[52deg]" />
-        </div>{" "}
-        <div
-          onClick={() =>
-            setColors({
-              up: "primary",
-              down: "foreground",
-            })
-          }
-          className="flex items-center cursor-pointer  border rounded-lg h-auto py-[10px] px-1 "
-        >
-          <TrendingUp className="h-4 w-4 text-primary -rotate-[32deg]" />
-          <TrendingDown className="h-4 w-4 text-foreground rotate-[52deg]" />
-        </div>{" "}
       </div>
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-        <PersonalAccountPnL docID={docID} date={date} colors={colors} />
-        <PropFirmAccountPnL docID={docID} date={date} colors={colors} />
+        <PersonalAccountPnL docID={docID} date={date} />
+        <PropFirmAccountPnL docID={docID} date={date} />
         <MostTradedCoins docID={docID} date={date} />
-        <StrategyWins docID={docID} date={date} colors={colors} />
-        <StrategyLosses docID={docID} date={date} colors={colors} />
-        <SessionChart docID={docID} date={date} colors={colors} />
+        <StrategyWins docID={docID} date={date} />
+        <StrategyLosses docID={docID} date={date} />
+        <SessionChart docID={docID} date={date} />
       </div>
+      <MonthlyCalendar docID={docID} />
     </main>
   );
 }

@@ -78,7 +78,6 @@ export default function FormComponent({
       try {
         const res = await fetchAllCoins();
         setAllCoins(res);
-        console.log(res);
       } catch (error) {
         console.error("Failed to fetch coins: ", error);
       }
@@ -150,7 +149,6 @@ export default function FormComponent({
     // Format date only for API submission
     data.date = new Date(data.date);
 
-    console.log(data);
 
     await uploadTrade({ docID, data });
 
@@ -227,7 +225,6 @@ export default function FormComponent({
     watch("tradeStatus"),
     watch("tradeType"), 
   ]);
-  console.log(allCoins);
 
   const PnL = watch("realizedPnL");
   const RR = watch("risk_Reward");

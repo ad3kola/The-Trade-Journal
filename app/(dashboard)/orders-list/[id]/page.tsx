@@ -22,7 +22,6 @@ function Page() {
     };
     fetchTrades();
   }, [id]);
-  console.log(allTrades);
 
   return (
     <main className="p-4 flex flex-col w-full gap-3">

@@ -59,7 +59,6 @@ export default function GradientChart({
     }
   }, [active, chartData]);
 
-  console.log(filteredData);
 
   return (
     <Card>

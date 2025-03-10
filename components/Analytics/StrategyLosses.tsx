@@ -38,11 +38,9 @@ function formatMetric(metric: string) {
 export default function StrategyLosses({
   docID,
   date,
-  colors
 }: {
   docID: string | null;
   date: DateRange | undefined;
-  colors: {up: string, down: string};
 
 }) {
   const [chartData, setChartData] = useState<
@@ -75,7 +73,7 @@ export default function StrategyLosses({
   const chartConfig: ChartConfig = chartData.reduce((acc, { metric }) => {
     acc[metric] = {
       label: metric,
-      color: colors.down === "foreground" ? `hsl(var(--${colors.down}))` : colors.down,
+      color: `hsl(var(--foreground))`,
     };
     return acc;
   }, {} as ChartConfig);
@@ -111,7 +109,7 @@ export default function StrategyLosses({
               cursor={false}
               content={<ChartTooltipContent indicator="line" />}
             />
-            <Bar dataKey="losses" radius={4} fill={colors.down === "foreground" ? `hsl(var(--${colors.down}))` : colors.down}>
+            <Bar dataKey="losses" radius={4} fill={`hsl(var(--foreground))`}>
               <LabelList
                 dataKey="metric"
                 position="insideLeft"

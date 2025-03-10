@@ -10,7 +10,9 @@ import {
   DocumentData,
   getDocs,
   query,
+  QueryDocumentSnapshot,
   QuerySnapshot,
+  Timestamp,
   where,
 } from "firebase/firestore";
 import { z } from "zod";
@@ -477,7 +479,6 @@ export async function fetchAnalyticsPnL(
   startDate: Date | null = null,
   endDate: Date | null = null
 ) {
-  
   const tradesCollectionRef = collection(usersCollection, docID, "trades");
 
   const queries = {
@@ -516,25 +517,78 @@ export async function fetchAnalyticsPnL(
       totalPnL += data.realizedPnL;
 
       if (data.tradeStatus.toLowerCase() == "win") {
-        wins.push({ date: formattedDate, value: Math.abs(data.realizedPnL.toFixed(2)) });
+        wins.push({
+          date: formattedDate,
+          value: Math.abs(data.realizedPnL.toFixed(2)),
+        });
       } else if (data.tradeStatus.toLowerCase() == "loss") {
-        losses.push({ date: formattedDate, value: Math.abs(data.realizedPnL.toFixed(2)) });
+        losses.push({
+          date: formattedDate,
+          value: Math.abs(data.realizedPnL.toFixed(2)),
+        });
       }
     });
 
     return { name, totalPnL, wins, losses };
   };
-  console.log(
-    "propfirmPnL :",
-    processData(propFirmSnapshot, "Prop Firm"),
-    "personalPnL: ",
-    processData(personalSnapshot, "Personal")
-  );
+
   return {
     propfirmPnL: processData(propFirmSnapshot, "Prop Firm"),
     personalPnL: processData(personalSnapshot, "Personal"),
   };
-};
+}
 
 // Helper function to format the date as 'MM/DD'
 const formatDate = (date: Date) => format(date, "MM/dd");
+const formatDateWithYear = (date: Date) => format(date, "MM/dd/yyyy");
+
+interface TradeData {
+  date: Timestamp;  // Assuming Firestore Timestamp for date
+  realizedPnL: number;
+  accountType: string;  // You can modify this type according to your actual data fields
+}
+
+// Type for the aggregated trade data by date
+interface AggregatedTrade {
+  total: number;
+  tradesCount: number;
+}
+
+// Function to fetch and aggregate trades for the calendar PnL
+export async function fetchAnalyticsCalendarPnL(docID: string) {
+  const tradesCollectionRef = collection(usersCollection, docID, "trades");
+
+  const querySnap = await getDocs(tradesCollectionRef);
+
+  // Aggregate trades by date
+  const aggregatedTrades = querySnap.docs.reduce((acc: { [key: string]: AggregatedTrade }, doc: QueryDocumentSnapshot) => {
+    const tradeData = doc.data() as TradeData;
+    const dateKey = formatDateWithYear(tradeData.date.toDate()); // Format date for consistent key
+
+    // If no trades exist for this date yet, create a new entry
+    if (!acc[dateKey]) {
+      acc[dateKey] = {
+        total: 0,
+        tradesCount: 0,
+      };
+    }
+
+    // Increment total PnL for the day
+    acc[dateKey].total += tradeData.realizedPnL;
+    // Increment the count of trades for the day
+    acc[dateKey].tradesCount += 1;
+
+    return acc;
+  }, {}); // Start with an empty object as the accumulator
+
+  // Convert aggregated data to an array and return it
+  const result = Object.keys(aggregatedTrades).map((date) => ({
+    date,
+    total: Number(aggregatedTrades[date].total.toFixed(0)),
+    tradesCount: aggregatedTrades[date].tradesCount,
+  }));
+
+  console.log(result);
+
+  return result;
+}

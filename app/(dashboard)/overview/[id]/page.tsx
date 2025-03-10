@@ -94,10 +94,6 @@ useEffect(() => {
     if (pnLStats) setWinRate(pnLStats.winRate);
   }, [pnLStats]);
 
-  // Log Chart Data inside `useEffect`
-  useEffect(() => {
-    if (chartData) console.log(chartData);
-  }, [chartData]);
 
   return (
     <main suppressHydrationWarning className="w-full px-2 py-4">

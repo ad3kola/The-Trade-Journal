@@ -33,11 +33,9 @@ import { cn } from "@/lib/utils";
 export default function PropFirmChart({
   docID,
   date,
-  colors
 }: {
   docID: string | null;
   date: DateRange | undefined;
-  colors: {up: string, down: string};
 
 }) {
   // Separate states for Prop Firm
@@ -50,11 +48,11 @@ export default function PropFirmChart({
 const chartConfig = {
   profits: {
     label: "Profits",
-    color: colors.up === "primary" ? `hsl(var(--${colors.up}))` : colors.up, 
+    color: `hsl(var(--primary))`,
   },
   losses: {
     label: "Losses",
-    color: colors.down === "foreground" ? `hsl(var(--${colors.down}))` : colors.down,
+    color: `hsl(var(--foreground))`,
   },
 } satisfies ChartConfig;
   useEffect(() => {

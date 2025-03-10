@@ -17,7 +17,6 @@ export default function RecentTransactions({
 }: {
   allTrades: z.infer<typeof formSchema>[];
 }) {
-  console.log(allTrades);
 
   return (
     <>

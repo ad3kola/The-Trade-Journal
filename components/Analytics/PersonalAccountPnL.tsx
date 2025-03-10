@@ -38,11 +38,9 @@ export interface Props {
 export default function GradientChart({
   docID,
   date,
-  colors
 }: {
   docID: string | null;
   date: DateRange |undefined;
-  colors: {up: string, down: string};
 }) {
   const [active, setActive] = useState("profits");
   const [chartData, setChartData] = useState<PnLDetails[]>([]);
@@ -51,11 +49,12 @@ export default function GradientChart({
   const chartConfig = {
     profits: {
       label: "Profits",
-      color: colors.up === "primary" ? `hsl(var(--${colors.up}))` : colors.up, 
+      color:`hsl(var(--primary))`,
     },
     losses: {
       label: "Losses",
-      color: colors.down === "foreground" ? `hsl(var(--${colors.down}))` : colors.down,
+      color:  `hsl(var(--foreground))`,
+
     },
   } satisfies ChartConfig
 
@@ -75,7 +74,6 @@ export default function GradientChart({
     }
   }, [active, date, docID]);
 
-  console.log(chartData);
 
   return (
     <Card>
@@ -153,8 +151,8 @@ export default function GradientChart({
               dot={{
                 fill:
                   active === "profits"
-                    ? "var(--color-profits)" // Fill color for profit dots
-                    : "var(--color-losses)", // Fill color for loss dots
+                    ? "var(--color-profits)"
+                    : "var(--color-losses)",
               }}
               stackId="a"
             />
