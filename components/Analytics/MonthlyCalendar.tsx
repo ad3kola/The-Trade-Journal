@@ -4,6 +4,12 @@ import dayjs from "dayjs";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { fetchAnalyticsCalendarPnL } from "@/actions/db/actions";
 import { Button } from "../ui/button";
+import {
+  ChevronDoubleLeftIcon,
+  ChevronDoubleRightIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "@heroicons/react/24/solid";
 
 const MonthlyCalendar = ({ docID }: { docID: string | null }) => {
   const [currentMonth, setCurrentMonth] = useState(dayjs());
@@ -18,9 +24,7 @@ const MonthlyCalendar = ({ docID }: { docID: string | null }) => {
   useEffect(() => {
     if (docID) {
       const fetchCalendarPnL = async () => {
-        const data = await fetchAnalyticsCalendarPnL(
-          docID,
-        );
+        const data = await fetchAnalyticsCalendarPnL(docID);
 
         setTrades(data); // Update state with fetched trades data
       };
@@ -48,29 +52,27 @@ const MonthlyCalendar = ({ docID }: { docID: string | null }) => {
     <Card className="xl:col-span-2">
       <CardHeader>
         <div className="flex justify-between items-center">
-          <div className="flex items-center justify-between w-full">
-            <Button variant={'outline'}
-              onClick={handlePreviousYear}
-            >
-              &laquo;&laquo; {/* Double left arrow for previous year */}
+          <div className="flex items-center justify-between w-full gap-2">
+            <Button size="sm" variant={"outline"} onClick={handlePreviousYear}>
+              <ChevronDoubleLeftIcon className="h-3 w-3" />
             </Button>
-            <Button variant={'outline'}
-              onClick={handlePreviousMonth}
-            >
-              &laquo; {/* Single left arrow for previous month */}
-            </Button>
-            <CardTitle className="mx-2">
-              {currentMonth.format("MMMM YYYY")}
-            </CardTitle>
-            <Button variant={'outline'}
-              onClick={handleNextMonth}
-            >
-              &raquo; {/* Single right arrow for next month */}
-            </Button>
-            <Button variant={'outline'}
-              onClick={handleNextYear}
-            >
-              &raquo;&raquo; {/* Double right arrow for next year */}
+            <div className=" flex-1 flex items-center w-full justify-center gap-4 sm:gap-8">
+              <Button
+                size="sm"
+                variant={"outline"}
+                onClick={handlePreviousMonth}
+              >
+                <ChevronLeftIcon className="h-3 w-3" />
+              </Button>
+              <CardTitle className="mx-2 whitespace-nowrap">
+                {currentMonth.format("MMMM YYYY")}
+              </CardTitle>
+              <Button size="sm" variant={"outline"} onClick={handleNextMonth}>
+                <ChevronRightIcon className="h-3 w-3" />
+              </Button>
+            </div>
+            <Button size="sm" variant={"outline"} onClick={handleNextYear}>
+              <ChevronDoubleRightIcon className="h-3 w-3" />
             </Button>
           </div>
         </div>
@@ -94,12 +96,12 @@ const MonthlyCalendar = ({ docID }: { docID: string | null }) => {
             return (
               <div
                 key={day}
-                className={`p-2 rounded-sm text-foreground sm:h-20 h-[60px] lg:h-[84px] flex flex-col items-end justify-start  ${
+                className={`p-2 rounded-sm sm:h-20 h-[60px] lg:h-[84px] flex flex-col justify-start  ${
                   pnl && pnl.total > 0
-                    ? "bg-green-600"
+                    ? "bg-green-950 text-green-500"
                     : pnl && pnl.total < 0
-                    ? "bg-red-700"
-                    : "bg-input text-black"
+                    ? "bg-red-950 text-red-600"
+                    : "bg-input text-opacity-50 font-bold"
                 }`}
               >
                 <p className="text-xs lg:text-sm font-normal">
@@ -107,13 +109,11 @@ const MonthlyCalendar = ({ docID }: { docID: string | null }) => {
                 </p>
                 {pnl !== null && (
                   <>
-                    <div className="text-sm sm:text-xl lg:text-2xl font-semibold lg:font-extrabold tracking-wide -mr-1">
-                      <span className="">$</span>
-                      {Math.abs(pnl.total)}
+                    <div className="text-sm sm:text-base mt-2 text-center font-medium tracking-wide">
+                      {pnl.total > 0
+                        ? `$${Math.abs(pnl.total)}`
+                        : `-$${Math.abs(pnl.total)}`}
                     </div>
-                    <p className="hidden sm:inline-flex text-xs lg:text-xs font-medium">
-                      {pnl.tradesCount} trades
-                    </p>
                   </>
                 )}
               </div>

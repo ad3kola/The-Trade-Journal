@@ -95,13 +95,13 @@ export default function Page() {
         <PersonalAccountPnL docID={docID} date={date} />
         <PropFirmAccountPnL docID={docID} date={date} />
         <MostTradedCoins docID={docID} date={date} />
+      <MonthlyCalendar docID={docID} />
         <StrategyWins docID={docID} date={date} />
         <StrategyLosses docID={docID} date={date} />
         <SessionChart docID={docID} date={date} />
       </div>
       <div className="grid grid-cols-1 xl:grid-cols-3">
 
-      <MonthlyCalendar docID={docID} />
       </div>
     </main>
   );
