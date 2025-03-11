@@ -645,7 +645,7 @@ export default function FormComponent({
             className={`${
               isUploading
                 ? "bg-primary text-foreground"
-                : "bg-foreground text-background"
+                : "bg-foreground text-neutral-950"
             }`}
           >
             {isUploading ? (

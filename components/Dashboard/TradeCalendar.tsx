@@ -7,7 +7,7 @@ export default function TradeCalendar({calendarDates}: {calendarDates: Date[]}) 
     <Calendar
       mode="multiple"
       selected={calendarDates}
-      className="rounded-md border shadow "
+      className="rounded-xl border shadow "
     />
   );
 }

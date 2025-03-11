@@ -77,10 +77,10 @@ const MonthlyCalendar = ({ docID }: { docID: string | null }) => {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="p-2 sm:p-6">
-        <div className="grid grid-cols-7 gap-1 text-center">
+      <CardContent className="py-2 px-1 sm:p-6">
+        <div className="grid grid-cols-7 gap-1 text-center ">
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-            <div key={day} className="font-bold text-sm">
+            <div key={day} className="font-medium text-xs border rounded-sm text-foreground py-1">
               {day}
             </div>
           ))}
@@ -96,12 +96,12 @@ const MonthlyCalendar = ({ docID }: { docID: string | null }) => {
             return (
               <div
                 key={day}
-                className={`p-2 rounded-sm sm:h-20 h-[60px] lg:h-[84px] flex flex-col justify-start  ${
+                className={`p-2 rounded-sm sm:h-20 h-[60px] lg:h-[84px] flex shadow-none hover:opacity-80 cursor-pointer flex-col justify-start ${
                   pnl && pnl.total > 0
                     ? "bg-green-950 text-green-500"
                     : pnl && pnl.total < 0
                     ? "bg-red-950 text-red-600"
-                    : "bg-input text-opacity-50 font-bold"
+                    : "bg-input font-bold text-gray-400 z-40"
                 }`}
               >
                 <p className="text-xs lg:text-sm font-normal">
@@ -109,11 +109,10 @@ const MonthlyCalendar = ({ docID }: { docID: string | null }) => {
                 </p>
                 {pnl !== null && (
                   <>
-                    <div className="text-sm sm:text-base mt-2 text-center font-medium tracking-wide">
-                      {pnl.total > 0
-                        ? `$${Math.abs(pnl.total)}`
-                        : `-$${Math.abs(pnl.total)}`}
+                    <div className="text-xs md:text-sm whitespace-nowrap lg:text-base mt-2 text-center font-semibold tracking-wide flex flex-col">
+                      ${Math.abs(pnl.total)}
                     </div>
+                 
                   </>
                 )}
               </div>

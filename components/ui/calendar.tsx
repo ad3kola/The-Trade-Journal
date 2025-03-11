@@ -66,7 +66,7 @@ function Calendar({
           isSingleMode && "dark:text-background",
           isRangeMode && "text-[#fff] dark:text-foreground",
             isMultipleMode
-            ? "bg-foreground text-[#fff] hover:text-[#fff] dark:text-primary rounded-lg" // Multiple mode
+            ? "bg-primary text-[#fff] hover:text-[#fff] rounded-lg" // Multiple mode
             : "bg-foreground text-background" // Range mode (no border-radius to connect)
         ),
 
