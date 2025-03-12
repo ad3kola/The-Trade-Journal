@@ -23,7 +23,7 @@ import {
 import SessionChart from "@/components/Analytics/SessionChart";
 import PersonalAccountPnL from "@/components/Analytics/PersonalAccountPnL";
 import PropFirmAccountPnL from "@/components/Analytics/PropFirmAccountPnL";
-import MonthlyCalendar from "@/components/Analytics/MonthlyCalendar";
+import PnLCalendar from "@/components/Analytics/PnLCalendar";
 
 export default function Page() {
   const [date, setDate] = useState<DateRange | undefined>({
@@ -91,18 +91,20 @@ export default function Page() {
           </Popover>
         </div>
       </div>
-      <div className="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-        <PersonalAccountPnL docID={docID} date={date} />
-        <PropFirmAccountPnL docID={docID} date={date} />
-        <MostTradedCoins docID={docID} date={date} />
-      <MonthlyCalendar docID={docID} />
-        <StrategyWins docID={docID} date={date} />
-        <StrategyLosses docID={docID} date={date} />
-        <SessionChart docID={docID} date={date} />
+      <div className="w-full flex flex-col gap-4">
+        <div className="grid grid-cols-1 2xl:grid-cols-3 gap-4">
+          <PersonalAccountPnL docID={docID} date={date} />
+          <PropFirmAccountPnL docID={docID} date={date} />
+          <MostTradedCoins docID={docID} date={date} />
+        </div>
+        <PnLCalendar docID={docID} />
+        <div className="grid grid-cols-1 2xl:grid-cols-3 gap-4">
+          <StrategyWins docID={docID} date={date} />
+          <StrategyLosses docID={docID} date={date} />
+          <SessionChart docID={docID} date={date} />
+        </div>
       </div>
-      <div className="grid grid-cols-1 xl:grid-cols-3">
-
-      </div>
+      <div className="grid grid-cols-1 xl:grid-cols-3"></div>
     </main>
   );
 }
