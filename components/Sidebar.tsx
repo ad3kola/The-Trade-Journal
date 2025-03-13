@@ -3,10 +3,10 @@
 import {
   ChartBarIcon,
   ChartPieIcon,
-  ClipboardIcon,
+  // ClipboardIcon,
   ClipboardListIcon,
   ExternalLink,
-  GraduationCapIcon,
+  // GraduationCapIcon,
   HomeIcon,
   PlusIcon,
   Table,
