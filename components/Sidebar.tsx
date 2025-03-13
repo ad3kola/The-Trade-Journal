@@ -56,7 +56,7 @@ const SideBar = () => {
     { Icon: PlusIcon, title: "Log a Trade", url: "/upload" },
     { Icon: ChartBarIcon, title: "Data & Analytics", url: "/analytics" },
     { Icon: ClipboardListIcon, title: "Strategy & Notes", url: "/strategy" },
-    { Icon: GraduationCapIcon, title: "Replay & Backtesting", url: "/backtesting" },
+    // { Icon: GraduationCapIcon, title: "Replay & Backtesting", url: "/backtesting" },
   ];
   const currentRoute = usePathname();
 
