@@ -243,10 +243,11 @@ export async function fetchTradeDataForLast7Trades(
 export async function fetchUserMetrics() {
   const querySnapshot = await getDocs(usersCollection);
   const metrics = querySnapshot.docs
-    .flatMap((doc) => doc.data().strategy)
-    .filter(Boolean);
-
-  const uniqueMetrics = [...new Set(metrics)];
+  .flatMap((doc) => doc.data().strategy)
+  .filter(Boolean);
+  console.log()
+    const uniqueMetrics = [...new Set(metrics)];
+    console.log(uniqueMetrics)
   return uniqueMetrics;
 }
 

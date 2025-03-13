@@ -63,7 +63,7 @@ export default function StrategyWins({
 
     loadMetricsAndWins();
   }, [docID, date]);
-
+console.log(chartData)
   const chartConfig: ChartConfig = chartData.reduce((acc, { metric }) => {
     acc[metric] = {
       label: metric,

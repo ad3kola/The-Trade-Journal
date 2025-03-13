@@ -28,7 +28,8 @@ export const formSchema = z.object({
       name: z.string().optional(),
       image: z.string().optional(),
       current_price: z.number().default(0),
-  }).strict(),
+    })
+    .strict(),
   accountType: z.nativeEnum(AccountType),
   tradeSession: z.nativeEnum(TradeSession),
   timeframe: z.nativeEnum(TradeTimeframe),
@@ -54,4 +55,11 @@ export const formSchema = z.object({
   confidence: z.array(z.number()).default([0]),
   tradeScreenshot: z.string().optional(),
   tradeReview: z.string().min(5, "Review must be at least 5 characters"),
+});
+
+export const strategySchema = z.object({
+  name: z.string(),
+  overview: z.string(),
+  winRate: z.coerce.number().nonnegative().max(100),
+  metrics: z.array(z.string()),
 });

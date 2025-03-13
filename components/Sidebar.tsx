@@ -3,7 +3,10 @@
 import {
   ChartBarIcon,
   ChartPieIcon,
+  ClipboardIcon,
+  ClipboardListIcon,
   ExternalLink,
+  GraduationCapIcon,
   HomeIcon,
   PlusIcon,
   Table,
@@ -50,8 +53,10 @@ const SideBar = () => {
     { Icon: HomeIcon, title: "Dashboard", url: "/overview" },
 
     { Icon: Table, title: "Orders List", url: "/orders-list" },
-    { Icon: ChartBarIcon, title: "Analytics", url: "/analytics" },
     { Icon: PlusIcon, title: "Log a Trade", url: "/upload" },
+    { Icon: ChartBarIcon, title: "Data & Analytics", url: "/analytics" },
+    { Icon: ClipboardListIcon, title: "Strategy & Notes", url: "/strategy" },
+    { Icon: GraduationCapIcon, title: "Replay & Backtesting", url: "/backtesting" },
   ];
   const currentRoute = usePathname();
 
