@@ -1,5 +1,6 @@
-"use client";
+"use client"
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -23,10 +24,15 @@ import {
   PercentIcon,
   XIcon,
 } from "lucide-react";
-import { useState } from "react";
 import { Input } from "./ui/input";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { usersCollection } from "@/config/firebase";
 
-export default function CreateStrategy() {
+export default function CreateStrategy({ docID }: { docID: string | null }) {
+  const [open, setOpen] = useState(false); // 👈 State for modal control
+  const [strategies, setStrategies] = useState<string[]>([]);
+  const [metricInput, setMetricInput] = useState("");
+
   const form = useForm<z.infer<typeof strategySchema>>({
     resolver: zodResolver(strategySchema),
     defaultValues: {
@@ -37,26 +43,41 @@ export default function CreateStrategy() {
     },
   });
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = form;
+  const { control, handleSubmit, reset, formState: { errors } } = form;
 
-  console.log(errors);
+  const onSubmit = async (data: z.infer<typeof strategySchema>) => {
+    if (!docID) return;
 
-  const onSubmit = (data: z.infer<typeof strategySchema>) => {
-    console.log("Form submitted", data);
+    try {
+      const q = query(
+        collection(usersCollection, docID, "strategy"),
+        where("name", "==", data.name)
+      );
+      const queryResponse = await getDocs(q);
+
+      if (!queryResponse.empty) {
+        console.log("Strategy already exists");
+        return;
+      }
+
+      data.metrics = strategies;
+
+      await addDoc(collection(usersCollection, docID, "strategy"), data);
+      console.log("New strategy created");
+
+      reset();
+      setStrategies([]);
+      setOpen(false);
+    } catch (err) {
+      console.error("Error creating strategy:", err);
+    }
   };
-
-  const [metricInput, setMetricInput] = useState("");
-  const [strategies, setStrategies] = useState<string[]>([]);
 
   return (
     <div className="w-full flex items-center justify-center">
-      <Dialog>
+      <Dialog open={open} onOpenChange={setOpen}> 
         <DialogTrigger asChild>
-          <Button>Create a new strategy</Button>
+          <Button onClick={() => setOpen(true)}>Create a new strategy</Button> 
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
@@ -94,7 +115,7 @@ export default function CreateStrategy() {
                     <FormLabel className="pl-2 whitespace-nowrap">
                       New Trade Metric
                     </FormLabel>
-                    <div className="flex gap-2 w-full items-center rounded-md border border-input bg-transparent pl-4 h-11 text-[13px] placeholder:tracking-wider lg:text-base shadow-sm placeholder:font-medium transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-foreground/60 focus-visible:outline-none">
+                    <div className="flex gap-2 w-full items-center rounded-md border border-input bg-transparent pl-4 h-11 text-[13px] lg:text-base shadow-sm transition-colors">
                       <NotebookPenIcon className="w-4 h-4" />
                       <Input
                         value={metricInput}
@@ -103,12 +124,11 @@ export default function CreateStrategy() {
                       />
                       <Button
                         type="button"
-                        variant="default"
-                        className="ml-auto text-lg font-bold"
+                        className="ml-auto text-xl font-bold"
                         size="icon"
                         onClick={() => {
                           if (metricInput.trim()) {
-                            setStrategies((others) => [metricInput, ...others]);
+                            setStrategies((prev) => [...prev, metricInput]);
                             setMetricInput("");
                           }
                         }}
@@ -118,7 +138,7 @@ export default function CreateStrategy() {
                     </div>
                   </div>
                   {strategies.length > 0 && (
-                    <div className="flex items-center space-x-3 space-y-2 flex-wrap -mt-2 px-2">
+                    <div className="flex items-center space-x-3 flex-wrap -mt-2 px-2">
                       {strategies.map((strat, index) => (
                         <div
                           key={index}
