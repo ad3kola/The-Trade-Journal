@@ -56,16 +56,16 @@ body {
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 14.9%;
     --muted-foreground: 0 0% 63.9%;
-    --accent: 242, 22%, 28%;
+    --accent: 210, 14%, 11%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 242, 22%, 28%;
     --input: 242 22% 28% / 70%;
     --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 224, 100%, 58%;
-    --chart-3: 243 76% 95%;
+    --chart-1: 142, 71%, 45%;
+    --chart-2: 0, 84%, 60%;
+    --chart-3: 262, 85%, 47%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
     --chart-6: 340 75% 55%;
@@ -86,6 +86,12 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+  h3 {
+    @apply font-semibold text-lg
+  }
+  h2 {
+    @apply font-bold text-xl
   }
 }
 

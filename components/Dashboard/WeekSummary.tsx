@@ -3,17 +3,16 @@
 import { useEffect, useState } from "react";
 import anime from "animejs";
 import {
+  ArrowDownIcon,
+  ArrowUpIcon,
   ChartColumnIncreasingIcon,
-  DollarSign,
-  EyeClosedIcon,
-  EyeIcon,
-  Percent,
+  CircleDollarSign,
+  PercentCircleIcon,
 } from "lucide-react";
-import { Card } from "../ui/card";
+import { Card, CardContent, CardHeader } from "../ui/card";
 import { cn } from "@/lib/utils";
 import { ChartPieIcon } from "@heroicons/react/24/solid";
 import { PNLs, RR } from "@/app/(dashboard)/overview/[id]/page";
-import { Button } from "../ui/button";
 
 const AnimatedNumber = ({
   value,
@@ -22,7 +21,7 @@ const AnimatedNumber = ({
   value: number;
   isInteger?: boolean;
 }) => {
-  const [displayValue, setDisplayValue] = useState(0); 
+  const [displayValue, setDisplayValue] = useState(0);
 
   useEffect(() => {
     const animation = anime({
@@ -32,12 +31,12 @@ const AnimatedNumber = ({
       duration: 2000,
       round: 1,
       update: (anim) => {
-        setDisplayValue((Number(anim.animations[0].currentValue)));
+        setDisplayValue(Number(anim.animations[0].currentValue));
       },
     });
 
     return () => animation.pause();
-  }, [value])
+  }, [value]);
 
   return isInteger
     ? String(Math.floor(displayValue)).padStart(2, "0")
@@ -47,7 +46,6 @@ const AnimatedNumber = ({
       });
 };
 
-
 const WeekSummary = ({
   pnLStats,
   RRStats,
@@ -56,94 +54,105 @@ const WeekSummary = ({
   RRStats: RR | null;
 }) => {
   const formattedTrades = RRStats?.totalTrades ?? 0;
-  const [hideBalance, setHidden] = useState(false);
 
   const content = [
     {
       title: "Realized PnL",
-      Icon: DollarSign,
+      Icon: CircleDollarSign,
       value: pnLStats?.totalPnL ?? 0,
       prefix: "$",
       isInteger: false,
+      previousValue: 0,
+      percentChange: 10.8,
     },
     {
       title: "Total Trades",
       Icon: ChartColumnIncreasingIcon,
       value: formattedTrades,
       isInteger: true,
+      previousValue: 0,
+      percentChange: 21.2,
     },
     {
       title: "Total R:R",
       Icon: ChartPieIcon,
       value: RRStats?.totalRR ?? 0,
       isInteger: false,
+      previousValue: 0,
+      percentChange: -6.8,
     },
     {
       title: "Highest PnL",
-      Icon: Percent,
+      Icon: PercentCircleIcon,
       value: pnLStats?.highestPositivePnL ?? 0,
       prefix: "$",
       isInteger: false,
+      previousValue: 0,
+      percentChange: 21.2,
     },
   ];
 
   return (
     <section>
-      <div className="w-full grid gap-4 grid-cols-2">
-        {content.map(({ title, Icon, value, prefix, isInteger }, indx) => {
-          const isRealizedPnL = title.toLowerCase() === "realized pnl";
-
-          return (
-            <Card key={indx}>
-              <div className="p-2 flex w-full gap-3 items-center justify-start h-full">
-                <div
-                  className={cn(
-                    "text-[#fff] flex items-center justify-center rounded-lg h-full bg-primary dark:text-foreground shrink-0 px-3",
-                    indx % 2 && "order-2"
-                  )}
-                >
-                  <Icon className="h-[22px] w-[22px] sm:w-[27px] sm:h-[27px]" />
+      <div className="w-full grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        {content.map(
+          ({ title, Icon, value, prefix, isInteger, percentChange }, indx) => {
+            return (
+              <Card key={indx} className="rounded-sm">
+                <div className="p-2 flex w-full gap-3 items-center justify-start h-full">
+                  <CardHeader
+                    className={cn(
+                      "py-2 flex tracking-wide flex-col w-full flex-1 gap-1 relative"
+                    )}
+                  >
+                    <div className="flex justify-between w-full items-start">
+                      <p className="text-sm font-medium text-foreground/80">
+                        {title}
+                      </p>
+                      <div className="p-2 rounded-sm dark:bg-primary bg-accent w-8 h-8">
+                        <Icon className="h-4 w-4" />
+                      </div>
+                    </div>
+                    <CardContent className="flex flex-col w-full p-0">
+                      <div className="flex w-full gap-2 items-center -mt-3">
+                        <h3 className="tracking-wider text-xl sm:text-2xl font-bold">
+                          <>
+                            {prefix}
+                            <AnimatedNumber
+                              value={value}
+                              isInteger={isInteger}
+                            />
+                          </>
+                        </h3>
+                        <div
+                          className={cn(
+                            "flex items-center justify-center text-xs p-0.5 rounded-sm",
+                            percentChange > 0
+                              ? "bg-green-950 text-green-500"
+                              : "bg-red-950 text-red-500"
+                          )}
+                        >
+                          {percentChange > 0 ? (
+                            <ArrowUpIcon className="h-3 w-4" />
+                          ) : (
+                            <ArrowDownIcon className="h-3 w-4" />
+                          )}
+                          {percentChange}%
+                        </div>
+                      </div>
+                      <p
+                        className="
+                        text-[11px] mt-1 md:mt-0 text-foreground/80"
+                      >
+                        vs. $98.14 last period
+                      </p>
+                    </CardContent>
+                  </CardHeader>
                 </div>
-                <div
-                  className={cn(
-                    "py-4 flex tracking-wide flex-col w-full flex-1 gap-1 relative",
-                    indx % 2 && "pl-2"
-                  )}
-                >
-                  {isRealizedPnL && (
-                    <Button
-                      onClick={() => setHidden(!hideBalance)}
-                      variant="outline"
-                      size="sm"
-                      className="w-fit absolute right-2 top-4.5 px-1.5"
-                    >
-                      {hideBalance ? (
-                        <EyeClosedIcon className="cursor-pointer h-4 w-4" />
-                      ) : (
-                        <EyeIcon className="cursor-pointer h-4 w-4" />
-                      )}
-                    </Button>
-                  )}
-                  <p className="text-[12px] sm:text-sm uppercase font-medium text-foreground/60">
-                    {title}
-                  </p>
-                  <div className="flex w-full gap-2 items-center -mt-2">
-                    <h3 className="tracking-wider mt-1 text-xl sm:text-2xl md:text-3xl font-bold">
-                      {isRealizedPnL && hideBalance ? (
-                        "****"
-                      ) : (
-                        <>
-                          {prefix}
-                          <AnimatedNumber value={value} isInteger={isInteger} />
-                        </>
-                      )}
-                    </h3>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          );
-        })}
+              </Card>
+            );
+          }
+        )}
       </div>
     </section>
   );
