@@ -44,6 +44,7 @@ export default function CreateStrategy({ docID }: { docID: string | null }) {
   });
 
   const { control, handleSubmit, reset, formState: { errors } } = form;
+  console.log(errors)
 
   const onSubmit = async (data: z.infer<typeof strategySchema>) => {
     if (!docID) return;
