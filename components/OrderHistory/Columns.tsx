@@ -7,6 +7,9 @@ import { z } from "zod";
 import { format } from "date-fns";
 import { formSchema } from "@/config/zod";
 import { cn } from "@/lib/utils";
+import { Checkbox } from "../ui/checkbox";
+import { TrashIcon } from "lucide-react";
+import { deleteTradeLog } from "@/actions/db/actions";
 
 const StatusCell = ({ value }: { value: boolean }) => (
   <div
@@ -19,6 +22,52 @@ const StatusCell = ({ value }: { value: boolean }) => (
 );
 
 export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        className="data-[state=checked]:bg-foreground data-[state=checked]:text-primary-foreground border-foreground"
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        className="data-[state=checked]:bg-foreground data-[state=checked]:text-primary-foreground border-foreground"
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    id: "id",
+    // header: ({ table }) => (
+    //   <Checkbox
+    //     className="data-[state=checked]:bg-foreground data-[state=checked]:text-primary-foreground border-foreground"
+    //     checked={
+    //       table.getIsAllPageRowsSelected() ||
+    //       (table.getIsSomePageRowsSelected() && "indeterminate")
+    //     }
+    //     onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+    //     aria-label="Select all"
+    //   />
+    // ),
+    cell: ({ row }) => (
+      <TrashIcon
+        className="data-[state=checked]:bg-foreground data-[state=checked]:text-primary-foreground border-foreground h-4 w-4"
+        onClick={() => deleteTradeLog(row.original.id, row.original.id)}
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: "coinSymbol",
     enableHiding: false,
@@ -54,7 +103,7 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
     header: "Date",
     cell: ({ row }) => {
       const date = new Date(row.getValue("date"));
-      return format(date, "PP");
+      return <div className="w-[120px]">{format(date, "PP")}</div>;
     },
   },
   {
@@ -202,7 +251,7 @@ export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
     accessorKey: "confidence",
     header: "Confidence",
     cell: ({ row }) => (
-      <Button className="bg-white hover:bg-white cursor-default mx-auto text-background font-bold h-6 w-5 text-[13px]">
+      <Button className="bg-primary mx-auto text-foreground font-bold h-6 w-5 text-[13px]">
         {row.getValue("confidence")}
       </Button>
     ),

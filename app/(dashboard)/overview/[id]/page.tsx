@@ -117,36 +117,43 @@ export default function Page() {
     setDateRange(ranges[newIndex]);
   };
   return (
-    <main suppressHydrationWarning className="w-full px-2 py-4">
+    <main suppressHydrationWarning className="w-full px-2 pt-4">
       {isLoading ? (
         <DashbaordSkeleton />
       ) : (
         <>
           {" "}
-          <div className="flex items-center justify-between w-full py-2">
-            <h3 className="flex-1 w-full ">Dashboard, March 2025</h3>
-            <div className="flex items-center  gap-1">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => cycleDateRange("prev")}
-              >
-                <ArrowLeftIcon />
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="capitalize w-[100px]"
-              >
-                {dateRange}
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => cycleDateRange("next")}
-              >
-                <ArrowRightIcon />
-              </Button>
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full py-2 gap-1">
+            <div className="w-full flex flex-col md:flex-row">
+              <h3>Dashboard</h3>
+              <div className="w-full flex">
+                <h3 className="w-full">
+                  <span className="hidden md:inline">|| </span>March 2025
+                </h3>
+                <div className="flex items-center gap-1">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => cycleDateRange("prev")}
+                  >
+                    <ArrowLeftIcon />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="capitalize w-[100px]"
+                  >
+                    {dateRange}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => cycleDateRange("next")}
+                  >
+                    <ArrowRightIcon />
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
           <div className="flex flex-col w-full gap-3">

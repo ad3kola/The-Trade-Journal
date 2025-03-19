@@ -7,6 +7,8 @@ import { format } from "date-fns";
 import {
   addDoc,
   collection,
+  deleteDoc,
+  doc,
   DocumentData,
   getDocs,
   query,
@@ -20,6 +22,14 @@ import { z } from "zod";
 export const uploadTrade = async ({ docID, data }: FormSchemaWithRefID) => {
   const tradesCollectionRef = collection(usersCollection, docID, "trades");
   await addDoc(tradesCollectionRef, data);
+};
+export const deleteTradeLog = async (
+  docID: string | undefined,
+  tradeID: string | undefined
+) => {
+  if (docID && tradeID) {
+    await deleteDoc(doc(collection(usersCollection, docID, "trades"), tradeID));
+  }
 };
 
 export const getAllTrades = async (
@@ -243,11 +253,11 @@ export async function fetchTradeDataForLast7Trades(
 export async function fetchUserMetrics() {
   const querySnapshot = await getDocs(usersCollection);
   const metrics = querySnapshot.docs
-  .flatMap((doc) => doc.data().strategy)
-  .filter(Boolean);
-  console.log()
-    const uniqueMetrics = [...new Set(metrics)];
-    console.log(uniqueMetrics)
+    .flatMap((doc) => doc.data().strategy)
+    .filter(Boolean);
+  console.log();
+  const uniqueMetrics = [...new Set(metrics)];
+  console.log(uniqueMetrics);
   return uniqueMetrics;
 }
 
@@ -544,9 +554,9 @@ const formatDate = (date: Date) => format(date, "MM/dd");
 const formatDateWithYear = (date: Date) => format(date, "MM/dd/yyyy");
 
 interface TradeData {
-  date: Timestamp;  // Assuming Firestore Timestamp for date
+  date: Timestamp; // Assuming Firestore Timestamp for date
   realizedPnL: number;
-  accountType: string;  // You can modify this type according to your actual data fields
+  accountType: string; // You can modify this type according to your actual data fields
 }
 
 // Type for the aggregated trade data by date
@@ -562,25 +572,28 @@ export async function fetchAnalyticsCalendarPnL(docID: string) {
   const querySnap = await getDocs(tradesCollectionRef);
 
   // Aggregate trades by date
-  const aggregatedTrades = querySnap.docs.reduce((acc: { [key: string]: AggregatedTrade }, doc: QueryDocumentSnapshot) => {
-    const tradeData = doc.data() as TradeData;
-    const dateKey = formatDateWithYear(tradeData.date.toDate()); // Format date for consistent key
+  const aggregatedTrades = querySnap.docs.reduce(
+    (acc: { [key: string]: AggregatedTrade }, doc: QueryDocumentSnapshot) => {
+      const tradeData = doc.data() as TradeData;
+      const dateKey = formatDateWithYear(tradeData.date.toDate()); // Format date for consistent key
 
-    // If no trades exist for this date yet, create a new entry
-    if (!acc[dateKey]) {
-      acc[dateKey] = {
-        total: 0,
-        tradesCount: 0,
-      };
-    }
+      // If no trades exist for this date yet, create a new entry
+      if (!acc[dateKey]) {
+        acc[dateKey] = {
+          total: 0,
+          tradesCount: 0,
+        };
+      }
 
-    // Increment total PnL for the day
-    acc[dateKey].total += tradeData.realizedPnL;
-    // Increment the count of trades for the day
-    acc[dateKey].tradesCount += 1;
+      // Increment total PnL for the day
+      acc[dateKey].total += tradeData.realizedPnL;
+      // Increment the count of trades for the day
+      acc[dateKey].tradesCount += 1;
 
-    return acc;
-  }, {}); // Start with an empty object as the accumulator
+      return acc;
+    },
+    {}
+  ); // Start with an empty object as the accumulator
 
   // Convert aggregated data to an array and return it
   const result = Object.keys(aggregatedTrades).map((date) => ({

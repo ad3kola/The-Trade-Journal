@@ -107,7 +107,7 @@ export function DataTable<TData, TValue>({
                     className="whitespace-nowrap tracking-wide capitalize px-5 rounded-none text-center"
                     key={header.id}
                   >
-                    <div className="w-[120px]">
+                    <div className="first:w-auto w-[120px]">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
