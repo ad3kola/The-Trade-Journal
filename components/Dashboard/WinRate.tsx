@@ -18,22 +18,27 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-const chartConfig = {
-  mobile: {
-    label: "Losses",
-    color: "hsl(var(--input))",
-  },
-  desktop: {
-    label: "Wins",
-    color: "hsl(var(--primary))",
-  },
-} satisfies ChartConfig;
-
-export default function WinRate({ winRate }: { winRate: number | null }) {
-  const wins = winRate !== null ? winRate : 0;
+export default function WinRate({ value }: { value: number }) {
+  const wins = value * 100;
   const losses = 100 - wins;
 
   const chartData = [{ wins, losses }];
+
+  const chartConfig = {
+    mobile: {
+      label: "Losses",
+      color: "hsl(var(--input))",
+    },
+    desktop: {
+      label: "Wins",
+      color:
+        wins > 50
+          ? "hsl(var(--chart-1))"
+          : wins < 50
+          ? "hsl(var(--chart-2))"
+          : "hsl(var(--chart-5))",
+    },
+  } satisfies ChartConfig;
 
   return (
     <Card className="flex flex-col">
@@ -41,10 +46,10 @@ export default function WinRate({ winRate }: { winRate: number | null }) {
         <CardTitle>Win Rate</CardTitle>
         <CardDescription>Based on all recorded trades</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-1 items-center pb-0">
+      <CardContent className="flex grid-cols-2 flex-col items-center pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square w-full max-w-[250px]"
+          className="mx-auto aspect-square w-full col-span-2 max-w-[250px]"
         >
           <RadialBarChart
             data={chartData}
@@ -67,7 +72,7 @@ export default function WinRate({ winRate }: { winRate: number | null }) {
                           y={(viewBox.cy || 0) - 16}
                           className="fill-foreground text-3xl font-bold"
                         >
-                          {wins.toFixed(1)}%
+                          {wins.toFixed(0)}%
                         </tspan>
                         <tspan
                           x={viewBox.cx}

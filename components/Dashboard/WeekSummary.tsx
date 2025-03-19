@@ -70,8 +70,6 @@ const WeekSummary = ({
       Icon: ChartColumnIncreasingIcon,
       value: formattedTrades,
       isInteger: true,
-      previousValue: 0,
-      percentChange: 21.2,
     },
     {
       title: "Total R:R",
@@ -79,7 +77,6 @@ const WeekSummary = ({
       value: RRStats?.totalRR ?? 0,
       isInteger: false,
       previousValue: 0,
-      percentChange: -6.8,
     },
     {
       title: "Highest PnL",
@@ -99,7 +96,7 @@ const WeekSummary = ({
           ({ title, Icon, value, prefix, isInteger, percentChange }, indx) => {
             return (
               <Card key={indx} className="rounded-sm">
-                <div className="p-2 flex w-full gap-3 items-center justify-start h-full">
+                <div className="py-2 flex w-full gap-3 items-center justify-start h-full">
                   <CardHeader
                     className={cn(
                       "py-2 flex tracking-wide flex-col w-full flex-1 gap-1 relative"
@@ -124,7 +121,7 @@ const WeekSummary = ({
                             />
                           </>
                         </h3>
-                        <div
+                        {percentChange && <div
                           className={cn(
                             "flex items-center justify-center text-xs p-0.5 rounded-sm",
                             percentChange > 0
@@ -138,7 +135,7 @@ const WeekSummary = ({
                             <ArrowDownIcon className="h-3 w-4" />
                           )}
                           {percentChange}%
-                        </div>
+                        </div>}
                       </div>
                       <p
                         className="

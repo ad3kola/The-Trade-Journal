@@ -16,13 +16,13 @@ import { z } from "zod";
 import Milestones from "@/components/Dashboard/Milestones";
 import TradeCalendar from "@/components/Dashboard/TradeCalendar";
 import WeekSummary from "@/components/Dashboard/WeekSummary";
-import WinRate from "@/components/Dashboard/WinRate";
 import RecentTransactions from "@/components/Dashboard/RecentTransactions";
 import { PnLOverviewCharts } from "@/lib/typings";
 import DashbaordSkeleton from "@/components/DashbaordSkeleton";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AccountPerformanceOverTime from "@/components/Dashboard/AccountPerformanceOverTime";
+import WinRate from "@/components/Dashboard/WinRate";
 
 export interface PNLs {
   totalPnL: number;
@@ -43,7 +43,7 @@ export default function Page() {
   const [allTrades, setAllTrades] = useState<z.infer<typeof formSchema>[]>([]);
   const [pnLStats, setPnLStats] = useState<PNLs | null>(null);
   const [RRStats, setRRStats] = useState<RR | null>(null);
-  const [winRate, setWinRate] = useState<number | null>(null);
+  // const [winRate, setWinRate] = useState<number | null>(null);
   const [calendarDates, setCalendarDates] = useState<Date[]>([]);
   const [chartData, setChartData] = useState<PnLOverviewCharts | null>(null);
 
@@ -96,21 +96,26 @@ export default function Page() {
 
     fetchData();
   }, [docID]);
-console.log(chartData)
+  console.log(chartData);
   // Set Win Rate when `pnLStats` is available
-  useEffect(() => {
-    if (pnLStats) setWinRate(pnLStats.winRate);
-  }, [pnLStats]);
+  // useEffect(() => {
+  //   if (pnLStats) setWinRate(pnLStats.winRate);
+  // }, [pnLStats]);
 
-const [dateRange, setDateRange] = useState<"today" | "this week" | "this month">("today");
-const cycleDateRange = (direction: "prev" | "next") => {
-  const ranges = ["today", "this week", "this month"] as const;
-  const currentIndex = ranges.indexOf(dateRange);
-  const newIndex = direction === "next" 
-    ? (currentIndex + 1) % ranges.length 
-    : (currentIndex - 1 + ranges.length) % ranges.length;
-  setDateRange(ranges[newIndex]);
-};
+  const dataWnL = { total: 13, wins: 5, losses: 8 };
+
+  const [dateRange, setDateRange] = useState<
+    "today" | "this week" | "this month"
+  >("today");
+  const cycleDateRange = (direction: "prev" | "next") => {
+    const ranges = ["today", "this week", "this month"] as const;
+    const currentIndex = ranges.indexOf(dateRange);
+    const newIndex =
+      direction === "next"
+        ? (currentIndex + 1) % ranges.length
+        : (currentIndex - 1 + ranges.length) % ranges.length;
+    setDateRange(ranges[newIndex]);
+  };
   return (
     <main suppressHydrationWarning className="w-full px-2 py-4">
       {isLoading ? (
@@ -119,36 +124,49 @@ const cycleDateRange = (direction: "prev" | "next") => {
         <>
           {" "}
           <div className="flex items-center justify-between w-full py-2">
-            <h3 className="flex-1 w-full ">Dashboard,  March 2025</h3>
-            <div className ='flex items-center  gap-1'>
-            <Button size="sm" variant="outline" onClick={() => cycleDateRange("prev")}>
-              <ArrowLeftIcon />
-            </Button>
-            <Button size="sm" variant="outline" className="capitalize w-[100px]">
-              {dateRange}
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => cycleDateRange("next")}>
-              <ArrowRightIcon />
-            </Button>
+            <h3 className="flex-1 w-full ">Dashboard, March 2025</h3>
+            <div className="flex items-center  gap-1">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => cycleDateRange("prev")}
+              >
+                <ArrowLeftIcon />
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="capitalize w-[100px]"
+              >
+                {dateRange}
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => cycleDateRange("next")}
+              >
+                <ArrowRightIcon />
+              </Button>
             </div>
           </div>
           <div className="grid grid-cols-1 gap-3 items-center w-full">
             <div className="flex flex-col w-full col-span-2 gap-3">
               <WeekSummary pnLStats={pnLStats} RRStats={RRStats} />
-            <div className="grid grid-cols-1 lg:grid-cols-3  gap-4 w-full">
-              <AccountPerformanceOverTime className="col-span-1 lg:col-span-2"/>
-              <div className="grid gird-cols-1 gap-4">
-                
-              <TradeCalendar calendarDates={calendarDates} />
-              <WinRate winRate={winRate} />
+              <div className="grid grid-cols-1 lg:grid-cols-3  gap-4 w-full">
+                <AccountPerformanceOverTime className="col-span-1 lg:col-span-2" />
+                <div className="flex lg:flex-col flex-col-reverse gap-4">
+                  <TradeCalendar calendarDates={calendarDates} />
+                  <WinRate value={dataWnL.wins / dataWnL.total} />
+                </div>
+              </div>
+              <div className="w-full py-5 flex flex-col gap-2">
+                <h3 className="px-4 font-semibold text-lg">
+                  Recent Transactions
+                </h3>
+                <RecentTransactions allTrades={allTrades} />
+                <Milestones />
               </div>
             </div>
-            <RecentTransactions allTrades={allTrades} />
-              <Milestones />
-            </div>
-          </div>
-          <div className="w-full py-5 flex flex-col gap-2">
-            <h3 className="px-4 font-semibold text-lg">Recent Transactions</h3>
           </div>
         </>
       )}
