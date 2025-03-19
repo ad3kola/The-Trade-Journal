@@ -19,7 +19,6 @@ export default function RecentTransactions({
 }) {
 
   return (
-    <>
       <Table>
         <TableHeader>
           <TableRow className="border-b bg-input">
@@ -116,6 +115,5 @@ export default function RecentTransactions({
             ))}
         </TableBody>
       </Table>
-    </>
   );
 }

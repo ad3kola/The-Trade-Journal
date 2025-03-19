@@ -65,7 +65,16 @@ const WeekSummary = ({
       previousValue: 0,
       percentChange: 10.8,
     },
+
     {
+      title: "Highest PnL",
+      Icon: PercentCircleIcon,
+      value: pnLStats?.highestPositivePnL ?? 0,
+      prefix: "$",
+      isInteger: false,
+      previousValue: 0,
+      percentChange: 21.2,
+    },    {
       title: "Total Trades",
       Icon: ChartColumnIncreasingIcon,
       value: formattedTrades,
@@ -77,15 +86,6 @@ const WeekSummary = ({
       value: RRStats?.totalRR ?? 0,
       isInteger: false,
       previousValue: 0,
-    },
-    {
-      title: "Highest PnL",
-      Icon: PercentCircleIcon,
-      value: pnLStats?.highestPositivePnL ?? 0,
-      prefix: "$",
-      isInteger: false,
-      previousValue: 0,
-      percentChange: 21.2,
     },
   ];
 
@@ -106,13 +106,13 @@ const WeekSummary = ({
                       <p className="text-sm font-medium text-foreground/80">
                         {title}
                       </p>
-                      <div className="p-2 rounded-sm dark:bg-primary bg-accent w-8 h-8">
+                      <div className="p-2 rounded-sm dark:bg-input bg-accent w-8 h-8">
                         <Icon className="h-4 w-4" />
                       </div>
                     </div>
                     <CardContent className="flex flex-col w-full p-0">
                       <div className="flex w-full gap-2 items-center -mt-3">
-                        <h3 className="tracking-wider text-xl sm:text-2xl font-bold">
+                        <h3 className="tracking-wider text-2xl font-bold">
                           <>
                             {prefix}
                             <AnimatedNumber

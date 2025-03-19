@@ -48,7 +48,7 @@ export default function AccountPerformanceOverTime({
   return (
     <Card className={className}>
       <Tabs defaultValue="day">
-        <CardHeader className="flex flex-col pb-0 sm:flex-row w-full md:items-center justify-between">
+        <CardHeader className="flex flex-col-reverse pb-0 gap-3 sm:flex-row w-full md:items-center justify-between">
           <div>
             <h3>Account Performance </h3>
           </div>
@@ -60,139 +60,12 @@ export default function AccountPerformanceOverTime({
         </CardHeader>
         <CardContent className="py-0">
           <TabsContent value={"day"}>
-            <div className="flex items-start gap-0.5 pb-1.5">
+            <div className="flex items-start gap-0.5 pb-1.5 md:-mt-3">
               <h1 className="text-3xl font-bold tracking-wide">
-                ${additionalContent[0].value - Math.abs(additionalContent[1].value)}k
-              </h1>
-              <div
-                className={cn(
-                  "flex items-center justify-center text-xs p-0.5 rounded-sm",
-                  percentChange > 0 ? "text-green-500" : "text-red-500"
-                )}
-              >
-                {percentChange > 0 ? (
-                  <ArrowUpIcon className="h-3 w-4" />
-                ) : (
-                  <ArrowDownIcon className="h-3 w-4" />
-                )}
-                {percentChange}%
-              </div>
-            </div>
-            <ChartContainer config={chartConfig}>
-              <AreaChart
-                accessibilityLayer
-                data={chartData}
-                margin={{
-                  left: 12,
-                  right: 12,
-                }}
-              >
-                <CartesianGrid vertical={false} />
-                <XAxis
-                  dataKey="month"
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  tickFormatter={(value) => value.slice(0, 3)}
-                />
-                <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent />}
-                />
-                <defs>
-                  <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
-                    <stop
-                      offset="5%"
-                      stopColor="var(--color-desktop)"
-                      stopOpacity={0.8}
-                    />
-                    <stop
-                      offset="95%"
-                      stopColor="var(--color-desktop)"
-                      stopOpacity={0.1}
-                    />
-                  </linearGradient>
-                </defs>
-                <Area
-                  dataKey="desktop"
-                  type="natural"
-                  fill="url(#fillDesktop)"
-                  fillOpacity={0.4}
-                  stroke="var(--color-desktop)"
-                  stackId="a"
-                />
-              </AreaChart>
-            </ChartContainer>
-          </TabsContent>
-          <TabsContent value={"week"}>
-            <div className="flex items-start gap-0.5 pb-1.5">
-              <h1 className="text-3xl font-bold tracking-wide">
-                ${additionalContent[0].value - Math.abs(additionalContent[1].value)}k
-              </h1>
-              <div
-                className={cn(
-                  "flex items-center justify-center text-xs p-0.5 rounded-sm",
-                  percentChange > 0 ? "text-green-500" : "text-red-500"
-                )}
-              >
-                {percentChange > 0 ? (
-                  <ArrowUpIcon className="h-3 w-4" />
-                ) : (
-                  <ArrowDownIcon className="h-3 w-4" />
-                )}
-                {percentChange}%
-              </div>
-            </div>
-            <ChartContainer config={chartConfig}>
-              <AreaChart
-                accessibilityLayer
-                data={chartData}
-                margin={{
-                  left: 12,
-                  right: 12,
-                }}
-              >
-                <CartesianGrid vertical={false} />
-                <XAxis
-                  dataKey="month"
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  tickFormatter={(value) => value.slice(0, 3)}
-                />
-                <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent />}
-                />
-                <defs>
-                  <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
-                    <stop
-                      offset="5%"
-                      stopColor="var(--color-desktop)"
-                      stopOpacity={0.8}
-                    />
-                    <stop
-                      offset="95%"
-                      stopColor="var(--color-desktop)"
-                      stopOpacity={0.1}
-                    />
-                  </linearGradient>
-                </defs>
-                <Area
-                  dataKey="desktop"
-                  type="natural"
-                  fill="url(#fillDesktop)"
-                  fillOpacity={0.4}
-                  stroke="var(--color-desktop)"
-                  stackId="a"
-                />
-              </AreaChart>
-            </ChartContainer>
-          </TabsContent>
-          <TabsContent value={"month"}>
-            <div className="flex items-start gap-0.5 pb-1.5">
-              <h1 className="text-3xl font-bold tracking-wide">
-                ${additionalContent[0].value - Math.abs(additionalContent[1].value)}k
+                $
+                {additionalContent[0].value -
+                  Math.abs(additionalContent[1].value)}
+                k
               </h1>
               <div
                 className={cn(
@@ -263,14 +136,14 @@ export default function AccountPerformanceOverTime({
 
 function AdditionalStats() {
   return (
-    <div className="grid grid-cols-2 gap-4 mt-2 py-2">
+    <div className="grid grid-cols-2 gap-4 mt-4 p-2">
       {additionalContent.map(({ title, value }, indx) => (
         <div
           key={indx}
           className="border-r-2 flex items-center gap-1 justify-center flex-col w-full"
         >
           <h4 className="">{title}</h4>
-          <h1 className={"text-xl font-semibold"}>${Math.abs(value)}k</h1>
+          <h1 className={"text-2xl font-semibold"}>${Math.abs(value)}k</h1>
           <div
             className={cn(
               "flex items-center justify-center text-xs p-0.5 rounded-sm",
