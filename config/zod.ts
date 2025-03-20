@@ -21,6 +21,7 @@ export const userSchema = z.object({
 });
 
 export const formSchema = z.object({
+  docID: z.string().optional(),
   id: z.string().optional(),
   coinSymbol: z
     .object({

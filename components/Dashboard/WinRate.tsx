@@ -18,8 +18,8 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-export default function WinRate({ value }: { value: number }) {
-  const wins = value * 100;
+export default function WinRate({ value }: { value: number | null }) {
+  const wins = value == null ? 0 : value;
   const losses = 100 - wins;
 
   const chartData = [{ wins, losses }];

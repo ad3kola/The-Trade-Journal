@@ -7,9 +7,9 @@ import { format } from "date-fns";
 import {
   addDoc,
   collection,
-  deleteDoc,
   doc,
   DocumentData,
+  getDoc,
   getDocs,
   query,
   QueryDocumentSnapshot,
@@ -23,13 +23,12 @@ export const uploadTrade = async ({ docID, data }: FormSchemaWithRefID) => {
   const tradesCollectionRef = collection(usersCollection, docID, "trades");
   await addDoc(tradesCollectionRef, data);
 };
-export const deleteTradeLog = async (
-  docID: string | undefined,
-  tradeID: string | undefined
-) => {
-  if (docID && tradeID) {
-    await deleteDoc(doc(collection(usersCollection, docID, "trades"), tradeID));
-  }
+
+export const getSelectedTrade = async (docID: string, tradeID: string) => {
+  const tradesCollectionRef = collection(usersCollection, docID, "trades");
+  const tradeDocRef = doc(tradesCollectionRef, tradeID);
+  const tradeDoc = await getDoc(tradeDocRef);
+  return tradeDoc.data() as z.infer<typeof formSchema>;
 };
 
 export const getAllTrades = async (
@@ -52,6 +51,7 @@ export const getAllTrades = async (
     const querySnapshot = await getDocs(queryRef);
     return querySnapshot.docs
       .map((doc) => ({
+        docID,
         id: doc.id,
         ...(doc.data() as z.infer<typeof formSchema>),
         date: new Date(doc.data().date.seconds * 1000),

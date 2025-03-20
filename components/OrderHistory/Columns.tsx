@@ -7,9 +7,13 @@ import { z } from "zod";
 import { format } from "date-fns";
 import { formSchema } from "@/config/zod";
 import { cn } from "@/lib/utils";
-import { Checkbox } from "../ui/checkbox";
-import { TrashIcon } from "lucide-react";
-import { deleteTradeLog } from "@/actions/db/actions";
+import { NotebookPenIcon, TrashIcon } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 const StatusCell = ({ value }: { value: boolean }) => (
   <div
@@ -21,49 +25,36 @@ const StatusCell = ({ value }: { value: boolean }) => (
   </div>
 );
 
-export const columns: ColumnDef<z.infer<typeof formSchema>>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        className="data-[state=checked]:bg-foreground data-[state=checked]:text-primary-foreground border-foreground"
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        className="data-[state=checked]:bg-foreground data-[state=checked]:text-primary-foreground border-foreground"
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
+export const getColumns = (
+  onDelete: (tradeID: string | undefined) => void
+): ColumnDef<z.infer<typeof formSchema>>[] => [
   {
     id: "id",
-    // header: ({ table }) => (
-    //   <Checkbox
-    //     className="data-[state=checked]:bg-foreground data-[state=checked]:text-primary-foreground border-foreground"
-    //     checked={
-    //       table.getIsAllPageRowsSelected() ||
-    //       (table.getIsSomePageRowsSelected() && "indeterminate")
-    //     }
-    //     onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-    //     aria-label="Select all"
-    //   />
-    // ),
+    header: () => <div>Actions</div>,
     cell: ({ row }) => (
-      <TrashIcon
-        className="data-[state=checked]:bg-foreground data-[state=checked]:text-primary-foreground border-foreground h-4 w-4"
-        onClick={() => deleteTradeLog(row.original.id, row.original.id)}
-      />
+      <TooltipProvider>
+        <div className="flex items-center gap-3">
+          <Tooltip>
+            <TooltipTrigger>
+              <TrashIcon
+                className="h-4 w-4 cursor-pointer"
+                onClick={() => onDelete(row.original.id)}
+              />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Delete</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger>
+              <NotebookPenIcon className="h-4 w-4 cursor-pointer" />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Edit Trade</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      </TooltipProvider>
     ),
     enableSorting: false,
     enableHiding: false,

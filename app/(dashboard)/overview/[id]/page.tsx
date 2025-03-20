@@ -43,7 +43,7 @@ export default function Page() {
   const [allTrades, setAllTrades] = useState<z.infer<typeof formSchema>[]>([]);
   const [pnLStats, setPnLStats] = useState<PNLs | null>(null);
   const [RRStats, setRRStats] = useState<RR | null>(null);
-  // const [winRate, setWinRate] = useState<number | null>(null);
+  const [winRate, setWinRate] = useState<number | null>(null);
   const [calendarDates, setCalendarDates] = useState<Date[]>([]);
   const [chartData, setChartData] = useState<PnLOverviewCharts | null>(null);
 
@@ -83,6 +83,7 @@ export default function Page() {
           fetchTradeDataForLast7Trades(docID, startOfMonth, endOfMonth),
         ]);
         setAllTrades(trades);
+        setWinRate(pnL.winRate)
         setPnLStats(pnL);
         setRRStats(RR);
         setCalendarDates(dates);
@@ -101,8 +102,7 @@ export default function Page() {
   // useEffect(() => {
   //   if (pnLStats) setWinRate(pnLStats.winRate);
   // }, [pnLStats]);
-
-  const dataWnL = { total: 13, wins: 5, losses: 8 };
+console.log(winRate)
 
   const [dateRange, setDateRange] = useState<
     "today" | "this week" | "this month"
@@ -162,7 +162,7 @@ export default function Page() {
               <AccountPerformanceOverTime className="col-span-1 xl:col-span-2" />
               <div className="flex lg:flex-col flex-col-reverse gap-4">
                 <TradeCalendar calendarDates={calendarDates} />
-                <WinRate value={dataWnL.wins / dataWnL.total} />
+                <WinRate value={winRate} />
               </div>
             </div>
             <div className="w-full py-5 flex flex-col gap-4">
