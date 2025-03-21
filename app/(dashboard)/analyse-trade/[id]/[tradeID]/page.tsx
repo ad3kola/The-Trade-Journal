@@ -9,6 +9,8 @@ import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { z } from "zod";
 import { format } from "date-fns";
+import { StarIcon as StarFilled } from "@heroicons/react/24/solid";
+import { StarIcon as StarOutline } from "@heroicons/react/24/outline";
 
 function Page() {
   const { id, tradeID } = useParams<{ id: string; tradeID: string }>();
@@ -26,6 +28,7 @@ function Page() {
   console.log(id);
   const date = new Date(trade?.date ?? new Date());
   const formattedDate = format(date, "PPP");
+  const confidence = trade?.confidence[0] || 0;
   return (
     <div className="p-4">
       {trade && (
@@ -33,29 +36,50 @@ function Page() {
           <div className="col-span-1 order-2 lg:order-1">
             <Card>
               <CardHeader>
-                <div className="flex items-start relative gap-4">
-                  <span
-                    className={cn(
-                      "h-[52px] w-1",
-                      trade.realizedPnL > 0 ? "bg-green-500" : "bg-red-500"
-                    )}
-                  />
-                  <div className="w-full flex flex-col gap-1">
-                    <CardTitle>Realized PnL</CardTitle>
-                    <h1
+                <div className="w-full flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <Image
+                      src={trade.coinSymbol.image as string}
+                      alt=""
+                      width={45}
+                      height={45}
+                    />
+                    <div className="flex flex-col">
+                      <h3 className="uppercase">
+                        {trade.coinSymbol.symbol} USDT
+                      </h3>
+                      <p className="max-w-52 text-[12px] font-medium text-foreground truncate whitespace-nowrap">
+                        {trade.coinSymbol.name} TetherUS Perpetual
+                      </p>
+                    </div>
+                    <h3></h3>
+                  </div>
+                  <div className="flex items-start relative gap-4">
+                    <span
                       className={cn(
-                        "text-3xl font-semibold",
-                        trade.realizedPnL > 0
-                          ? "text-green-500"
-                          : "text-red-500"
+                        "h-[52px] w-1",
+                        trade.realizedPnL > 0 ? "bg-green-500" : "bg-red-500"
                       )}
-                    >
-                      ${Math.abs(trade.realizedPnL).toFixed(2)}
-                    </h1>
+                    />
+                    <div className="w-full flex flex-col gap-1">
+                      <CardTitle className="text-sm font =-normal tracking-wider">
+                        Realized PnL
+                      </CardTitle>
+                      <h1
+                        className={cn(
+                          "text-3xl font-semibold",
+                          trade.realizedPnL > 0
+                            ? "text-green-500"
+                            : "text-red-500"
+                        )}
+                      >
+                        ${Math.abs(trade.realizedPnL).toFixed(2)}
+                      </h1>
+                    </div>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="grid grid-cols-1 gap-3">
+              <CardContent className="grid grid-cols-1 gap-4">
                 <div className="flex items-center justify-between gap-3 w-full font-semibold">
                   <p className="text-sm text-muted-foreground">Leverage Used</p>
                   <p className="text-sm font-normal tracking-wide">
@@ -120,12 +144,30 @@ function Page() {
                   <p className="text-sm tracking-wide">{trade.tradeSession}</p>
                 </div>
                 <div className="flex items-start justify-between gap-3 w-full font-semibold">
-                  <p className="text-sm text-muted-foreground">Trade Review</p>
+                  <p className="text-sm text-muted-foreground whitespace-nowrap">
+                    Trade Review
+                  </p>
                   <p className="w-60 text-xs">{trade.tradeReview}</p>
                 </div>
                 <div className="flex items-start justify-between gap-3 w-full font-semibold">
+                  <p className="text-sm text-muted-foreground whitespace-nowrap">
+                    Trade Review
+                  </p>
+<div className="w-full flex items-center justify-end gap-1">
+{Array(5)
+                    .fill(0)
+                    .map((_, index) =>
+                      index < confidence ? (
+                        <StarFilled key={index} className="h-6 w-6 text-yellow-500" />
+                      ) : (
+                        <StarOutline key={index} className="h-6 w-6 text-gray-400" />
+                      )
+                    )}
+</div>
+                </div>
+                <div className="flex items-start justify-between w-full font-semibold gap-6">
                   <p className="text-sm text-muted-foreground">Trade Review</p>
-                  <div className="flex flex-wrap items-center justify-end gap-3 w-full font-semibold">
+                  <div className="flex flex-wrap items-center justify-end gap-3 font-semibold w-96">
                     {trade.strategy.divergence && (
                       <div
                         className={cn(
@@ -185,12 +227,12 @@ function Page() {
               </CardContent>
             </Card>
           </div>
-          <div className="relative w-full h-96 lg:h-[650px] lg:col-span-2 col-span-1 rounded-md overflow-hidden border-2 border-input">
+          <div className="relative w-full h-96 lg:h-full lg:col-span-2 col-span-1 rounded-md overflow-hidden border-2 border-input">
             <Image
               alt=""
               fill
               src={trade.tradeScreenshot as string}
-              className="w-full object-cover"
+              className="w-full object-fit"
             />
           </div>
         </div>
