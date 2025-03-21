@@ -11,11 +11,12 @@ import { z } from "zod";
 import { format } from "date-fns";
 import { StarIcon as StarFilled } from "@heroicons/react/24/solid";
 import { StarIcon as StarOutline } from "@heroicons/react/24/outline";
+import { useRouter } from "next/navigation";
 
 function Page() {
   const { id, tradeID } = useParams<{ id: string; tradeID: string }>();
   const [trade, setTradeData] = useState<z.infer<typeof formSchema>>();
-
+const router = useRouter()
   useEffect(() => {
     const getTradeData = async () => {
       const data = await getSelectedTrade(id, tradeID);
@@ -29,6 +30,9 @@ function Page() {
   const date = new Date(trade?.date ?? new Date());
   const formattedDate = format(date, "PPP");
   const confidence = trade?.confidence[0] || 0;
+  if (!trade || !tradeID) {
+    router.push("/orders-list");
+  }
   return (
     <div className="p-4">
       {trade && (

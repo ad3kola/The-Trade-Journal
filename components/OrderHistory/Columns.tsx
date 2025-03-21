@@ -45,17 +45,17 @@ console.log(row.original.id);
               />
             </TooltipTrigger>
             <TooltipContent>
-              <p>Delete</p>
+              <p className="font-bold tracking-wide">Delete Trade</p>
             </TooltipContent>
           </Tooltip>
           <Tooltip>
             <Link href={`/analyse-trade/${row.original.docID}/${row.original.id}`}>
             <TooltipTrigger>
-              <NotebookPenIcon className="h-4 w-4 cursor-pointer" />
+              <NotebookPenIcon className="h-4 w-4 cursor-pointer mt-1" />
             </TooltipTrigger>
             </Link>
             <TooltipContent>
-              <p>Edit Trade</p>
+              <p className="font-bold tracking-wide">Edit Trade</p>
             </TooltipContent>
           </Tooltip>
         </div>
@@ -171,7 +171,7 @@ console.log(row.original.id);
     header: () => <div className="">Realized PnL</div>,
     cell: ({ row }) => {
       const value = Number(row.getValue("realizedPnL"));
-      const formatted = value.toFixed();
+      const formatted = Math.abs((Number(value.toFixed())));
       return (
         <div
           className={cn(
