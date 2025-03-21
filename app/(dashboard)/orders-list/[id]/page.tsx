@@ -52,7 +52,7 @@ function Page() {
       console.error("Error deleting trade:", error);
     }
   };
-
+console.log(allTrades)
   return (
     <main className="p-4 flex flex-col w-full gap-3">
       <div className="px-4 mt-5 font-semibold">

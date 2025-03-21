@@ -24,11 +24,21 @@ export const uploadTrade = async ({ docID, data }: FormSchemaWithRefID) => {
   await addDoc(tradesCollectionRef, data);
 };
 
-export const getSelectedTrade = async (docID: string, tradeID: string) => {
-  const tradesCollectionRef = collection(usersCollection, docID, "trades");
-  const tradeDocRef = doc(tradesCollectionRef, tradeID);
-  const tradeDoc = await getDoc(tradeDocRef);
-  return tradeDoc.data() as z.infer<typeof formSchema>;
+export const getSelectedTrade = async (
+  docID: string | null,
+  tradeID: string
+) => {
+  if (docID) {
+    const tradesCollectionRef = collection(usersCollection, docID, "trades");
+    const tradeDocRef = doc(tradesCollectionRef, tradeID);
+    const tradeDoc = await getDoc(tradeDocRef);
+    console.log(tradeDoc.data()?.coinSymbol.name);
+    const res = {
+      ...(tradeDoc.data() as z.infer<typeof formSchema>),
+      date: new Date(tradeDoc.data()?.date.seconds * 1000),
+    };
+    return res as z.infer<typeof formSchema>;
+  }
 };
 
 export const getAllTrades = async (
@@ -40,7 +50,6 @@ export const getAllTrades = async (
     const tradesCollectionRef = collection(usersCollection, docID, "trades");
     let queryRef = query(tradesCollectionRef);
 
-    // Apply date filtering if dates are provided
     if (startDate) {
       queryRef = query(queryRef, where("date", ">=", startDate));
     }

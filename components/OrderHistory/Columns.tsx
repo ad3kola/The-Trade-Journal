@@ -14,6 +14,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import Link from "next/link";
 
 const StatusCell = ({ value }: { value: boolean }) => (
   <div
@@ -31,7 +32,9 @@ export const getColumns = (
   {
     id: "id",
     header: () => <div>Actions</div>,
-    cell: ({ row }) => (
+    cell: ({ row }) => {
+console.log(row.original.id);
+      return (
       <TooltipProvider>
         <div className="flex items-center gap-3">
           <Tooltip>
@@ -46,16 +49,19 @@ export const getColumns = (
             </TooltipContent>
           </Tooltip>
           <Tooltip>
+            <Link href={`/analyse-trade/${row.original.docID}/${row.original.id}`}>
             <TooltipTrigger>
               <NotebookPenIcon className="h-4 w-4 cursor-pointer" />
             </TooltipTrigger>
+            </Link>
             <TooltipContent>
               <p>Edit Trade</p>
             </TooltipContent>
           </Tooltip>
         </div>
       </TooltipProvider>
-    ),
+    )
+   },
     enableSorting: false,
     enableHiding: false,
   },

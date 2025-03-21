@@ -62,6 +62,7 @@ export enum FormFieldType {
   COMBOBOX = "comboBox",
   SWITCH = "switch",
   SKELETON = "skeleton",
+  OPTION = "option",
   SLIDER = "slider",
 }
 
