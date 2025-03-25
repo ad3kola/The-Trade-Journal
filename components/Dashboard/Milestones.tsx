@@ -3,6 +3,7 @@ import { Card, CardContent } from "../ui/card";
 import { Progress } from "../ui/progress";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
+import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 
 const Milestones = () => {
   const goals = [
@@ -15,9 +16,14 @@ const Milestones = () => {
     <Card className={cn("h-full w-full pt-2.5")}>
       <div className="pb-2 pt-1 px-4 font-semibold flex items-center justify-between text-lg">
         <p>Goals and Milestones</p>
-        <Button variant={"outline"} size={"icon"}>
+        <Sheet>
+          <SheetTrigger><Button variant={"outline"} size={"icon"}>
           <PlusIcon className="h-4 w-4" />
-        </Button>
+        </Button></SheetTrigger>
+        <SheetContent>
+          
+        </SheetContent>
+        </Sheet>
       </div>
       <CardContent className="p-3">
         <div className="flex flex-col gap-2">

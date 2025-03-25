@@ -65,3 +65,7 @@ export const strategySchema = z.object({
   winRate: z.coerce.number().nonnegative().max(100),
   metrics: z.array(z.string()),
 });
+
+export const milestonesSchema = z.object({
+   
+})
