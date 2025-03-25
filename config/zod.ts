@@ -32,10 +32,10 @@ export const formSchema = z.object({
       current_price: z.number().default(0),
     })
     .strict(),
-  accountType: z.nativeEnum(AccountType),
-  tradeSession: z.nativeEnum(TradeSession),
+    accountType: z.nativeEnum(AccountType).nullable(),
+    tradeSession: z.nativeEnum(TradeSession),
   timeframe: z.nativeEnum(TradeTimeframe),
-  tradeType: z.nativeEnum(TradeType),
+  tradeType: z.nativeEnum(TradeType).nullable(),
   tradeStatus: z.nativeEnum(TradeStatus),
   entryPrice: z.coerce.number().nonnegative(),
   takeProfit: z.coerce.number().nonnegative(),

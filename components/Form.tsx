@@ -73,7 +73,7 @@ export default function FormComponent({
   docID: string;
   userID: string;
 }) {
-  const [selectedCoin, setSelectedCoin] = useState<Coin | null>(null)
+  const [selectedCoin, setSelectedCoin] = useState<Coin | null>(null);
   useEffect(() => {
     const fetchCoins = async () => {
       try {
@@ -87,6 +87,7 @@ export default function FormComponent({
     fetchCoins();
   }, []);
   const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -150,7 +151,6 @@ export default function FormComponent({
     // Format date only for API submission
     data.date = new Date(data.date);
 
-
     await uploadTrade({ docID, data });
 
     // Reset form values
@@ -198,8 +198,8 @@ export default function FormComponent({
     const tp = Number(getValues("takeProfit"));
     const sl = Number(getValues("stopLoss"));
     const risk = Number(getValues("riskAmount"));
-    const tradeStatus = getValues("tradeStatus") as "Win" | "Loss"; 
-    const tradeType = getValues("tradeType") as "Buy" | "Sell"; 
+    const tradeStatus = getValues("tradeStatus") as "Win" | "Loss";
+    const tradeType = getValues("tradeType") as "Buy" | "Sell";
 
     if (entry && tp && sl && risk && tradeStatus && tradeType) {
       const result = calculateTradeMetrics(
@@ -224,13 +224,12 @@ export default function FormComponent({
     watch("stopLoss"),
     watch("riskAmount"),
     watch("tradeStatus"),
-    watch("tradeType"), 
+    watch("tradeType"),
   ]);
 
   const PnL = watch("realizedPnL");
   const RR = watch("risk_Reward");
   const qty = watch("positionSize");
-
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit(onSubmit)} className="h-full py-5">
@@ -406,7 +405,9 @@ export default function FormComponent({
               Icon={DollarSignIcon}
               name="entryPrice"
               label="Entry Price"
-              placeholder={selectedCoin ? selectedCoin.current_price.toString() : '0.00'}
+              placeholder={
+                selectedCoin ? selectedCoin.current_price.toString() : "0.00"
+              }
             />
             <div className="grid w-full gap-4 grid-cols-2">
               <CustomFormField
@@ -589,7 +590,7 @@ export default function FormComponent({
                     />
                     <div
                       onClick={() => fileInputRef.current?.click()}
-                      className="w-full bg-background rounded-md h-64 border hover:bg-accent border-accent overflow-hidden flex items-center justify-center text-white/80 cursor-pointer hover:scale-[1.01] duration-200 transition flex-col relative"
+                      className="w-full bg-background rounded-md h-64 border hover:bg-input border-accent overflow-hidden flex items-center justify-center text-white/80 cursor-pointer hover:scale-[1.01] duration-200 transition flex-col relative"
                     >
                       {fileURL ? (
                         <Image

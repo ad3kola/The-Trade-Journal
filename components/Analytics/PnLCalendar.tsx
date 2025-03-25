@@ -138,8 +138,20 @@ function PnLCalendar({ docID }: { docID: string | null }) {
             <CardTitle className="text-sm text-gray-500 dark:text-gray-400">
               Account Balance & PnL
             </CardTitle>
-            <CardContent className="p-0 py-2 text-3xl font-bold">
-              ${(39032.5).toLocaleString()}
+            <CardContent className="p-0 py-2 flex flex-col gap-2">
+              <h1 className=" text-3xl font-bold ">
+                {" "}
+                ${(39032.5).toLocaleString()}
+              </h1>
+              <h4 className="text-sm">
+                Total Profits Made: <span>{}</span>
+              </h4>
+              <h4 className="text-sm">
+                Total Profits Made: <span>{}</span>
+              </h4>
+              <h4 className="text-sm">
+                Total Losses Made: <span>{}</span>
+              </h4>
             </CardContent>
           </Card>
           <CalendarPnLChart />

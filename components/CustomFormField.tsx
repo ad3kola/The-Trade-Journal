@@ -112,11 +112,11 @@ const RenderField = <T extends FieldValues>({
                 {...field}
                 placeholder={placeholder}
                 onChange={(e) => {
-                  field.onChange(e); 
+                  field.onChange(e);
                   setPassword(e.target.value);
                 }}
                 disabled={disabled}
-                value={field.value} 
+                value={field.value}
               />
             </div>
             <div className="text-left flex items-center justify-start mt-2">
