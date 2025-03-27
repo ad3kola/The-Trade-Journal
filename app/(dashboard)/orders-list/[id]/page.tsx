@@ -35,7 +35,7 @@ function Page() {
     const fetchTrades = async () => {
       const docID = await getCurrentUserDoc(id);
       if (docID) {
-        const res = await getAllTrades(docID.docRefID);
+        const res = await getAllTrades(docID.userID);
         setAllTrades(res);
       }
     };
@@ -47,12 +47,14 @@ function Page() {
 
     try {
       await deleteTradeLog(DOCID, tradeID);
-      setAllTrades((prevTrades) => prevTrades.filter((trade) => trade.id !== tradeID));
+      setAllTrades((prevTrades) =>
+        prevTrades.filter((trade) => trade.id !== tradeID)
+      );
     } catch (error) {
       console.error("Error deleting trade:", error);
     }
   };
-console.log(allTrades)
+  console.log(allTrades);
   return (
     <main className="p-4 flex flex-col w-full gap-3">
       <div className="px-4 mt-5 font-semibold">

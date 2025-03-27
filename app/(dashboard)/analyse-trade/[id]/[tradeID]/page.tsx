@@ -14,8 +14,10 @@ import { StarIcon as StarOutline } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 
 function Page() {
+
   const { id, tradeID } = useParams<{ id: string; tradeID: string }>();
   const [trade, setTradeData] = useState<z.infer<typeof formSchema>>();
+
 const router = useRouter()
   useEffect(() => {
     const getTradeData = async () => {

@@ -57,7 +57,7 @@ export const getAllTrades = async (
     if (endDate) {
       queryRef = query(queryRef, where("date", "<=", endDate));
     }
-
+    console.log(docID);
     const querySnapshot = await getDocs(queryRef);
     return querySnapshot.docs
       .map((doc) => ({
@@ -217,18 +217,18 @@ export async function fetchTradeDataForLastTrades(
   endDate: Date | null = null
 ) {
   const trades = await getAllTrades(docID, startDate, endDate);
-  
+
   // Sort trades by date (earliest to latest)
   trades.sort(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 
   const formatNumber = (num: number) => {
-      if (num >= 1000) {
-        return numbro(num).format({ average: true, mantissa: 2 }); // 9.99k
-      }
-      return numbro(num).format({ mantissa: 2 }); 
-    };
+    if (num >= 1000) {
+      return numbro(num).format({ average: true, mantissa: 2 }); // 9.99k
+    }
+    return numbro(num).format({ mantissa: 2 });
+  };
 
   const wonTrades = trades.filter(
     (trade) => trade.tradeStatus.toLowerCase() === "win"
@@ -239,7 +239,7 @@ export async function fetchTradeDataForLastTrades(
 
   // Format the date and map it to the profitsArray
   const profitsArray = wonTrades.slice(-20).map((trade) => ({
-    date: format(new Date(trade.date), "M/d"),  // Format date to "MM/DD"
+    date: format(new Date(trade.date), "M/d"), // Format date to "MM/DD"
     profit: trade.realizedPnL,
   }));
   console.log(profitsArray); // Debug log to check the profits array

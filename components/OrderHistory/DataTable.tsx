@@ -29,6 +29,7 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { SlidersHorizontalIcon } from "lucide-react";
+import Link from "next/link";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -124,20 +125,30 @@ export function DataTable<TData, TValue>({
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow
-                className="cursor-pointer py-2"
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
+              <Link
+                href={`/analyse-trade/`}
+                  // ${row.original.docID}/${row.original.id}`} 
+                  key={row.id}
+                  // }
               >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell
-                    className="px-5 capitalize text-center mx-auto"
-                    key={cell.id}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
+                <TableRow
+                  className="cursor-pointer py-2"
+                  
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell
+                      className="px-5 capitalize text-center mx-auto"
+                      key={cell.id}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </Link>
             ))
           ) : (
             <TableRow>
