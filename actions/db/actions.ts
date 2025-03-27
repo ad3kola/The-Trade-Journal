@@ -17,6 +17,7 @@ import {
   Timestamp,
   where,
 } from "firebase/firestore";
+import numbro from "numbro";
 import { z } from "zod";
 
 export const uploadTrade = async ({ docID, data }: FormSchemaWithRefID) => {
@@ -210,53 +211,58 @@ export const tradeCalendar = async (
   return formattedDates;
 };
 
-export async function fetchTradeDataForLast7Trades(
+export async function fetchTradeDataForLastTrades(
   docID: string,
   startDate: Date | null = null,
   endDate: Date | null = null
 ) {
   const trades = await getAllTrades(docID, startDate, endDate);
-
-  // Sort trades by date (oldest first)
+  
+  // Sort trades by date (earliest to latest)
   trades.sort(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 
-  const winTrades = trades.filter(
+  const formatNumber = (num: number) => {
+      if (num >= 1000) {
+        return numbro(num).format({ average: true, mantissa: 2 }); // 9.99k
+      }
+      return numbro(num).format({ mantissa: 2 }); 
+    };
+
+  const wonTrades = trades.filter(
     (trade) => trade.tradeStatus.toLowerCase() === "win"
   );
-  const lossTrades = trades.filter(
+  const lostTrades = trades.filter(
     (trade) => trade.tradeStatus.toLowerCase() === "loss"
   );
 
-  const profits = winTrades
-    .slice(-10) // Get last 7 winning trades
-    .reduce((acc, trade) => {
-      const formattedDate = format(new Date(trade.date), "MM/dd");
-      if (!acc[formattedDate]) acc[formattedDate] = 0;
-      acc[formattedDate] += trade.realizedPnL || 0;
-      return acc;
-    }, {} as Record<string, number>);
-
-  const losses = lossTrades
-    .slice(-10) // Get last 7 losing trades
-    .reduce((acc, trade) => {
-      const formattedDate = format(new Date(trade.date), "MM/dd");
-      if (!acc[formattedDate]) acc[formattedDate] = 0;
-      acc[formattedDate] += Math.abs(trade.realizedPnL || 0); // Convert to positive
-      return acc;
-    }, {} as Record<string, number>);
-
-  const profitsArray = Object.entries(profits).map(([date, Profit]) => ({
-    date,
-    Profit,
+  // Format the date and map it to the profitsArray
+  const profitsArray = wonTrades.slice(-20).map((trade) => ({
+    date: format(new Date(trade.date), "M/d"),  // Format date to "MM/DD"
+    profit: trade.realizedPnL,
   }));
-  const lossesArray = Object.entries(losses).map(([date, Loss]) => ({
-    date,
-    Loss,
-  }));
+  console.log(profitsArray); // Debug log to check the profits array
 
-  return { profits: profitsArray, losses: lossesArray };
+  // Sum the total profit from the last 20 winning trades
+  const summedProfit = wonTrades
+    .slice(-20)
+    .reduce((acc, trade) => acc + (trade.realizedPnL || 0), 0);
+
+  // Sum the total loss from the last 10 losing trades
+  const summedLoss = lostTrades
+    .slice(-10) // Get last 10 losing trades (or modify to 7 if needed)
+    .reduce((acc, trade) => acc + (trade.realizedPnL || 0), 0);
+
+  // Calculate net PnL
+  const netPnL = summedProfit - summedLoss;
+
+  return {
+    Total_Profit: formatNumber(summedProfit),
+    Total_Loss: formatNumber(summedLoss),
+    Realized_PnL: formatNumber(netPnL),
+    Profits_Array: profitsArray,
+  };
 }
 
 export async function fetchUserMetrics() {

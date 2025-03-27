@@ -67,5 +67,5 @@ export const strategySchema = z.object({
 });
 
 export const milestonesSchema = z.object({
-   
+   username: z.string()
 })

@@ -6,7 +6,7 @@ import { auth } from "@/config/firebase";
 import {
   fetchPnLData,
   fetchRRData,
-  fetchTradeDataForLast7Trades,
+  fetchTradeDataForLastTrades,
   getAllTrades,
   getCurrentUserDoc,
   tradeCalendar,
@@ -80,7 +80,7 @@ export default function Page() {
           fetchPnLData(docID, startOfMonth, endOfMonth),
           fetchRRData(docID, startOfMonth, endOfMonth),
           tradeCalendar(docID),
-          fetchTradeDataForLast7Trades(docID, startOfMonth, endOfMonth),
+          fetchTradeDataForLastTrades(docID, startOfMonth, endOfMonth),
         ]);
         setAllTrades(trades);
         setWinRate(pnL.winRate)
@@ -98,10 +98,7 @@ export default function Page() {
     fetchData();
   }, [docID]);
   console.log(chartData);
-  // Set Win Rate when `pnLStats` is available
-  // useEffect(() => {
-  //   if (pnLStats) setWinRate(pnLStats.winRate);
-  // }, [pnLStats]);
+
 console.log(winRate)
 
   const [dateRange, setDateRange] = useState<
@@ -116,6 +113,7 @@ console.log(winRate)
         : (currentIndex - 1 + ranges.length) % ranges.length;
     setDateRange(ranges[newIndex]);
   };
+  console.log(chartData)
   return (
     <main suppressHydrationWarning className="w-full px-2 pt-4">
       {isLoading ? (
@@ -159,7 +157,7 @@ console.log(winRate)
           <div className="flex flex-col w-full gap-3">
             <WeekSummary pnLStats={pnLStats} RRStats={RRStats} />
             <div className="grid grid-cols-1 xl:grid-cols-3  gap-4 w-full">
-              <AccountPerformanceOverTime className="col-span-1 xl:col-span-2" />
+             {chartData && <AccountPerformanceOverTime data = {chartData} className="col-span-1 xl:col-span-2" />}
               <div className="flex lg:flex-col flex-col-reverse gap-4">
                 <TradeCalendar calendarDates={calendarDates} />
                 <WinRate value={winRate} />

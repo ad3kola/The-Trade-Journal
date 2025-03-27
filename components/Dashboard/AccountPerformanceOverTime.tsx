@@ -1,8 +1,7 @@
 "use client";
 
-import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon, GitCommitVertical } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
-
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   ChartConfig,
@@ -13,24 +12,7 @@ import {
 import { Tabs, TabsContent, TabsTrigger } from "../ui/tabs";
 import { TabsList } from "@radix-ui/react-tabs";
 import { cn } from "@/lib/utils";
-const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
-];
-const additionalContent = [
-  {
-    title: "Total Profits",
-    value: 295.86,
-  },
-  {
-    title: "Total Losses",
-    value: -36.82,
-  },
-];
+import { PnLOverviewCharts } from "@/lib/typings";
 
 const chartConfig = {
   desktop: {
@@ -39,12 +21,16 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+
 const percentChange = 85.6;
 export default function AccountPerformanceOverTime({
   className,
+  data
 }: {
   className: string;
+  data: PnLOverviewCharts
 }) {
+  const chartData = data.Profits_Array
   return (
     <Card className={className}>
       <Tabs defaultValue="day">
@@ -63,9 +49,8 @@ export default function AccountPerformanceOverTime({
             <div className="flex items-start gap-0.5 pb-1.5 md:-mt-3">
               <h1 className="text-3xl font-bold tracking-wide">
                 $
-                {additionalContent[0].value -
-                  Math.abs(additionalContent[1].value)}
-                k
+                {data.Realized_PnL}
+                
               </h1>
               <div
                 className={cn(
@@ -92,11 +77,10 @@ export default function AccountPerformanceOverTime({
               >
                 <CartesianGrid vertical={false} />
                 <XAxis
-                  dataKey="month"
+                  dataKey="date"
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
-                  tickFormatter={(value) => value.slice(0, 3)}
                 />
                 <ChartTooltip
                   cursor={false}
@@ -117,24 +101,56 @@ export default function AccountPerformanceOverTime({
                   </linearGradient>
                 </defs>
                 <Area
-                  dataKey="desktop"
+                  dataKey="profit"
                   type="natural"
                   fill="url(#fillDesktop)"
                   fillOpacity={0.4}
                   stroke="var(--color-desktop)"
                   stackId="a"
+                  dot={({ cx, cy, payload }) => {
+                    const r = 24
+                    return (
+                      <GitCommitVertical
+                        key={payload.month}
+                        x={cx - r / 2}
+                        y={cy - r / 2}
+                        width={r}
+                        height={r}
+                        fill="hsl(var(--background))"
+                        stroke="var(--color-desktop)"
+                      />
+                    )
+                  }}
                 />
               </AreaChart>
             </ChartContainer>
           </TabsContent>
         </CardContent>
-        <AdditionalStats />{" "}
+        <AdditionalStats losses={data.Total_Loss} profits={data.Total_Profit} />{" "}
       </Tabs>
     </Card>
   );
 }
 
-function AdditionalStats() {
+function AdditionalStats({
+  profits,
+  losses,
+}: {
+  losses: string;
+  profits: string;
+}) {
+  console.log(profits);
+
+  const additionalContent = [
+    {
+      title: "Total Profits",
+      value: profits,
+    },
+    {
+      title: "Total Losses",
+      value: losses,
+    },
+  ];
   return (
     <div className="grid grid-cols-2 gap-4 mt-4 p-2">
       {additionalContent.map(({ title, value }, indx) => (
@@ -143,14 +159,14 @@ function AdditionalStats() {
           className="border-r-2 flex items-center gap-1 justify-center flex-col w-full"
         >
           <h4 className="">{title}</h4>
-          <h1 className={"text-2xl font-semibold"}>${Math.abs(value)}k</h1>
+          <h1 className={"text-2xl font-semibold"}>${value}</h1>
           <div
             className={cn(
               "flex items-center justify-center text-xs p-0.5 rounded-sm",
-              value > 0 ? "text-green-500" : "text-red-500"
+              Number(value) > 0 ? "text-green-500" : "text-red-500"
             )}
           >
-            {value > 0 ? (
+            {Number(value) > 0 ? (
               <ArrowUpIcon className="h-3 w-4" />
             ) : (
               <ArrowDownIcon className="h-3 w-4" />

@@ -62,7 +62,7 @@ export interface UserProps {
 
 export interface Profits {
   date: string;
-  Profit: number;
+  profit: number;
 }
 
 export interface Losses {
@@ -71,8 +71,10 @@ export interface Losses {
 }
 
 export interface PnLOverviewCharts {
-  profits: Profits[];
-  losses: Losses[];
+  Profits_Array: Profits[];
+  Total_Loss: string;
+  Total_Profit: string;
+  Realized_PnL: string;
 }
 
 export interface PnLDetails {

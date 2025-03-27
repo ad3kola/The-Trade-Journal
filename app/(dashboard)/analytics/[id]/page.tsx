@@ -22,7 +22,6 @@ import {
 } from "@/components/ui/popover";
 import SessionChart from "@/components/Analytics/SessionChart";
 import PersonalAccountPnL from "@/components/Analytics/PersonalAccountPnL";
-import PropFirmAccountPnL from "@/components/Analytics/PropFirmAccountPnL";
 import PnLCalendar from "@/components/Analytics/PnLCalendar";
 
 export default function Page() {
@@ -94,7 +93,6 @@ export default function Page() {
       <div className="w-full flex flex-col gap-4">
         <div className="grid grid-cols-1 2xl:grid-cols-3 gap-4">
           <PersonalAccountPnL docID={docID} date={date} />
-          <PropFirmAccountPnL docID={docID} date={date} />
           <MostTradedCoins docID={docID} date={date} />
         </div>
         <PnLCalendar docID={docID} />

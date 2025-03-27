@@ -1,9 +1,9 @@
 import { GemIcon, PlusIcon } from "lucide-react";
 import { Card, CardContent } from "../ui/card";
 import { Progress } from "../ui/progress";
-import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import MilestonesForm from "./MilestonesForm";
 
 const Milestones = () => {
   const goals = [
@@ -16,14 +16,14 @@ const Milestones = () => {
     <Card className={cn("h-full w-full pt-2.5")}>
       <div className="pb-2 pt-1 px-4 font-semibold flex items-center justify-between text-lg">
         <p>Goals and Milestones</p>
-        <Sheet>
-          <SheetTrigger><Button variant={"outline"} size={"icon"}>
+        <Dialog>
+          <DialogTrigger>
           <PlusIcon className="h-4 w-4" />
-        </Button></SheetTrigger>
-        <SheetContent>
-          
-        </SheetContent>
-        </Sheet>
+        </DialogTrigger>
+        <DialogContent>
+          <MilestonesForm />
+        </DialogContent>
+        </Dialog>
       </div>
       <CardContent className="p-3">
         <div className="flex flex-col gap-2">

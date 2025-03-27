@@ -34,7 +34,6 @@ export const pnlOverTimeChartData = [
   { month: "June", gains: 214, losses: 140 },
 ];
 
-
 export enum TradeStatus {
   WIN = "Win",
   LOSS = "Loss",
@@ -68,6 +67,12 @@ export enum TradeTimeframe {
   D1 = "1D",
   W1 = "1W",
   M1M = "1M",
+}
+
+export enum MilestoneType {
+  financial = "Financial",
+  time = "Time",
+  achievement = "Acheivement",
 }
 
 export const calculateTradeMetrics = (
@@ -105,4 +110,3 @@ export const calculateTradeMetrics = (
     realizedPnl,
   };
 };
-

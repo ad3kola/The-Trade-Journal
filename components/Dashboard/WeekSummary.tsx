@@ -88,7 +88,6 @@ const WeekSummary = ({
       previousValue: 0,
     },
   ];
-
   return (
     <section>
       <div className="w-full grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
