@@ -12,7 +12,8 @@ import {
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { cn } from "@/lib/utils";
 import { ChartPieIcon } from "@heroicons/react/24/solid";
-import { PNLs, RR } from "@/app/(dashboard)/overview/[id]/page";
+import { PNLs, RR } from "@/app/(dashboard)/dashboard/[id]/page";
+import { Button } from "../ui/button";
 
 const AnimatedNumber = ({
   value,
@@ -53,8 +54,8 @@ const WeekSummary = ({
   pnLStats: PNLs | null;
   RRStats: RR | null;
 }) => {
+  const roi = 21.2;
   const formattedTrades = RRStats?.totalTrades ?? 0;
-
   const content = [
     {
       title: "Realized PnL",
@@ -63,7 +64,7 @@ const WeekSummary = ({
       prefix: "$",
       isInteger: false,
       previousValue: 0,
-      percentChange: 10.8,
+      percentChange: roi ?? 0,
     },
 
     {
@@ -73,8 +74,8 @@ const WeekSummary = ({
       prefix: "$",
       isInteger: false,
       previousValue: 0,
-      percentChange: 21.2,
-    },    {
+    },
+    {
       title: "Total Trades",
       Icon: ChartColumnIncreasingIcon,
       value: formattedTrades,
@@ -88,8 +89,29 @@ const WeekSummary = ({
       previousValue: 0,
     },
   ];
+  const [dateRange, setDateRange] = useState<
+    "today" | "this week" | "this month"
+  >("today");
+  const cycleDateRange = () => {
+    const ranges = ["today", "this week", "this month"] as const;
+    const currentIndex = ranges.indexOf(dateRange);
+    const newIndex = (currentIndex + 1) % ranges.length;
+    setDateRange(ranges[newIndex]);
+  };
   return (
     <section>
+      <div className="w-full flex items-center justify-between">
+        <h3 className="font-medium">Dashboard - March 2025</h3>
+        <div className="flex items-center gap-1">
+          <Button
+            variant="outline"
+            className="capitalize w-28"
+            onClick={cycleDateRange}
+          >
+            {dateRange}
+          </Button>
+        </div>
+      </div>
       <div className="w-full grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {content.map(
           ({ title, Icon, value, prefix, isInteger, percentChange }, indx) => {
@@ -120,21 +142,23 @@ const WeekSummary = ({
                             />
                           </>
                         </h3>
-                        {percentChange && <div
-                          className={cn(
-                            "flex items-center justify-center text-xs p-0.5 rounded-sm",
-                            percentChange > 0
-                              ? "bg-green-950 text-green-500"
-                              : "bg-red-950 text-red-500"
-                          )}
-                        >
-                          {percentChange > 0 ? (
-                            <ArrowUpIcon className="h-3 w-4" />
-                          ) : (
-                            <ArrowDownIcon className="h-3 w-4" />
-                          )}
-                          {percentChange}%
-                        </div>}
+                        {percentChange && (
+                          <div
+                            className={cn(
+                              "flex items-center justify-center text-xs p-0.5 rounded-sm",
+                              percentChange > 0
+                                ? "bg-green-950 text-green-500"
+                                : "bg-red-950 text-red-500"
+                            )}
+                          >
+                            {percentChange > 0 ? (
+                              <ArrowUpIcon className="h-3 w-4" />
+                            ) : (
+                              <ArrowDownIcon className="h-3 w-4" />
+                            )}
+                            {percentChange}%
+                          </div>
+                        )}
                       </div>
                       <p
                         className="

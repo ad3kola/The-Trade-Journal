@@ -29,28 +29,14 @@ import { usePathname } from "next/navigation";
 import { NavLinks } from "@/lib/typings";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { useEffect, useState } from "react";
-import { auth } from "@/config/firebase";
-import { getCurrentUserDoc } from "@/actions/db/actions";
 import { cn } from "@/lib/utils";
+import { SignOutButton, useAuth } from "@clerk/nextjs";
 const SideBar = () => {
-  const [currentID, setCurrentID] = useState<string>("");
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (authUser) => {
-      if (authUser) {
-        const userData = await getCurrentUserDoc(authUser.uid);
-        if (userData) {
-          setCurrentID(userData?.userID);
-        }
-      }
-    });
-
-    return () => unsubscribe(); // Cleanup the listener
-  }, []);
+const { userId } = useAuth()
 
   const navLinks: NavLinks[] = [
-    { Icon: HomeIcon, title: "Dashboard", url: "/overview" },
+    { Icon: HomeIcon, title: "Dashboard", url: "/dashboard" },
 
     { Icon: Table, title: "Orders List", url: "/orders-list" },
     { Icon: PlusIcon, title: "Log a Trade", url: "/upload" },
@@ -84,11 +70,11 @@ const SideBar = () => {
                       asChild
                       className={cn(
                         "font-bold transition duration-100 ease-in-out text-sm tracking-wider gap-4 py-6",
-                        currentRoute == `${url}/${currentID}` &&
+                        currentRoute == `${url}/${userId}` &&
                           "bg-primary hover:bg-primary dark:hover:text-foreground text-[#fff] hover:font-medium"
                       )}
                     >
-                      <Link href={`${url}/${currentID}`}>
+                      <Link href={`${url}/${userId}`}>
                         <Icon className="h-10 w-10" />
                         <span>{title}</span>
                       </Link>
@@ -101,13 +87,15 @@ const SideBar = () => {
                   asChild
                   className="font-bold transition duration-100 ease-in-out text-sm tracking-wider gap-4 py-6 hover:bg-primary dark:hover:text-foreground hover:font-medium"
                 >
-                  <Button
-                    variant="outline"
-                    className="w-full flex items-center justify-start"
-                  >
-                    <ExternalLink className="h-10 w-10" />
-                    Log Out
-                  </Button>
+                  <SignOutButton>
+                    <Button
+                      variant="outline"
+                      className="w-full flex items-center justify-start"
+                    >
+                      <ExternalLink className="h-10 w-10" />
+                      Log Out
+                    </Button>
+                  </SignOutButton>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

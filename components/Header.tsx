@@ -5,19 +5,21 @@ import { Button } from "./ui/button";
 import Image from "next/image";
 import { ModeToggle } from "./ModeToggle";
 import { SidebarTrigger } from "./ui/sidebar";
-import { auth } from "@/config/firebase";
 import { Skeleton } from "./ui/skeleton";
-import { useEffect, useState } from "react";
+import { SignedOut, SignInButton, useUser } from "@clerk/nextjs";
 
 const Header = () => {
-  const [user, setUser] = useState(auth.currentUser);
-  const fullName = user?.displayName || "";
-  const [firstName] = fullName.split(" ");
+  // const [user, setUser] = useState(auth.currentUser);
+  const { user } = useUser()
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => setUser(user));
-    return () => unsubscribe(); // Cleanup on unmount
-  }, []);
+console.log(user?.id)
+    // const fullName = user?.displayName || "";
+  // const [firstName] = fullName.split(" ");
+
+  // useEffect(() => {
+  //   const unsubscribe = auth.onAuthStateChanged((user) => setUser(user));
+  //   return () => unsubscribe(); // Cleanup on unmount
+  // }, []);
 
   return (
     <header
@@ -32,8 +34,8 @@ const Header = () => {
               width={60}
               height={60}
               src={
-                user?.photoURL
-                  ? (user.photoURL as string)
+                user?.imageUrl
+                  ? (user.imageUrl as string)
                   : "/assets/avatar.jpg"
               }
               alt="profile"
@@ -45,8 +47,8 @@ const Header = () => {
           </div>
           <div className="flex flex-col text-base justify-center -space-y-1 w-full">
             <h3 className="font-semibold tracking-wider">
-              <span className="block sm:hidden">{firstName}</span>{" "}
-              <span className="hidden sm:block">{fullName}</span>{" "}
+              <span className="block sm:hidden">{user?.firstName}</span>{" "}
+              <span className="hidden sm:block">{user?.fullName}</span>{" "}
             </h3>
             <p className="text-[12px] text-foreground/65 font-medium">
               Hey, Welcome back!
@@ -76,6 +78,9 @@ const Header = () => {
             {Math.floor(Math.random() * 8) + 1} New{" "}
           </Button>
         </div>
+        <SignedOut>
+          <SignInButton>Sign in</SignInButton>
+        </SignedOut>
         <ModeToggle />
       </div>
     </header>

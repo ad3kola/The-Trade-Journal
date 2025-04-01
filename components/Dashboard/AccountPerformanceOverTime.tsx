@@ -13,6 +13,8 @@ import { Tabs, TabsContent, TabsTrigger } from "../ui/tabs";
 import { TabsList } from "@radix-ui/react-tabs";
 import { cn } from "@/lib/utils";
 import { PnLOverviewCharts } from "@/lib/typings";
+import { useState } from "react";
+// import { useEffect } from "react";
 
 const chartConfig = {
   desktop: {
@@ -23,25 +25,46 @@ const chartConfig = {
 
 
 const percentChange = 85.6;
+
 export default function AccountPerformanceOverTime({
   className,
-  data
+  docID
 }: {
   className: string;
-  data: PnLOverviewCharts
+  docID: string;
 }) {
-  const chartData = data.Profits_Array
+console.log(docID)
+  const [activeTab, setActiveTab] = useState("day");
+  const [data, setChartData] = useState<PnLOverviewCharts | null>(null);
+console.log(setChartData)
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     let tradeData;
+  //     if (activeTab === "day") {
+  //       tradeData = await fetchDailyTradeData(docID);
+  //     } else if (activeTab === "week") {
+  //       tradeData = await fetchWeeklyTradeData(docID);
+  //     } else {
+  //       tradeData = await fetchMonthlyTradeData(docID);
+  //     }
+  //     setChartData(tradeData);
+  //   }
+  //   fetchData();
+  // }, [activeTab, docID]);
+
+  const chartData = data?.Profits_Array;
+  
   return (
     <Card className={className}>
-      <Tabs defaultValue="day">
+      <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
         <CardHeader className="flex flex-col-reverse pb-0 gap-3 sm:flex-row w-full md:items-center justify-between">
           <div>
             <h3>Account Performance </h3>
           </div>
           <TabsList className="p-1 bg-background border rounded-md w-fit">
-            <TabsTrigger value="day">Day</TabsTrigger>
-            <TabsTrigger value="week">Week</TabsTrigger>
-            <TabsTrigger value="month">Month</TabsTrigger>
+            <TabsTrigger value="day">Daily</TabsTrigger>
+            {/* <TabsTrigger value="week">Week</TabsTrigger> */}
+            <TabsTrigger value="month">Monthly</TabsTrigger>
           </TabsList>
         </CardHeader>
         <CardContent className="py-0">
@@ -49,7 +72,7 @@ export default function AccountPerformanceOverTime({
             <div className="flex items-start gap-0.5 pb-1.5 md:-mt-3">
               <h1 className="text-3xl font-bold tracking-wide">
                 $
-                {data.Realized_PnL}
+                {data?.Realized_PnL ?? "0"}
                 
               </h1>
               <div
@@ -126,7 +149,7 @@ export default function AccountPerformanceOverTime({
             </ChartContainer>
           </TabsContent>
         </CardContent>
-        <AdditionalStats losses={data.Total_Loss} profits={data.Total_Profit} />{" "}
+        <AdditionalStats losses={data?.Total_Loss ?? "0"} profits={data?.Total_Profit ?? "0"} />{" "}
       </Tabs>
     </Card>
   );
@@ -139,7 +162,6 @@ function AdditionalStats({
   losses: string;
   profits: string;
 }) {
-  console.log(profits);
 
   const additionalContent = [
     {

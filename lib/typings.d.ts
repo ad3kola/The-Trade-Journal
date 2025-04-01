@@ -41,7 +41,7 @@ export interface DailySummaryData {
 }
 
 export interface FormSchemaWithRefID {
-  docID: string;
+  id: string;
   data: z.infer<typeof formSchema>;
 }
 

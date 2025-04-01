@@ -20,8 +20,8 @@ import {
 import numbro from "numbro";
 import { z } from "zod";
 
-export const uploadTrade = async ({ docID, data }: FormSchemaWithRefID) => {
-  const tradesCollectionRef = collection(usersCollection, docID, "trades");
+export const uploadTrade = async ({ id, data }: FormSchemaWithRefID) => {
+  const tradesCollectionRef = collection(usersCollection, id, "trades");
   await addDoc(tradesCollectionRef, data);
 };
 
@@ -57,9 +57,9 @@ export const getAllTrades = async (
     if (endDate) {
       queryRef = query(queryRef, where("date", "<=", endDate));
     }
-    console.log(docID);
+    console.log("Document ID: ", docID);
     const querySnapshot = await getDocs(queryRef);
-    return querySnapshot.docs
+    const res =  querySnapshot.docs
       .map((doc) => ({
         docID,
         id: doc.id,
@@ -67,6 +67,8 @@ export const getAllTrades = async (
         date: new Date(doc.data().date.seconds * 1000),
       }))
       .sort((b, a) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      console.log(res)
+      return res
   } catch (err) {
     console.log(err);
     return [];
@@ -211,21 +213,20 @@ export const tradeCalendar = async (
   return formattedDates;
 };
 
-export async function fetchTradeDataForLastTrades(
+export async function fetchDailyTradeData(
   docID: string,
   startDate: Date | null = null,
   endDate: Date | null = null
 ) {
   const trades = await getAllTrades(docID, startDate, endDate);
 
-  // Sort trades by date (earliest to latest)
   trades.sort(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 
   const formatNumber = (num: number) => {
     if (num >= 1000) {
-      return numbro(num).format({ average: true, mantissa: 2 }); // 9.99k
+      return numbro(num).format({ average: true, mantissa: 2 });
     }
     return numbro(num).format({ mantissa: 2 });
   };
@@ -237,25 +238,21 @@ export async function fetchTradeDataForLastTrades(
     (trade) => trade.tradeStatus.toLowerCase() === "loss"
   );
 
-  // Format the date and map it to the profitsArray
   const profitsArray = wonTrades.slice(-20).map((trade) => ({
-    date: format(new Date(trade.date), "M/d"), // Format date to "MM/DD"
+    date: format(new Date(trade.date), "M/d"), 
     profit: trade.realizedPnL,
   }));
-  console.log(profitsArray); // Debug log to check the profits array
+  console.log(profitsArray); 
 
-  // Sum the total profit from the last 20 winning trades
   const summedProfit = wonTrades
     .slice(-20)
     .reduce((acc, trade) => acc + (trade.realizedPnL || 0), 0);
 
-  // Sum the total loss from the last 10 losing trades
   const summedLoss = lostTrades
-    .slice(-10) // Get last 10 losing trades (or modify to 7 if needed)
+    .slice(-10) 
     .reduce((acc, trade) => acc + (trade.realizedPnL || 0), 0);
 
-  // Calculate net PnL
-  const netPnL = summedProfit - summedLoss;
+  const netPnL = summedProfit + summedLoss;
 
   return {
     Total_Profit: formatNumber(summedProfit),

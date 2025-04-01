@@ -58,7 +58,7 @@ export function DataTable<TData, TValue>({
   return (
     <div className="rounded-none">
       <div className="flex items-center pb-4 gap-3">
-        <div className="max-w-sm flex gap-2 w-full items-center rounded-md border border-input bg-sidebar pl-4 h-10 text-[13px] placeholder:tracking-wider lg:text-base shadow-sm placeholder:font-medium  transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-foreground/60 focus-visible:outline-none">
+        <div className="max-w-sm flex gap-2 w-full items-center rounded-md border border-input bg-sidebar pl-4 h-10 text-[13px] placeholder:tracking-wider lg:text-base shadow-sm placeholder:font-medium transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-foreground/60 focus-visible:outline-none">
           <SlidersHorizontalIcon className="h-4 w-4" />
           <Input
             placeholder="Filter emails..."

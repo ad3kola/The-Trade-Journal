@@ -67,10 +67,10 @@ export enum FormFieldType {
 }
 
 export default function FormComponent({
-  docID,
+  id,
   userID,
 }: {
-  docID: string;
+  id: string;
   userID: string;
 }) {
   const [selectedCoin, setSelectedCoin] = useState<Coin | null>(null);
@@ -145,38 +145,46 @@ export default function FormComponent({
   async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsUploading(true);
 
-    if (fileURL) {
-      data.tradeScreenshot = fileURL;
+    try {
+      if (fileURL) {
+        data.tradeScreenshot = fileURL;
+      }
+
+      // Format date only for API submission
+      data.date = new Date(data.date);
+
+      await uploadTrade({ id, data });
+
+      // Reset form values
+      form.reset({
+        entryPrice: 0,
+        stopLoss: 0,
+        takeProfit: 0,
+        positionSize: 0,
+        leverage: 0,
+        riskAmount: 0,
+        strategy: {
+          divergence: false,
+          fib_Key_Levels: false,
+          head_and_Shoulders: false,
+          indicator_Highlight: false,
+          pro_Trend_Bias: false,
+          trendline_Retest: false,
+        },
+        tradeReview: "",
+        tradeScreenshot: "",
+      });
+
+      setFileURL("");
+      reset();
+
+      // Navigate after state updates
+      router.push(`/orders-list/${userID}`);
+    } catch (error) {
+      console.error("Error uploading trade:", error);
+    } finally {
+      setIsUploading(false);
     }
-    // Format date only for API submission
-    data.date = new Date(data.date);
-
-    await uploadTrade({ docID, data });
-
-    // Reset form values
-    form.reset({
-      entryPrice: 0,
-      stopLoss: 0,
-      takeProfit: 0,
-      positionSize: 0,
-      leverage: 0,
-      riskAmount: 0,
-      strategy: {
-        divergence: false,
-        fib_Key_Levels: false,
-        head_and_Shoulders: false,
-        indicator_Highlight: false,
-        pro_Trend_Bias: false,
-        trendline_Retest: false,
-      },
-      tradeReview: "",
-      tradeScreenshot: "",
-    });
-
-    setFileURL("");
-    reset();
-    router.push(`/orders-list/${userID}`);
-    setIsUploading(false);
   }
   console.log(userID);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
